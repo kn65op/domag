@@ -1,0 +1,2 @@
+When go to Items, while some depot is opeend title does not update
+

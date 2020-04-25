@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/nav_items">
+
+    <fragment
+        android:id="@+id/nav_items"
+        android:name="com.example.domag2.ui.items.ItemsFragment"
+        android:label="@string/menu_items"
+        tools:layout="@layout/fragment_items">
+
+        <action
+            android:id="@+id/action_nav_items_self"
+            app:destination="@id/nav_items">
+            <argument
+                android:name="depotId"
+                android:defaultValue="0"
+                app:argType="integer" />
+        </action>
+
+        <action
+            android:id="@+id/action_nav_items_to_editContainer"
+            app:destination="@id/editContainer">
+            <argument
+                android:name="depotId"
+                android:defaultValue="0"
+                app:argType="integer" />
+            <argument
+                android:name="parentId"
+                android:defaultValue="0"
+                app:argType="integer" />
+        </action>
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_shortage"
+        android:name="com.example.domag2.ui.shortage.GalleryFragment"
+        android:label="@string/menu_shortage"
+        tools:layout="@layout/fragment_gallery" />
+
+    <fragment
+        android:id="@+id/nav_short_term"
+        android:name="com.example.domag2.ui.shortTerm.SlideshowFragment"
+        android:label="@string/menu_short_term"
+        tools:layout="@layout/fragment_slideshow" />
+
+    <fragment
+        android:id="@+id/nav_shopping_lists"
+        android:name="com.example.domag2.ui.shoppingList.ToolsFragment"
+        android:label="@string/menu_shopping_lists"
+        tools:layout="@layout/fragment_tools" />
+
+    <fragment
+        android:id="@+id/nav_categories"
+        android:name="com.example.domag2.ui.categories.ShareFragment"
+        android:label="@string/menu_categories"
+        tools:layout="@layout/fragment_share" />
+
+    <fragment
+        android:id="@+id/nav_send"
+        android:name="com.example.domag2.ui.settings.SendFragment"
+        android:label="@string/menu_settings"
+        tools:layout="@layout/fragment_send" />
+    <fragment
+        android:id="@+id/editContainer"
+        android:name="com.example.domag2.EditDepotFragment"
+        android:label="fragment_edit_container"
+        tools:layout="@layout/fagment_edit_depot">
+        <action
+            android:id="@+id/action_editContainer_to_nav_items"
+            app:destination="@id/nav_items">
+            <argument
+                android:name="depotId"
+                android:defaultValue="0"
+                app:argType="integer" />
+        </action>
+    </fragment>
+</navigation>
