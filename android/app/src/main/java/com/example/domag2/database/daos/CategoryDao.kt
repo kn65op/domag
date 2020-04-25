@@ -38,14 +38,14 @@ interface CategoryDao {
     fun findByName(name: String): LiveData<List<Category>>
 
     @Insert
-    fun insert(categorys: List<Category>)
+    suspend fun insert(categorys: List<Category>)
 
     @Insert
-    fun insert(category: Category)
+    suspend fun insert(category: Category)
 
     @Update
-    fun update(category: Category)
+    suspend fun update(category: Category)
 
     @Delete
-    fun delete(category: Category)
+    suspend fun delete(category: Category)
 }

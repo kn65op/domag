@@ -59,14 +59,12 @@ val item5 = Item(uid = 5, depotId = 3, categoryId = 3)
 val item6 = Item(uid = 6, depotId = 3, categoryId = 4)
 val item7 = Item(uid = 7, depotId = 3, categoryId = 4)
 
-fun fillData(db: AppDatabase) {
+fun fillData(db: AppDatabase) = runBlocking {
     val depotDao = db.depotDao()
 
-    runBlocking {
-        depotDao.insert(listOf(mainDepot1.depot, mainDepot2.depot))
-        depotDao.insert(depot1InMainDepot1.depot)
-        depotDao.insert(depot2InMainDepot1.depot)
-    }
+    depotDao.insert(listOf(mainDepot1.depot, mainDepot2.depot))
+    depotDao.insert(depot1InMainDepot1.depot)
+    depotDao.insert(depot2InMainDepot1.depot)
 
     val categoryDao = db.categoryDao()
 

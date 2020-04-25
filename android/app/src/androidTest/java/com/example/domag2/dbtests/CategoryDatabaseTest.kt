@@ -8,6 +8,7 @@ import com.example.domag2.database.database.AppDatabase
 import com.example.domag2.dbtests.common.getFromLiveData
 import com.example.domag2.dbtests.data.*
 import com.example.domag2.matchers.isEqualRegardlessId
+import kotlinx.coroutines.runBlocking
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.CoreMatchers.not
 import org.hamcrest.MatcherAssert.assertThat
@@ -108,7 +109,7 @@ open class CategoryDatabaseTest {
     }
 
     @Test
-    fun delete() {
+    fun delete() = runBlocking {
         val toRemove = getFromLiveData(categoryDao.findByName(mainCategory1.category.name))
         assertThat(toRemove.size, equalTo(1))
 
@@ -123,7 +124,7 @@ open class CategoryDatabaseTest {
     }
 
     @Test
-    fun categoryWithItems() {
+    fun categoryWithItems() = runBlocking {
         val categoryWithItems = getFromLiveData(categoryDao.findWithContentsById(3))
 
         assertThat(
