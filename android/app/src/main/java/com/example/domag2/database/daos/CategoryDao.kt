@@ -20,6 +20,10 @@ interface CategoryDao {
     fun findWithContentsById(categoryIds: Int): LiveData<CategoryWithContents>
 
     @Transaction
+    @Query("SELECT rowid, * FROM category WHERE rowid = :categoryIds")
+    suspend fun findWithContentsByIdImmediately(categoryIds: Int): CategoryWithContents
+
+    @Transaction
     @Query("SELECT rowid, * FROM category WHERE rowid IN (:categoryIds)")
     fun findWithContentsById(categoryIds: Array<Int>): LiveData<List<CategoryWithContents>>
 
@@ -48,4 +52,13 @@ interface CategoryDao {
 
     @Delete
     suspend fun delete(category: Category)
+
+    suspend fun deleteWithChildren(category: Category) {
+        category.uid?.let { uid ->
+            findWithContentsByIdImmediately(uid).categories.forEach {
+                deleteWithChildren(it)
+            }
+        }
+        delete(category)
+    }
 }

@@ -9,8 +9,7 @@ import com.example.domag2.dbtests.common.getFromLiveData
 import com.example.domag2.dbtests.data.*
 import com.example.domag2.matchers.isEqualRegardlessId
 import kotlinx.coroutines.runBlocking
-import org.hamcrest.CoreMatchers.equalTo
-import org.hamcrest.CoreMatchers.not
+import org.hamcrest.CoreMatchers.*
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.greaterThan
 import org.hamcrest.collection.IsArrayContainingInAnyOrder.arrayContainingInAnyOrder
@@ -118,9 +117,26 @@ open class CategoryDatabaseTest {
         val all = getFromLiveData(categoryDao.getAll())
 
         assertThat(
-            all.toTypedArray(),
-            not(arrayContainingInAnyOrder(toRemove[0]))
+            all,
+            not(hasItem(toRemove[0]))
         )
+    }
+
+    @Test
+    fun deleteShouldDeleteAlsoAllCategoriesInside() = runBlocking {
+        val toRemove = getFromLiveData(categoryDao.findByName(mainCategory1.category.name)).plus(
+            getFromLiveData(categoryDao.findByName(category2InMainCategory1Name))).plus(
+            getFromLiveData(categoryDao.findByName(category1InMainCategory1Name)))
+        assertThat(toRemove.size, equalTo(3))
+
+        categoryDao.deleteWithChildren(toRemove[0])
+
+        val all = getFromLiveData(categoryDao.getAll())
+
+        assertThat(all, not(hasItem(toRemove[0])))
+        assertThat(all, not(hasItem(toRemove[1])))
+        assertThat(all, not(hasItem(toRemove[2])))
+
     }
 
     @Test
