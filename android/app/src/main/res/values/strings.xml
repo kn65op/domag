@@ -27,4 +27,7 @@
     <string name="edit_depot_menu_remove_depot_item_text">Remove</string>
     <string name="edit_depot_menu_confirm_text">Save</string>
     <string name="categories_menu_edit_category_menu_item">Edit category</string>
+    <string name="edit_category_category_name">Name</string>
+    <string name="edit_category_parent_text">Parent</string>
+    <string name="edit_category_unit">Unit</string>
 </resources>

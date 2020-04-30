@@ -68,7 +68,7 @@ class CategoriesFragment : FragmentWithActionBar() {
                 val callback = requireActivity().onBackPressedDispatcher.addCallback(this) {
                     val action =
                         CategoriesFragmentDirections.actionNavCategoriesSelf(
-                            depotId = it.category.parentId ?: 0
+                            categoryId = it.category.parentId ?: 0
                         )
                     Log.i(LOG_TAG, "${currentCategory.value?.category?.uid}")
                     root.findNavController().navigate(action)
@@ -96,12 +96,12 @@ class CategoriesFragment : FragmentWithActionBar() {
         addCategoryFab.setOnClickListener {
             Log.i(LOG_TAG, "Clicked add depot")
             Log.i(LOG_TAG, "Wiato for to go")
-            //val action =
-            //CategoriesFragmentDirections.actionNavCategoriesToEditContainer(
-            //parentId = currentCategory.value?.category?.uid ?: 0
-            //?/)
-            //Log.i(LOG_TAG, "${currentCategory.value?.category?.uid}")
-            //root.findNavController().navigate(action)
+            val action =
+                CategoriesFragmentDirections.actionNavCategoriesToEditCategory(
+                    parentId = currentCategory.value?.category?.uid ?: 0
+                )
+            Log.i(LOG_TAG, "${currentCategory.value?.category?.uid}")
+            root.findNavController().navigate(action)
         }
     }
 
@@ -137,15 +137,15 @@ class CategoriesFragment : FragmentWithActionBar() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean =
         when (item.itemId) {
-            R.id.items_edit_depot_menu_item -> {
+            R.id.categories_menu_edit_category_menu_item -> {
                 Log.i(LOG_TAG, "Clicked add depot")
-                //currentCategory.value?.category?.uid?.let {
-                //   val action = CategoriesFragmentDirections.actionNavCategoriesToEditContainer(
-                //categoryId = it
-                //)
-                //Log.i(LOG_TAG, "Edit $it")
-                //view?.findNavController()?.navigate(action)
-                //}
+                currentCategory.value?.category?.uid?.let {
+                    val action = CategoriesFragmentDirections.actionNavCategoriesToEditCategory(
+                        categoryId = it
+                    )
+                    Log.i(LOG_TAG, "Edit $it")
+                    view?.findNavController()?.navigate(action)
+                }
                 true
             }
             else -> super.onOptionsItemSelected(item)

@@ -1,4 +1,4 @@
-package com.example.domag2
+package com.example.domag2.ui.categories
 
 import android.os.Bundle
 import android.util.Log
@@ -11,65 +11,69 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.domag2.R
 import com.example.domag2.database.database.AppDatabase
 import com.example.domag2.database.database.DatabaseFactoryImpl
-import com.example.domag2.database.entities.Depot
-import com.example.domag2.database.relations.DepotWithContents
+import com.example.domag2.database.entities.Category
+import com.example.domag2.database.relations.CategoryWithContents
 import com.example.domag2.ui.common.FragmentWithActionBar
-import com.example.domag2.ui.items.DepotAdapter
 import com.example.domag2.ui.utils.replaceText
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner
-import kotlinx.android.synthetic.main.fagment_edit_depot.*
+import kotlinx.android.synthetic.main.fragment_edit_category.*
 import kotlinx.coroutines.launch
 
-private const val CURRENT_DEPOT_NAME_PARAMETER = "currentName"
+private const val CURRENT_CATEGORY_NAME_PARAMETER = "currentName"
+private const val CURRENT_CATEGORY_UNIT_PARAMETER = "currentUnit"
 private const val PARENT_ID_PARAMETER = "currentParent"
 private const val PARENT_ID_ACTION_PARAMETER = "parentId"
-private const val CURRENT_DEPOT_ID_PARAMETER = "depotId"
+private const val CURRENT_CATEGORY_ID_PARAMETER = "categoryId"
 
-class EditDepotFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedListener {
+class EditCategoryFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedListener {
     private val dbFactory = DatabaseFactoryImpl()
     private var currentName: String? = null
+    private var currentUnit: String? = null
     private var currentParent: Int? = null
-    private var depotId: Int? = null
+    private var categoryId: Int? = null
     private lateinit var viewManager: RecyclerView.LayoutManager
     private lateinit var viewAdapter: RecyclerView.Adapter<*>
     private lateinit var recyclerView: RecyclerView
     private lateinit var spinner: SearchableSpinner
-    private var currentDepot = MutableLiveData<DepotWithContents>()
-    private var allDepots = emptyList<Depot>()
+    private var currentCategory = MutableLiveData<CategoryWithContents>()
+    private var allCategories = emptyList<Category>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        currentName = savedInstanceState?.getString(CURRENT_DEPOT_NAME_PARAMETER)
+        currentName = savedInstanceState?.getString(CURRENT_CATEGORY_NAME_PARAMETER)
+        currentUnit = savedInstanceState?.getString(CURRENT_CATEGORY_UNIT_PARAMETER)
         currentParent = savedInstanceState?.getInt(PARENT_ID_PARAMETER)
         if (currentParent == null)
             currentParent = arguments?.getInt(PARENT_ID_ACTION_PARAMETER)
-        depotId = arguments?.getInt(CURRENT_DEPOT_ID_PARAMETER)
-        Log.i(LOG_TAG, "Passed depotId: $depotId")
-        val savedId = savedInstanceState?.getInt(CURRENT_DEPOT_ID_PARAMETER)
+        categoryId = arguments?.getInt(CURRENT_CATEGORY_ID_PARAMETER)
+        Log.i(LOG_TAG, "Passed depotId: $categoryId")
+        val savedId = savedInstanceState?.getInt(CURRENT_CATEGORY_ID_PARAMETER)
         savedId?.let {
             if (it != 0) {
-                depotId = it
+                categoryId = it
             }
         }
-        Log.i(LOG_TAG, "Using depotId: $depotId")
-        Log.i(LOG_TAG, "Editing depot: $depotId: $currentName with parent: $currentParent")
+        Log.i(LOG_TAG, "Using depotId: $categoryId")
+        Log.i(LOG_TAG, "Editing depot: $categoryId: $currentName with parent: $currentParent")
     }
 
     private fun readDepot() {
-        depotId?.let { searchDepotId ->
-            if (searchDepotId != 0) {
+        categoryId?.let { searchCategoryId ->
+            if (searchCategoryId != 0) {
                 context?.let { context ->
                     val db = dbFactory.factory.createDatabase(context)
-                    db.depotDao().findWithContentsById(searchDepotId)
+                    db.categoryDao().findWithContentsById(searchCategoryId)
                         .observe(viewLifecycleOwner, Observer {
                             if (it != null) {
-                                currentDepot.value = it
-                                currentParent = it.depot.parentId
+                                currentCategory.value = it
+                                currentParent = it.category.parentId
+                                currentUnit = it.category.unit
                                 Log.i(
                                     LOG_TAG,
-                                    "Editing depot: ${it.depot.uid}: ${it.depot.name} with parent: ${it.depot.parentId}"
+                                    "Editing depot: ${it.category.uid}: ${it.category.name} with parent: ${it.category.parentId}"
                                 )
                             }
                         })
@@ -78,19 +82,19 @@ class EditDepotFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedLis
         }
     }
 
-    private fun getAllDepots(db: AppDatabase?) {
-        val rootObjects = db?.depotDao()?.getAll()
+    private fun getAllCategories(db: AppDatabase?) {
+        val rootObjects = db?.categoryDao()?.getAll()
         rootObjects?.observe(viewLifecycleOwner, Observer { depots ->
             if (depots != null) {
-                allDepots = depots
-                Log.i(LOG_TAG, "Observed all objects: ${allDepots.size}")
+                allCategories = depots
+                Log.i(LOG_TAG, "Observed all objects: ${allCategories.size}")
                 val parents = ArrayAdapter<String>(context!!, android.R.layout.simple_spinner_item)
                 parents.add(context?.getString(R.string.edit_depot_parent_select_no_parent))
-                parents.addAll(depots.filter { it.uid != depotId }.map { it.name })
+                parents.addAll(depots.filter { it.uid != categoryId }.map { it.name })
                 spinner.adapter = parents
-                Log.i(LOG_TAG, "AllDepots: ${allDepots.size}")
+                Log.i(LOG_TAG, "AllDepots: ${allCategories.size}")
                 val parentDepotPosition =
-                    allDepots.indexOfFirst {
+                    allCategories.indexOfFirst {
                         Log.i(LOG_TAG, "${it.uid} ? ${currentParent})")
                         it.uid == currentParent
                     } + PARENT_SHIFT
@@ -105,38 +109,38 @@ class EditDepotFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedLis
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val root = inflater.inflate(R.layout.fagment_edit_depot, container, false)
+        val root = inflater.inflate(R.layout.fragment_edit_category, container, false)
 
         readDepot()
 
-        spinner = root.findViewById(R.id.edit_depot_fragment_parent_spinner)
-        recyclerView = root.findViewById(R.id.edit_depot_content_view)
+        spinner = root.findViewById(R.id.edit_category_fragment_parent_spinner)
+        recyclerView = root.findViewById(R.id.edit_category_content_view)
 
         spinner.setTitle(context?.getString(R.string.edit_depot_parent_text))
         spinner.setPositiveButton(context?.getString(R.string.edit_depot_parent_select_text))
 
         viewManager = LinearLayoutManager(context)
-        viewAdapter = DepotAdapter(currentDepot, context!!, this)
+        viewAdapter = CategoryAdapter(currentCategory, context!!, this)
 
         recyclerView.apply {
             setHasFixedSize(true)
             layoutManager = viewManager
             adapter = viewAdapter
         }
-        currentDepot.observe(this, Observer {
+        currentCategory.observe(this, Observer {
             activity?.runOnUiThread {
                 if (!recyclerView.isComputingLayout) {
                     recyclerView.adapter?.notifyDataSetChanged()
                 }
-                currentName = it.depot.name
-                currentName?.let {
-                    edit_depot_depot_name.replaceText(it)
-                }
+                currentName = it.category.name
+                currentName?.let { edit_category_category_name.replaceText(it) }
+                currentUnit = it.category.unit
+                currentUnit?.let { edit_category_unit_field.replaceText(it) }
             }
         })
 
         val db = context?.let { dbFactory.factory.createDatabase(it) }
-        getAllDepots(db)
+        getAllCategories(db)
 
         setHasOptionsMenu(true)
         actionBar()?.setHomeAsUpIndicator(R.drawable.ic_cancel_small)
@@ -151,21 +155,27 @@ class EditDepotFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedLis
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
         R.id.edit_depot_menu_confirm -> {
-            val name = edit_depot_depot_name.text.toString()
+            val name = edit_category_category_name.text.toString()
             if (name.isNotEmpty()) {
                 val db = context?.let { it1 -> dbFactory.factory.createDatabase(it1) }
-                val dao = db?.depotDao()
-                if (currentDepot.value == null) {
+                val dao = db?.categoryDao()
+                if (currentCategory.value == null) {
                     lifecycleScope.launch {
                         Log.i(LOG_TAG, "Insert $name with parent: $currentParent")
-                        dao?.insert(Depot(name = name, parentId = currentParent))
+                        dao?.insert(
+                            Category(
+                                name = name,
+                                unit = edit_category_unit_field.text.toString(),
+                                parentId = currentParent
+                            )
+                        )
                         Log.i(LOG_TAG, "Inserted $name")
                     }
                 } else {
                     lifecycleScope.launch {
                         Log.i(LOG_TAG, "Edit $name")
-                        currentDepot.value?.depot?.let {
-                            val depot = Depot(uid = it.uid, name = name, parentId = currentParent)
+                        currentCategory.value?.category?.let {
+                            val depot = Category(uid = it.uid, unit=edit_category_unit_field.text.toString(), name = name, parentId = currentParent)
                             dao?.update(depot)
                         }
                         Log.i(LOG_TAG, "Edited $name")
@@ -177,13 +187,16 @@ class EditDepotFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedLis
         }
         R.id.edit_depot_menu_remove_depot_item -> {
             val db = context?.let { it1 -> dbFactory.factory.createDatabase(it1) }
-            val dao = db?.depotDao()
-            currentDepot.value?.let {
-                val parent = it.depot.parentId
+            val dao = db?.categoryDao()
+            currentCategory.value?.let {
+                val parent = it.category.parentId
                 lifecycleScope.launch {
-                    dao?.deleteWithChildren(it.depot)
+                    dao?.deleteWithChildren(it.category)
                 }
-                val action = EditDepotFragmentDirections.actionEditContainerToNavItems(parent ?: 0)
+                val action =
+                    EditCategoryFragmentDirections.actionEditCategoryToNavCategories(
+                        parent ?: 0
+                    )
                 Log.i(LOG_TAG, "$view will navigate to $parent")
                 view?.findNavController()?.navigate(action)
             }
@@ -193,17 +206,18 @@ class EditDepotFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedLis
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
-        outState.putString(CURRENT_DEPOT_NAME_PARAMETER, currentName)
+        outState.putString(CURRENT_CATEGORY_NAME_PARAMETER, currentName)
+        outState.putString(CURRENT_CATEGORY_UNIT_PARAMETER, currentUnit)
         currentParent?.let { outState.putInt(PARENT_ID_PARAMETER, it) }
-        depotId?.let { outState.putInt(CURRENT_DEPOT_ID_PARAMETER, it) }
+        categoryId?.let { outState.putInt(CURRENT_CATEGORY_ID_PARAMETER, it) }
         super.onSaveInstanceState(outState)
     }
 
-    override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
-        if (p2 == 0)
+    override fun onItemSelected(p0: AdapterView<*>?, p1: View?, position: Int, p3: Long) {
+        if (position == 0)
             currentParent = null
         else
-            currentParent = allDepots[p2 - PARENT_SHIFT].uid
+            currentParent = allCategories[position - PARENT_SHIFT].uid
         Log.i(LOG_TAG, "Set parent id $currentParent")
     }
 
@@ -213,15 +227,16 @@ class EditDepotFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedLis
 
     companion object {
         @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            EditDepotFragment().apply {
+        fun newInstance(param1: String, param2: String, param3: String) =
+            EditCategoryFragment().apply {
                 arguments = Bundle().apply {
-                    putString(CURRENT_DEPOT_NAME_PARAMETER, param1)
+                    putString(CURRENT_CATEGORY_NAME_PARAMETER, param1)
                     putString(PARENT_ID_PARAMETER, param2)
+                    putString(CURRENT_CATEGORY_UNIT_PARAMETER, param3)
                 }
             }
 
-        private val LOG_TAG = "EditDepotFragment";
+        private val LOG_TAG = "EditCategoryFragment";
         private const val PARENT_SHIFT = 1
     }
 }

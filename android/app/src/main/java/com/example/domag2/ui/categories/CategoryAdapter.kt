@@ -120,6 +120,7 @@ class CategoryAdapter(
         depotViewHolder.nameViewHolder.text = printedCategory?.name
         holder.itemView.setOnClickListener {
             val id = printedCategory?.uid ?: 0
+            Log.i(LOG_TAG, "Navigate to $id")
             val action = CategoriesFragmentDirections.actionNavCategoriesSelf(id)
             holder.itemView.findNavController().navigate(action)
         }
