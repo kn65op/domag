@@ -41,6 +41,9 @@ interface CategoryDao {
     @Query("SELECT rowid, * FROM category WHERE name MATCH :name")
     fun findByName(name: String): LiveData<List<Category>>
 
+    @Query("SELECT rowid, * FROM category WHERE parentId IS NULL")
+    fun findRootDepots(): LiveData<List<Category>>
+
     @Insert
     suspend fun insert(categorys: List<Category>)
 
