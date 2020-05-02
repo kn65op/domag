@@ -5,12 +5,13 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.example.domag2.database.daos.ItemDao
 import com.example.domag2.database.database.AppDatabase
-import com.example.domag2.database.entities.Item
 import com.example.domag2.database.entities.withName
+import com.example.domag2.dbtests.common.assertItemInDb
+import com.example.domag2.dbtests.common.assertNoItemInDb
 import com.example.domag2.dbtests.common.getFromLiveData
 import com.example.domag2.dbtests.data.*
 import kotlinx.coroutines.runBlocking
-import org.hamcrest.CoreMatchers.*
+import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.After
 import org.junit.Before
@@ -40,14 +41,6 @@ open class ItemDatabaseTest {
     fun closeDb() {
         db.clearAllTables()
         db.close()
-    }
-
-    private fun assertNoItemInDb(itemToDelete: Item) {
-        assertThat(getFromLiveData(itemDao.getAll()), not(hasItem(itemToDelete)))
-    }
-
-    private fun assertItemInDb(itemToDelete: Item) {
-        assertThat(getFromLiveData(itemDao.getAll()), hasItem(itemToDelete))
     }
 
     @Test
@@ -86,8 +79,8 @@ open class ItemDatabaseTest {
 
         itemDao.update(updatedItem)
 
-        assertNoItemInDb(itemToUpdate)
-        assertItemInDb(updatedItem)
+        assertNoItemInDb(itemToUpdate, db)
+        assertItemInDb(updatedItem, db)
     }
 
     @Test
@@ -96,7 +89,7 @@ open class ItemDatabaseTest {
 
         itemDao.delete(itemToDelete)
 
-        assertNoItemInDb(itemToDelete)
+        assertNoItemInDb(itemToDelete, db)
     }
 }
 
