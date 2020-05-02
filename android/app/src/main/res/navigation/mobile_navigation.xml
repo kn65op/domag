@@ -54,25 +54,60 @@
 
     <fragment
         android:id="@+id/nav_categories"
-        android:name="com.example.domag2.ui.categories.ShareFragment"
+        android:name="com.example.domag2.ui.categories.CategoriesFragment"
         android:label="@string/menu_categories"
-        tools:layout="@layout/fragment_share" />
+        tools:layout="@layout/fragment_categories">
+        <action
+            android:id="@+id/action_nav_categories_self"
+            app:destination="@id/nav_categories" />
+        <argument
+            android:name="categoryId"
+            android:defaultValue="0"
+            app:argType="integer" />
+        <action
+            android:id="@+id/action_nav_categories_to_editCategory"
+            app:destination="@id/editCategory">
+            <argument
+                android:name="categoryId"
+                android:defaultValue="0"
+                app:argType="integer" />
+            <argument
+                android:name="parentId"
+                android:defaultValue="0"
+                app:argType="integer" />
+        </action>
+    </fragment>
 
     <fragment
         android:id="@+id/nav_send"
         android:name="com.example.domag2.ui.settings.SendFragment"
         android:label="@string/menu_settings"
         tools:layout="@layout/fragment_send" />
+
     <fragment
         android:id="@+id/editContainer"
-        android:name="com.example.domag2.EditDepotFragment"
+        android:name="com.example.domag2.ui.depot.EditDepotFragment"
         android:label="fragment_edit_container"
-        tools:layout="@layout/fagment_edit_depot">
+        tools:layout="@layout/fragment_edit_depot">
         <action
             android:id="@+id/action_editContainer_to_nav_items"
             app:destination="@id/nav_items">
             <argument
                 android:name="depotId"
+                android:defaultValue="0"
+                app:argType="integer" />
+        </action>
+    </fragment>
+    <fragment
+        android:id="@+id/editCategory"
+        android:name="com.example.domag2.ui.categories.EditCategoryFragment"
+        android:label="fragment_edit_category"
+        tools:layout="@layout/fragment_edit_category">
+        <action
+            android:id="@+id/action_editCategory_to_nav_categories"
+            app:destination="@id/nav_categories">
+            <argument
+                android:name="categoryId"
                 android:defaultValue="0"
                 app:argType="integer" />
         </action>

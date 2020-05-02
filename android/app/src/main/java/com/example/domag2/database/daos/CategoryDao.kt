@@ -20,6 +20,10 @@ interface CategoryDao {
     fun findWithContentsById(categoryIds: Int): LiveData<CategoryWithContents>
 
     @Transaction
+    @Query("SELECT rowid, * FROM category WHERE rowid = :categoryIds")
+    suspend fun findWithContentsByIdImmediately(categoryIds: Int): CategoryWithContents
+
+    @Transaction
     @Query("SELECT rowid, * FROM category WHERE rowid IN (:categoryIds)")
     fun findWithContentsById(categoryIds: Array<Int>): LiveData<List<CategoryWithContents>>
 
@@ -37,15 +41,27 @@ interface CategoryDao {
     @Query("SELECT rowid, * FROM category WHERE name MATCH :name")
     fun findByName(name: String): LiveData<List<Category>>
 
-    @Insert
-    fun insert(categorys: List<Category>)
+    @Query("SELECT rowid, * FROM category WHERE parentId IS NULL")
+    fun findRootDepots(): LiveData<List<Category>>
 
     @Insert
-    fun insert(category: Category)
+    suspend fun insert(categorys: List<Category>)
+
+    @Insert
+    suspend fun insert(category: Category)
 
     @Update
-    fun update(category: Category)
+    suspend fun update(category: Category)
 
     @Delete
-    fun delete(category: Category)
+    suspend fun delete(category: Category)
+
+    suspend fun deleteWithChildren(category: Category) {
+        category.uid?.let { uid ->
+            findWithContentsByIdImmediately(uid).categories.forEach {
+                deleteWithChildren(it)
+            }
+        }
+        delete(category)
+    }
 }
