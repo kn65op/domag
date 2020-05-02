@@ -101,10 +101,10 @@ class DepotAdapter(
             )
             val itemViewHolder = holder as ItemViewHolder
             Log.i(LOG_TAG, "Show item: $itemPosition")
-            itemViewHolder.amountViewHolder.text =
-                depotContent.items[itemPosition].cos
             category.observe(lifecycleOwner, Observer {
                 Log.i(LOG_TAG, "Category for $itemPosition: ${it?.name}")
+                itemViewHolder.amountViewHolder.text =
+                    depotContent.items[itemPosition].name
                 itemViewHolder.nameViewHolder.text = it?.name
                 itemViewHolder.unitViewHolder.text = it?.unit
             })

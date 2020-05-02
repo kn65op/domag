@@ -58,6 +58,8 @@ val item4 = Item(uid = 4, depotId = 1, categoryId = 3)
 val item5 = Item(uid = 5, depotId = 3, categoryId = 3)
 val item6 = Item(uid = 6, depotId = 3, categoryId = 4)
 val item7 = Item(uid = 7, depotId = 3, categoryId = 4)
+val itemsFrom2 = listOf(item2, item3, item4, item5, item6, item7)
+val allItemsCount = itemsFrom2.size + 1
 
 fun fillData(db: AppDatabase) = runBlocking {
     val depotDao = db.depotDao()
@@ -79,7 +81,7 @@ fun fillData(db: AppDatabase) = runBlocking {
 
     val itemDao = db.itemDao()
     itemDao.insert(item1)
-    itemDao.insert(listOf(item2, item3, item4, item5, item6, item7))
+    itemDao.insert(itemsFrom2)
 }
 
 fun createDb(context: Context) = Room.inMemoryDatabaseBuilder(

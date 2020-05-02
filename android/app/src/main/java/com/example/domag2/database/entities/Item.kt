@@ -9,6 +9,9 @@ data class Item(
     val uid: Int? = null,
     val depotId: Int,
     val categoryId: Int,
-    val cos: String = "123"
-
+    val name: String? = null
 )
+
+fun Item.withName(newName: String) =
+    Item(uid = uid, depotId = depotId, categoryId = categoryId, name = newName)
+
