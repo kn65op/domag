@@ -47,11 +47,19 @@ open class CategoriesPartTestSuite {
         typeNewTextOnId(R.id.edit_category_category_name, name)
     }
 
+    private fun writeUnitName(unit: String) {
+        typeNewTextOnId(R.id.edit_category_unit_field, unit)
+    }
+
     private fun apply() {
         clickOnId(R.id.edit_depot_menu_confirm)
     }
 
     private fun assertCategoryInContents(name: String) {
+        viewOrChildHasText(R.id.fragment_categories_layout, name)
+    }
+
+    private fun assertUnitInContents(name: String) {
         viewOrChildHasText(R.id.fragment_categories_layout, name)
     }
 
@@ -76,6 +84,13 @@ open class CategoriesPartTestSuite {
         apply()
     }
 
+    private fun changeUnit(categoryName: String, newUnit: String) {
+        clickOnText(categoryName)
+        clickEditCategory()
+        writeUnitName(newUnit)
+        apply()
+    }
+
     private fun renameCategory(oldName: String, newName: String) {
         clickOnText(oldName)
         clickEditCategory()
@@ -83,7 +98,7 @@ open class CategoriesPartTestSuite {
         apply()
     }
 
-    private fun changeParent(name:String, parentName: String) {
+    private fun changeParent(name: String, parentName: String) {
         clickOnText(name)
         clickEditCategory()
         setParentCategory(parentName)
@@ -204,6 +219,14 @@ open class CategoriesPartTestSuite {
         renameCategory(mainCategory1Name, newName)
 
         asserTitleIs(newName)
+    }
+
+    @Test
+    fun changeUnitShouldRenameUnit() {
+        val newUnit = "NewUnit"
+        changeUnit(mainCategory1Name, newUnit)
+
+        assertUnitInContents(newUnit)
     }
 
     @Test
