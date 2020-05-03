@@ -90,27 +90,11 @@ class DepotDatabaseTest : DatabaseTest() {
         val toRemove = getFromLiveData(depotDao.findByName(mainDepot1.depot.name))
         assertThat(toRemove.size, equalTo(1))
 
-        depotDao.deleteOnly(toRemove[0])
+        depotDao.delete(toRemove[0])
 
         val all = getFromLiveData(depotDao.getAll())
 
         assertThat(all, not(hasItem(toRemove[0])))
-    }
-
-    @Test
-    fun deleteShouldDeleteAlsoAllAllDepotsInside() = runBlocking {
-        val shouldBeRemoved = getFromLiveData(depotDao.findByName(mainDepot1Name)).plus(
-            getFromLiveData(depotDao.findByName(depot1InMainDepot1Name))
-        ).plus(getFromLiveData(depotDao.findByName(depot1InMainDepot1Name)))
-        assertThat(shouldBeRemoved.size, greaterThan(1))
-
-        depotDao.deleteWithChildren(shouldBeRemoved[0])
-
-        val all = getFromLiveData(depotDao.getAll())
-
-        assertThat(all, not(hasItem(shouldBeRemoved[0])))
-        assertThat(all, not(hasItem(shouldBeRemoved[1])))
-        assertThat(all, not(hasItem(shouldBeRemoved[2])))
     }
 
     @Test
@@ -119,7 +103,7 @@ class DepotDatabaseTest : DatabaseTest() {
 
         assertThat(
             depotWithItems.items.toTypedArray(),
-            arrayContainingInAnyOrder(item2, item5, item6, item7)
+            arrayContainingInAnyOrder(item2, item5)
         )
     }
 

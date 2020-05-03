@@ -37,12 +37,14 @@ class DeleteDepotOperationTest : DatabaseTest() {
 
     @Test
     fun deleteShouldDeleteAlsoAllAllDepotsInside() = runBlocking {
+        val toRemove = getFromLiveData(depotDao.findWithContentsByName(mainDepot1.depot.name))
+        MatcherAssert.assertThat(toRemove.size, CoreMatchers.equalTo(1))
         val shouldBeRemoved = getFromLiveData(depotDao.findByName(mainDepot1Name)).plus(
             getFromLiveData(depotDao.findByName(depot1InMainDepot1Name))
         ).plus(getFromLiveData(depotDao.findByName(depot1InMainDepot1Name)))
         MatcherAssert.assertThat(shouldBeRemoved.size, Matchers.greaterThan(1))
 
-        depotDao.deleteWithChildren(shouldBeRemoved[0])
+        db.deleteDepot(toRemove[0])
 
         val all = getFromLiveData(depotDao.getAll())
 
