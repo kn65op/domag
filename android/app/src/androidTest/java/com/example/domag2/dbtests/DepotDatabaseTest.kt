@@ -1,34 +1,20 @@
 package com.example.domag2.dbtests
 
-import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import androidx.test.core.app.ApplicationProvider
-import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.example.domag2.database.daos.DepotDao
-import com.example.domag2.database.database.AppDatabase
+import com.example.domag2.dbtests.common.DatabaseTest
 import com.example.domag2.dbtests.common.getFromLiveData
 import com.example.domag2.dbtests.data.*
 import com.example.domag2.matchers.isEqualRegardlessId
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.CoreMatchers.*
 import org.hamcrest.MatcherAssert.assertThat
-import org.hamcrest.Matchers.contains
 import org.hamcrest.Matchers.greaterThan
 import org.hamcrest.collection.IsArrayContainingInAnyOrder.arrayContainingInAnyOrder
-import org.junit.After
 import org.junit.Before
-import org.junit.Rule
 import org.junit.Test
-import org.junit.runner.RunWith
 
-
-@RunWith(AndroidJUnit4::class)
-open class DepotDatabaseTest {
-    @get:Rule
-    var instantTaskExecutorRule = InstantTaskExecutorRule()
+class DepotDatabaseTest : DatabaseTest() {
     private lateinit var depotDao: DepotDao
-    private lateinit var db: AppDatabase
     val matchDepotStartingWithName =
         arrayContainingInAnyOrder(
             isEqualRegardlessId(mainDepot1.depot),
@@ -36,20 +22,8 @@ open class DepotDatabaseTest {
         )
 
     @Before
-    fun createDb() {
-        db = com.example.domag2.dbtests.data.createDb(ApplicationProvider.getApplicationContext())
+    fun createDao() {
         depotDao = db.depotDao()
-    }
-
-    @Before
-    fun fillDatabase() {
-        fillData(db)
-    }
-
-    @After
-    fun closeDb() {
-        db.clearAllTables()
-        db.close()
     }
 
     @Test

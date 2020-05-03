@@ -1,6 +1,5 @@
 package com.example.domag2.dbtests
 
-import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.example.domag2.database.daos.CategoryDao
 import com.example.domag2.dbtests.common.DatabaseTest
 import com.example.domag2.dbtests.common.getFromLiveData
@@ -13,9 +12,7 @@ import org.hamcrest.Matchers.greaterThan
 import org.hamcrest.collection.IsArrayContainingInAnyOrder.arrayContainingInAnyOrder
 import org.junit.Before
 import org.junit.Test
-import org.junit.runner.RunWith
 
-@RunWith(AndroidJUnit4::class)
 open class CategoryDatabaseTest  : DatabaseTest() {
     private lateinit var categoryDao: CategoryDao
     val matchCategoryStartingWithName =

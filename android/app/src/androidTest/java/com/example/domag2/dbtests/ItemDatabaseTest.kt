@@ -1,11 +1,8 @@
 package com.example.domag2.dbtests
 
-import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import androidx.test.core.app.ApplicationProvider
-import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.example.domag2.database.daos.ItemDao
-import com.example.domag2.database.database.AppDatabase
 import com.example.domag2.database.entities.withName
+import com.example.domag2.dbtests.common.DatabaseTest
 import com.example.domag2.dbtests.common.assertItemInDb
 import com.example.domag2.dbtests.common.assertNoItemInDb
 import com.example.domag2.dbtests.common.getFromLiveData
@@ -13,34 +10,15 @@ import com.example.domag2.dbtests.data.*
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
-import org.junit.After
 import org.junit.Before
-import org.junit.Rule
 import org.junit.Test
-import org.junit.runner.RunWith
 
-@RunWith(AndroidJUnit4::class)
-open class ItemDatabaseTest {
-    @get:Rule
-    var instantTaskExecutorRule = InstantTaskExecutorRule()
+class ItemDatabaseTest : DatabaseTest() {
     private lateinit var itemDao: ItemDao
-    private lateinit var db: AppDatabase
 
     @Before
-    fun createDb() {
-        db = createDb(ApplicationProvider.getApplicationContext())
+    fun createDao() {
         itemDao = db.itemDao()
-    }
-
-    @Before
-    fun fillDatabase() {
-        fillData(db)
-    }
-
-    @After
-    fun closeDb() {
-        db.clearAllTables()
-        db.close()
     }
 
     @Test

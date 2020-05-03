@@ -53,11 +53,11 @@ val category2InMainCategory1 =
 
 val item1 = Item(uid = 1, depotId = 1, categoryId = 1)
 val item2 = Item(uid = 2, depotId = 3, categoryId = 3)
-val item3 = Item(uid = 3, depotId = 1, categoryId = 2)
+val item3 = Item(uid = 3, depotId = 2, categoryId = 2)
 val item4 = Item(uid = 4, depotId = 1, categoryId = 3)
 val item5 = Item(uid = 5, depotId = 3, categoryId = 3)
-val item6 = Item(uid = 6, depotId = 3, categoryId = 4)
-val item7 = Item(uid = 7, depotId = 3, categoryId = 4)
+val item6 = Item(uid = 6, depotId = 2, categoryId = 4)
+val item7 = Item(uid = 7, depotId = 4, categoryId = 4)
 val itemsFrom2 = listOf(item2, item3, item4, item5, item6, item7)
 val allItemsCount = itemsFrom2.size + 1
 
