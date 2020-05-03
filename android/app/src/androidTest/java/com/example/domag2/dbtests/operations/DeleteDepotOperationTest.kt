@@ -9,6 +9,7 @@ import com.example.domag2.dbtests.data.*
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.CoreMatchers
 import org.hamcrest.MatcherAssert
+import org.hamcrest.Matchers
 import org.junit.Before
 import org.junit.Test
 
@@ -32,5 +33,21 @@ class DeleteDepotOperationTest : DatabaseTest() {
         assertNoItemInDb(item4, db)
         assertNoItemInDb(item5, db)
         assertNoItemInDb(item7, db)
+    }
+
+    @Test
+    fun deleteShouldDeleteAlsoAllAllDepotsInside() = runBlocking {
+        val shouldBeRemoved = getFromLiveData(depotDao.findByName(mainDepot1Name)).plus(
+            getFromLiveData(depotDao.findByName(depot1InMainDepot1Name))
+        ).plus(getFromLiveData(depotDao.findByName(depot1InMainDepot1Name)))
+        MatcherAssert.assertThat(shouldBeRemoved.size, Matchers.greaterThan(1))
+
+        depotDao.deleteWithChildren(shouldBeRemoved[0])
+
+        val all = getFromLiveData(depotDao.getAll())
+
+        MatcherAssert.assertThat(all, CoreMatchers.not(CoreMatchers.hasItem(shouldBeRemoved[0])))
+        MatcherAssert.assertThat(all, CoreMatchers.not(CoreMatchers.hasItem(shouldBeRemoved[1])))
+        MatcherAssert.assertThat(all, CoreMatchers.not(CoreMatchers.hasItem(shouldBeRemoved[2])))
     }
 }
