@@ -101,37 +101,6 @@ open class CategoryDatabaseTest  : DatabaseTest() {
     }
 
     @Test
-    fun deleteShouldDeleteAlsoAllCategoriesInside() = runBlocking {
-        val toRemove = getFromLiveData(categoryDao.findByName(mainCategory1.category.name)).plus(
-            getFromLiveData(categoryDao.findByName(category2InMainCategory1Name))).plus(
-            getFromLiveData(categoryDao.findByName(category1InMainCategory1Name)))
-        assertThat(toRemove.size, equalTo(3))
-
-        categoryDao.deleteWithChildren(toRemove[0])
-
-        val all = getFromLiveData(categoryDao.getAll())
-
-        assertThat(all, not(hasItem(toRemove[0])))
-        assertThat(all, not(hasItem(toRemove[1])))
-        assertThat(all, not(hasItem(toRemove[2])))
-    }
-
-    @Test
-    fun deleteShouldDeleteAlsoItemsUnderCategories() = runBlocking {
-        val toRemove = getFromLiveData(categoryDao.findByName(mainCategory1Name))
-        assertThat(toRemove.size, equalTo(1))
-
-        categoryDao.delete(toRemove[0])
-
-        /*assertNoItemInDb(item1, db)
-        assertNoItemInDb(item2, db)
-        assertNoItemInDb(item4, db)
-        assertNoItemInDb(item5, db)
-        assertNoItemInDb(item6, db)
-        assertNoItemInDb(item7, db)*/
-    }
-
-    @Test
     fun categoryWithItems() = runBlocking {
         val categoryWithItems = getFromLiveData(categoryDao.findWithContentsById(3))
 

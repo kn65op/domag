@@ -15,6 +15,7 @@ import com.example.domag2.R
 import com.example.domag2.database.database.AppDatabase
 import com.example.domag2.database.database.DatabaseFactoryImpl
 import com.example.domag2.database.entities.Category
+import com.example.domag2.database.operations.deleteCategory
 import com.example.domag2.database.relations.CategoryWithContents
 import com.example.domag2.ui.common.FragmentWithActionBar
 import com.example.domag2.ui.utils.replaceText
@@ -187,11 +188,10 @@ class EditCategoryFragment : FragmentWithActionBar(), AdapterView.OnItemSelected
         }
         R.id.edit_depot_menu_remove_depot_item -> {
             val db = context?.let { it1 -> dbFactory.factory.createDatabase(it1) }
-            val dao = db?.categoryDao()
             currentCategory.value?.let {
                 val parent = it.category.parentId
                 lifecycleScope.launch {
-                    dao?.deleteWithChildren(it.category)
+                    db?.deleteCategory(it)
                 }
                 val action =
                     EditCategoryFragmentDirections.actionEditCategoryToNavCategories(
