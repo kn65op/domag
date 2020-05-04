@@ -115,7 +115,7 @@ class EditDepotFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedLis
         recyclerView = root.findViewById(R.id.edit_depot_content_view)
 
         spinner.setTitle(context?.getString(R.string.edit_depot_parent_text))
-        spinner.setPositiveButton(context?.getString(R.string.edit_depot_parent_select_text))
+        spinner.setPositiveButton(context?.getString(R.string.spinner_select_text))
 
         viewManager = LinearLayoutManager(context)
         viewAdapter = DepotAdapter(currentDepot, context!!, this)

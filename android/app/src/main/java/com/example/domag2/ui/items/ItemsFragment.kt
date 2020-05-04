@@ -125,6 +125,12 @@ class ItemsFragment : FragmentWithActionBar() {
             Log.i(LOG_TAG, "${currentDepot.value?.depot?.uid}")
             root.findNavController().navigate(action)
         }
+        val addItemFab : FloatingActionButton = root.findViewById(R.id.items_add_item_fab)
+        addItemFab.setOnClickListener{
+            Log.i(LOG_TAG, "Clicked add item")
+            val action = ItemsFragmentDirections.actionNavItemsToFragmentEditItem(depotId = currentDepot.value?.depot?.uid ?: 0)
+            root.findNavController().navigate(action)
+        }
     }
 
     private fun getDepot(db: AppDatabase?, depotId: Int) {

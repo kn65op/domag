@@ -21,13 +21,16 @@
     <string name="items_add_item">Add item</string>
     <string name="items_add_depot">Add depot</string>
     <string name="items_menu_edit_depot_menu_item">Edit depot</string>
-    <string name="edit_depot_parent_text">Parent container</string>
-    <string name="edit_depot_parent_select_text">Select</string>
+    <string name="edit_depot_parent_text">Parent depot</string>
+    <string name="spinner_select_text">Select</string>
     <string name="edit_depot_parent_select_no_parent">(No parent)</string>
     <string name="edit_depot_menu_remove_depot_item_text">Remove</string>
     <string name="edit_depot_menu_confirm_text">Save</string>
     <string name="categories_menu_edit_category_menu_item">Edit category</string>
     <string name="edit_category_category_name">Name</string>
-    <string name="edit_category_parent_text">Parent</string>
+    <string name="edit_category_parent_text">Parent category</string>
     <string name="edit_category_unit">Unit</string>
+    <string name="edit_item_amount_text">Amount</string>
+    <string name="edit_item_depot_spinner_title">Depot</string>
+    <string name="edit_item_category_spinner_title">Category</string>
 </resources>
