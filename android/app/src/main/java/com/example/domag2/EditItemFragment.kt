@@ -2,18 +2,19 @@ package com.example.domag2
 
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import com.example.domag2.database.database.AppDatabase
 import com.example.domag2.database.database.DatabaseFactoryImpl
 import com.example.domag2.database.entities.Category
 import com.example.domag2.database.entities.Depot
+import com.example.domag2.database.entities.Item
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner
+import kotlinx.coroutines.launch
 
 private const val DEPOT_ID_PARAMETER = "depotId"
 
@@ -35,6 +36,7 @@ class EditItemFragment : Fragment(), AdapterView.OnItemSelectedListener {
         savedInstanceState: Bundle?
     ): View? {
         val root = inflater.inflate(R.layout.fragment_edit_item, container, false)
+        setHasOptionsMenu(true)
 
         depotSpinner = root.findViewById(R.id.edit_item_depot_spinner)
         categorySpinner = root.findViewById(R.id.edit_item_category_spinner)
@@ -87,6 +89,30 @@ class EditItemFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
     override fun onNothingSelected(p0: AdapterView<*>?) {
         Log.i(LOG_TAG, "Nothing selected")
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.edit_depot_menu, menu)
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
+        R.id.edit_depot_menu_confirm -> {
+            val db = dbFactory.factory.createDatabase(requireContext())
+            val depotId = allDepots[depotSpinner.selectedItemPosition].uid
+            val categoryId = allCategories[categorySpinner.selectedItemPosition].uid
+            if (depotId != null && categoryId != null) {
+                lifecycleScope.launch {
+                    val item = Item(depotId = depotId, categoryId = categoryId, name = "New item")
+                    val dao = db.itemDao()
+                    dao.insert(item)
+                }
+
+            }
+            activity?.onBackPressed()
+            true
+        }
+        else -> super.onOptionsItemSelected(item)
     }
 
     companion object {
