@@ -51,6 +51,12 @@ open class ItemsPartTestSuite {
         viewOrChildHasText(R.id.fragment_items_layout, name)
     }
 
+    private fun assertItemInContents(name: String, unit: String, amount: Double) {
+        viewOrChildHasText(R.id.fragment_items_layout, name)
+        viewOrChildHasText(R.id.fragment_items_layout, unit)
+        viewOrChildHasText(R.id.fragment_items_layout, amount.toString())
+    }
+
     private fun setParentDepot(name: String) {
         clickOnId(R.id.edit_depot_fragment_parent_spinner)
         clickOnText(name)
@@ -79,7 +85,7 @@ open class ItemsPartTestSuite {
         apply()
     }
 
-    private fun changeParent(name:String, parentName: String) {
+    private fun changeParent(name: String, parentName: String) {
         clickOnText(name)
         clickEditDepot()
         setParentDepot(parentName)
@@ -221,5 +227,13 @@ open class ItemsPartTestSuite {
         Espresso.pressBack()
 
         asserTitleIs(mainDepot2Name)
+    }
+
+    @Test
+    fun shouldPrintItemInContainer() {
+        clickOnText(mainDepot1Name)
+
+        assertItemInContents(mainCategory1Name, mainCategory1Unit, itemAmount1)
+        assertItemInContents(category1InMainCategory1Name, category1InMainCategory1Unit, itemAmount4)
     }
 }

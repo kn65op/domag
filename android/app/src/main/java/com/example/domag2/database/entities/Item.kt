@@ -7,11 +7,12 @@ import androidx.room.PrimaryKey
 data class Item(
     @PrimaryKey
     val uid: Int? = null,
+    val amount : Double,
     val depotId: Int,
     val categoryId: Int,
     val name: String? = null
 )
 
 fun Item.withName(newName: String) =
-    Item(uid = uid, depotId = depotId, categoryId = categoryId, name = newName)
+    Item(uid = uid, depotId = depotId, categoryId = categoryId, name = newName,  amount = amount)
 

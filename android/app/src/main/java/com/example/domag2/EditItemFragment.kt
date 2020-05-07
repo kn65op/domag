@@ -13,6 +13,7 @@ import com.example.domag2.database.database.DatabaseFactoryImpl
 import com.example.domag2.database.entities.Category
 import com.example.domag2.database.entities.Depot
 import com.example.domag2.database.entities.Item
+import com.google.android.material.textfield.TextInputEditText
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner
 import kotlinx.coroutines.launch
 
@@ -23,6 +24,7 @@ class EditItemFragment : Fragment(), AdapterView.OnItemSelectedListener {
     private var depotId = 0
     private lateinit var depotSpinner: SearchableSpinner
     private lateinit var categorySpinner: SearchableSpinner
+    private lateinit var amountField: TextInputEditText
     private var allCategories = emptyList<Category>()
     private var allDepots = emptyList<Depot>()
 
@@ -40,6 +42,7 @@ class EditItemFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
         depotSpinner = root.findViewById(R.id.edit_item_depot_spinner)
         categorySpinner = root.findViewById(R.id.edit_item_category_spinner)
+        amountField = root.findViewById(R.id.edit_item_amount_value)
 
         depotSpinner.setTitle(context?.getString(R.string.edit_item_depot_spinner_title))
         depotSpinner.setPositiveButton(context?.getString(R.string.spinner_select_text))
@@ -103,7 +106,12 @@ class EditItemFragment : Fragment(), AdapterView.OnItemSelectedListener {
             val categoryId = allCategories[categorySpinner.selectedItemPosition].uid
             if (depotId != null && categoryId != null) {
                 lifecycleScope.launch {
-                    val item = Item(depotId = depotId, categoryId = categoryId, name = "New item")
+                    val item = Item(
+                        depotId = depotId,
+                        categoryId = categoryId,
+                        name = "New item",
+                        amount = amountField.text.toString().toDouble()
+                    )
                     val dao = db.itemDao()
                     dao.insert(item)
                 }

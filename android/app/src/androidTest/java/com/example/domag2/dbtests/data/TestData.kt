@@ -21,15 +21,15 @@ val depot1InMainDepot1 = DepotWithContents(Depot(name = depot1InMainDepot1Name, 
 val depot2InMainDepot1 = DepotWithContents(Depot(name = depot2InMainDepot1Name, parentId = 1))
 
 
-val mainCategory1Name = "category name"
-val mainCategory2Name = "category name2"
-val category1InMainCategory1Name = "categoryName"
-val category2InMainCategory1Name = "category anoname 2"
+const val mainCategory1Name = "category name"
+const val mainCategory2Name = "category name2"
+const val category1InMainCategory1Name = "categoryName"
+const val category2InMainCategory1Name = "category anoname 2"
 
-val mainCategory1Unit = "l"
-val mainCategory2Unit = "zzz"
-val category1InMainCategory1Unit = "szt"
-val category2InMainCategory1Unit = "kg"
+const val mainCategory1Unit = "l"
+const val mainCategory2Unit = "zzz"
+const val category1InMainCategory1Unit = "szt"
+const val category2InMainCategory1Unit = "kg"
 
 val mainCategory1 =
     CategoryWithContents(category = Category(name = mainCategory1Name, unit = mainCategory1Unit))
@@ -51,13 +51,22 @@ val category2InMainCategory1 =
         )
     )
 
-val item1 = Item(uid = 1, depotId = 1, categoryId = 1)
-val item2 = Item(uid = 2, depotId = 3, categoryId = 3)
-val item3 = Item(uid = 3, depotId = 2, categoryId = 2)
-val item4 = Item(uid = 4, depotId = 1, categoryId = 3)
-val item5 = Item(uid = 5, depotId = 3, categoryId = 3)
-val item6 = Item(uid = 6, depotId = 2, categoryId = 4)
-val item7 = Item(uid = 7, depotId = 4, categoryId = 4)
+const val itemAmount1 = 1.0
+const val itemAmount2 = 1123.3
+const val itemAmount3 = 2.0
+const val itemAmount4 = 11.11
+const val itemAmount5 = 8.8
+const val itemAmount6 = 0.8
+const val itemAmount7 = 1.8
+
+val item1 = Item(uid = 1, depotId = 1, categoryId = 1, amount = itemAmount1)
+val item2 = Item(uid = 2, depotId = 3, categoryId = 3, amount = itemAmount2)
+val item3 = Item(uid = 3, depotId = 2, categoryId = 2, amount = itemAmount3)
+val item4 = Item(uid = 4, depotId = 1, categoryId = 3, amount = itemAmount4)
+val item5 = Item(uid = 5, depotId = 3, categoryId = 3, amount = itemAmount5)
+val item6 = Item(uid = 6, depotId = 2, categoryId = 4, amount = itemAmount6)
+val item7 = Item(uid = 7, depotId = 4, categoryId = 4, amount = itemAmount7)
+
 val itemsFrom2 = listOf(item2, item3, item4, item5, item6, item7)
 val allItemsCount = itemsFrom2.size + 1
 

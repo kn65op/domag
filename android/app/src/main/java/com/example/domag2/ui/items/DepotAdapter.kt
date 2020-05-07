@@ -104,9 +104,9 @@ class DepotAdapter(
             category.observe(lifecycleOwner, Observer {
                 Log.i(LOG_TAG, "Category for $itemPosition: ${it?.name}")
                 itemViewHolder.amountViewHolder.text =
-                    depotContent.items[itemPosition].name
-                itemViewHolder.nameViewHolder.text = it?.name
+                    depotContent.items[itemPosition].amount.toString()
                 itemViewHolder.unitViewHolder.text = it?.unit
+                itemViewHolder.nameViewHolder.text = it?.name
             })
         }
     }
