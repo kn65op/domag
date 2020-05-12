@@ -1,2 +1,3 @@
-include ':app'
+include ':app', ':type'
 rootProject.name='Domag2'
+project(':type').projectDir = new File('externals/AndroidLibs/type')

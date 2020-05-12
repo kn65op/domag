@@ -15,6 +15,7 @@ import com.example.domag2.database.entities.Depot
 import com.example.domag2.database.entities.Item
 import com.google.android.material.textfield.TextInputEditText
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner
+import io.github.kn65op.android.lib.type.FixedPointNumber
 import kotlinx.coroutines.launch
 
 private const val DEPOT_ID_PARAMETER = "depotId"
@@ -110,7 +111,7 @@ class EditItemFragment : Fragment(), AdapterView.OnItemSelectedListener {
                         depotId = depotId,
                         categoryId = categoryId,
                         name = "New item",
-                        amount = amountField.text.toString().toDouble()
+                        amount = FixedPointNumber(amountField.text.toString().toDouble())
                     )
                     val dao = db.itemDao()
                     dao.insert(item)

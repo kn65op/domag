@@ -1,0 +1,3 @@
+[submodule "android/externals/AndroidLibs"]
+	path = android/externals/AndroidLibs
+	url = https://github.com/kn65op/AndroidLibs.git
