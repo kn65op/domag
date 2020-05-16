@@ -7,6 +7,7 @@ import androidx.test.rule.ActivityTestRule
 import com.example.domag2.R
 import com.example.domag2.dbtests.data.*
 import com.example.domag2.uitests.common.*
+import io.github.kn65op.android.lib.type.FixedPointNumber
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -51,7 +52,7 @@ open class ItemsPartTestSuite {
         viewOrChildHasText(R.id.fragment_items_layout, name)
     }
 
-    private fun assertItemInContents(name: String, unit: String, amount: Double) {
+    private fun assertItemInContents(name: String, unit: String, amount: FixedPointNumber) {
         viewOrChildHasText(R.id.fragment_items_layout, name)
         viewOrChildHasText(R.id.fragment_items_layout, unit)
         viewOrChildHasText(R.id.fragment_items_layout, amount.toString())
@@ -94,6 +95,25 @@ open class ItemsPartTestSuite {
 
     private fun asserTitleIs(title: String) {
         viewOrChildHasText(R.id.toolbar, title)
+    }
+
+    private fun addItem(categoryName: String, amount: FixedPointNumber) {
+        clickOnId(R.id.items_general_fab)
+        clickOnId(R.id.items_add_item_fab)
+
+        setCategory(categoryName)
+        writeItemAmount(amount)
+
+        apply()
+    }
+
+    private fun writeItemAmount(amount: FixedPointNumber) {
+        typeNewTextOnId(R.id.edit_item_amount_value, amount.toString())
+    }
+
+    private fun setCategory(name: String) {
+        clickOnId(R.id.edit_item_category_spinner)
+        clickOnText(name)
     }
 
     @Test
@@ -234,6 +254,21 @@ open class ItemsPartTestSuite {
         clickOnText(mainDepot1Name)
 
         assertItemInContents(mainCategory1Name, mainCategory1Unit, itemAmount1)
-        assertItemInContents(category1InMainCategory1Name, category1InMainCategory1Unit, itemAmount4)
+        assertItemInContents(
+            category1InMainCategory1Name,
+            category1InMainCategory1Unit,
+            itemAmount4
+        )
+    }
+
+    @Test
+    fun addedItemShouldBeShown() {
+        clickOnText(mainDepot1Name)
+
+        val itemAmount = FixedPointNumber(8)
+
+        addItem(mainCategory2Name, itemAmount)
+
+        assertItemInContents(mainCategory2Name, mainCategory2Unit, itemAmount)
     }
 }

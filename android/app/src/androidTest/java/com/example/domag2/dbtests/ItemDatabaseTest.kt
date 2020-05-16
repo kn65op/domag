@@ -1,7 +1,7 @@
 package com.example.domag2.dbtests
 
 import com.example.domag2.database.daos.ItemDao
-import com.example.domag2.database.entities.withName
+import com.example.domag2.database.entities.withDescription
 import com.example.domag2.dbtests.common.DatabaseTest
 import com.example.domag2.dbtests.common.assertItemInDb
 import com.example.domag2.dbtests.common.assertNoItemInDb
@@ -53,7 +53,7 @@ class ItemDatabaseTest : DatabaseTest() {
     @Test
     fun updateItem() = runBlocking {
         val itemToUpdate = getFromLiveData(itemDao.findById(3))
-        val updatedItem = itemToUpdate.withName("NewName")
+        val updatedItem = itemToUpdate.withDescription("NewName")
 
         itemDao.update(updatedItem)
 

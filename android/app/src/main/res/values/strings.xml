@@ -33,4 +33,5 @@
     <string name="edit_item_amount_text">Amount</string>
     <string name="edit_item_depot_spinner_title">Depot</string>
     <string name="edit_item_category_spinner_title">Category</string>
+    <string name="edit_item_description">Description</string>
 </resources>

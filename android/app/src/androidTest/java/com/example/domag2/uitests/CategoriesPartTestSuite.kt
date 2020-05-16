@@ -7,6 +7,7 @@ import androidx.test.rule.ActivityTestRule
 import com.example.domag2.R
 import com.example.domag2.dbtests.data.*
 import com.example.domag2.uitests.common.*
+import io.github.kn65op.android.lib.type.FixedPointNumber
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -109,7 +110,7 @@ open class CategoriesPartTestSuite {
         viewOrChildHasText(R.id.toolbar, title)
     }
 
-    private fun assertItemInContents(name: String, unit: String, amount: Double) {
+    private fun assertItemInContents(name: String, unit: String, amount: FixedPointNumber) {
         viewOrChildHasText(R.id.fragment_categories_layout, name)
         viewOrChildHasText(R.id.fragment_categories_layout, unit)
         viewOrChildHasText(R.id.fragment_categories_layout, amount.toString())

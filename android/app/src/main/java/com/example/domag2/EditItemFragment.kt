@@ -26,6 +26,7 @@ class EditItemFragment : Fragment(), AdapterView.OnItemSelectedListener {
     private lateinit var depotSpinner: SearchableSpinner
     private lateinit var categorySpinner: SearchableSpinner
     private lateinit var amountField: TextInputEditText
+    private lateinit var descriptionField: TextInputEditText
     private var allCategories = emptyList<Category>()
     private var allDepots = emptyList<Depot>()
 
@@ -44,6 +45,7 @@ class EditItemFragment : Fragment(), AdapterView.OnItemSelectedListener {
         depotSpinner = root.findViewById(R.id.edit_item_depot_spinner)
         categorySpinner = root.findViewById(R.id.edit_item_category_spinner)
         amountField = root.findViewById(R.id.edit_item_amount_value)
+        descriptionField = root.findViewById(R.id.edit_item_description)
 
         depotSpinner.setTitle(context?.getString(R.string.edit_item_depot_spinner_title))
         depotSpinner.setPositiveButton(context?.getString(R.string.spinner_select_text))
@@ -110,7 +112,7 @@ class EditItemFragment : Fragment(), AdapterView.OnItemSelectedListener {
                     val item = Item(
                         depotId = depotId,
                         categoryId = categoryId,
-                        name = "New item",
+                        description = descriptionField.text.toString(),
                         amount = FixedPointNumber(amountField.text.toString().toDouble())
                     )
                     val dao = db.itemDao()

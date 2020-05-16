@@ -11,9 +11,9 @@ data class Item(
     val amount: FixedPointNumber,
     val depotId: Int,
     val categoryId: Int,
-    val name: String? = null
+    val description: String? = null
 )
 
-fun Item.withName(newName: String) =
-    Item(uid = uid, depotId = depotId, categoryId = categoryId, name = newName, amount = amount)
+fun Item.withDescription(newDescription: String) =
+    Item(uid = uid, depotId = depotId, categoryId = categoryId, description = newDescription, amount = amount)
 
