@@ -30,8 +30,10 @@
     <string name="edit_category_category_name">Name</string>
     <string name="edit_category_parent_text">Parent category</string>
     <string name="edit_category_unit">Unit</string>
-    <string name="edit_item_amount_text">Amount</string>
+    <string name="edit_item_amount_text">Amount (required)</string>
     <string name="edit_item_depot_spinner_title">Depot</string>
     <string name="edit_item_category_spinner_title">Category</string>
     <string name="edit_item_description">Description</string>
+    <string name="edit_item_no_amount_dialog_message">Amount can\'t be empty</string>
+    <string name="ok">OK</string>
 </resources>

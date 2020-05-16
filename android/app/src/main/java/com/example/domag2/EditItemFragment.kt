@@ -1,5 +1,7 @@
 package com.example.domag2
 
+import android.app.AlertDialog
+import android.content.DialogInterface
 import android.os.Bundle
 import android.util.Log
 import android.view.*
@@ -17,6 +19,7 @@ import com.google.android.material.textfield.TextInputEditText
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner
 import io.github.kn65op.android.lib.type.FixedPointNumber
 import kotlinx.coroutines.launch
+import java.lang.NumberFormatException
 
 private const val DEPOT_ID_PARAMETER = "depotId"
 
@@ -107,20 +110,29 @@ class EditItemFragment : Fragment(), AdapterView.OnItemSelectedListener {
             val db = dbFactory.factory.createDatabase(requireContext())
             val depotId = allDepots[depotSpinner.selectedItemPosition].uid
             val categoryId = allCategories[categorySpinner.selectedItemPosition].uid
-            if (depotId != null && categoryId != null) {
-                lifecycleScope.launch {
-                    val item = Item(
-                        depotId = depotId,
-                        categoryId = categoryId,
-                        description = descriptionField.text.toString(),
-                        amount = FixedPointNumber(amountField.text.toString().toDouble())
-                    )
-                    val dao = db.itemDao()
-                    dao.insert(item)
-                }
+            try {
+                val amount = FixedPointNumber(amountField.text.toString().toDouble())
+                if (depotId != null && categoryId != null) {
+                    lifecycleScope.launch {
+                        val item = Item(
+                            depotId = depotId,
+                            categoryId = categoryId,
+                            description = descriptionField.text.toString(),
+                            amount = amount
+                        )
+                        val dao = db.itemDao()
+                        dao.insert(item)
+                    }
 
+                }
+                activity?.onBackPressed()
+            } catch (ex: NumberFormatException) {
+                Log.e(LOG_TAG, "Amount can't be converted: $ex")
+                val builder: AlertDialog.Builder = AlertDialog.Builder(requireActivity())
+                builder.setMessage(R.string.edit_item_no_amount_dialog_message)
+                builder.setPositiveButton(R.string.ok, DialogInterface.OnClickListener{_, _ -> })
+                builder.create().show()
             }
-            activity?.onBackPressed()
             true
         }
         else -> super.onOptionsItemSelected(item)

@@ -97,9 +97,13 @@ open class ItemsPartTestSuite {
         viewOrChildHasText(R.id.toolbar, title)
     }
 
-    private fun addItem(categoryName: String, amount: FixedPointNumber) {
+    private fun openAddItem() {
         clickOnId(R.id.items_general_fab)
         clickOnId(R.id.items_add_item_fab)
+    }
+
+    private fun addItem(categoryName: String, amount: FixedPointNumber) {
+        openAddItem()
 
         setCategory(categoryName)
         writeItemAmount(amount)
@@ -114,6 +118,10 @@ open class ItemsPartTestSuite {
     private fun setCategory(name: String) {
         clickOnId(R.id.edit_item_category_spinner)
         clickOnText(name)
+    }
+
+    private fun assertEmptyAmountDialog() {
+        dialogWithText("Amount can't be empty")
     }
 
     @Test
@@ -270,5 +278,16 @@ open class ItemsPartTestSuite {
         addItem(mainCategory2Name, itemAmount)
 
         assertItemInContents(mainCategory2Name, mainCategory2Unit, itemAmount)
+    }
+
+    @Test fun shouldNotAllowAddItemWithEmptyAmount() {
+        clickOnText(mainDepot1Name)
+
+        openAddItem()
+        apply()
+
+        assertEmptyAmountDialog()
+
+        clickOnText("OK")
     }
 }
