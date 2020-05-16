@@ -61,9 +61,10 @@ val itemAmount6 = FixedPointNumber(0.8)
 val itemAmount7 = FixedPointNumber(1.8)
 
 const val item1Description = "Good"
+const val item2Description = "BAD"
 
 val item1 = Item(uid = 1, depotId = 1, categoryId = 1, amount = itemAmount1, description = item1Description)
-val item2 = Item(uid = 2, depotId = 3, categoryId = 3, amount = itemAmount2)
+val item2 = Item(uid = 2, depotId = 3, categoryId = 3, amount = itemAmount2, description = item2Description)
 val item3 = Item(uid = 3, depotId = 2, categoryId = 2, amount = itemAmount3)
 val item4 = Item(uid = 4, depotId = 1, categoryId = 3, amount = itemAmount4)
 val item5 = Item(uid = 5, depotId = 3, categoryId = 3, amount = itemAmount5)

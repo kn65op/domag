@@ -260,7 +260,6 @@ open class ItemsPartTestSuite {
     @Test
     fun shouldPrintItemInContainer() {
         clickOnText(mainDepot1Name)
-        val descriptionCategoryDelimiter = " - "
 
         assertItemInContents("$item1Description$descriptionCategoryDelimiter$mainCategory1Name", mainCategory1Unit, itemAmount1)
         assertItemInContents(

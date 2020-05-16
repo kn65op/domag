@@ -262,8 +262,8 @@ open class CategoriesPartTestSuite {
         clickOnText(mainCategory1Name)
         clickOnText(category1InMainCategory1Name)
 
-        assertItemInContents(category1InMainCategory1Name, category1InMainCategory1Unit, itemAmount2)
-        assertItemInContents(category1InMainCategory1Name, category1InMainCategory1Unit, itemAmount4)
-        assertItemInContents(category1InMainCategory1Name, category1InMainCategory1Unit, itemAmount5)
+        assertItemInContents("$item2Description$descriptionCategoryDelimiter$depot1InMainDepot1Name", category1InMainCategory1Unit, itemAmount2)
+        assertItemInContents(mainDepot1Name, category1InMainCategory1Unit, itemAmount4)
+        assertItemInContents(depot1InMainDepot1Name, category1InMainCategory1Unit, itemAmount5)
     }
 }

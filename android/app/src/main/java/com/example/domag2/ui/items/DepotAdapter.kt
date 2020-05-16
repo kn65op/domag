@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.domag2.R
 import com.example.domag2.database.database.DatabaseFactoryImpl
 import com.example.domag2.database.relations.DepotWithContents
+import com.example.domag2.ui.common.constructItemFullName
 
 class DepotAdapter(
     var depot: LiveData<DepotWithContents>,
@@ -111,14 +112,6 @@ class DepotAdapter(
                 }
             })
         }
-    }
-
-    private fun constructItemFullName(category: String, item: String?): String {
-        if (item == null || item.isEmpty())
-        {
-            return category
-        }
-        return "$item - $category"
     }
 
     private fun bindDepot(
