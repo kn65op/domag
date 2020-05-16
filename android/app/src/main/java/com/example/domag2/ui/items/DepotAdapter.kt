@@ -103,12 +103,22 @@ class DepotAdapter(
             Log.i(LOG_TAG, "Show item: $itemPosition")
             category.observe(lifecycleOwner, Observer {
                 Log.i(LOG_TAG, "Category for $itemPosition: ${it?.name}")
-                itemViewHolder.amountViewHolder.text =
-                    depotContent.items[itemPosition].amount.toString()
-                itemViewHolder.unitViewHolder.text = it?.unit
-                itemViewHolder.nameViewHolder.text = it?.name
+                it?.let {category ->
+                    itemViewHolder.amountViewHolder.text =
+                        depotContent.items[itemPosition].amount.toString()
+                    itemViewHolder.unitViewHolder.text = category.unit
+                    itemViewHolder.nameViewHolder.text = constructItemFullName(category.name, depotContent.items[itemPosition].description)
+                }
             })
         }
+    }
+
+    private fun constructItemFullName(category: String, item: String?): String {
+        if (item == null || item.isEmpty())
+        {
+            return category
+        }
+        return "$item - $category"
     }
 
     private fun bindDepot(
