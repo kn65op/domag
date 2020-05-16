@@ -124,10 +124,25 @@ open class ItemsPartBase {
         dialogWithText("Category can't be empty.")
     }
 
+    internal fun assertEmptyDepotDialog() {
+        dialogWithText("Depot can't be empty.")
+    }
 }
 
 @RunWith(AndroidJUnit4::class)
 open class ItemsPartWithEmptyDbTestSuite : ItemsPartBase() {
+    @Test
+    fun WhenNoDepotShouldNotAddItem()
+    {
+        openAddItem()
+        writeItemAmount(FixedPointNumber(1))
+        apply()
+
+        assertEmptyDepotDialog()
+
+        clickOnText("OK")
+    }
+
     @Test
     fun WhenNoCategoryShouldNotAddItem()
     {

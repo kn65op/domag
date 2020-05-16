@@ -122,7 +122,9 @@ class EditItemFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedList
     override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
         R.id.edit_depot_menu_confirm -> {
             val db = dbFactory.factory.createDatabase(requireContext())
-            if (categorySpinner.selectedItemPosition == -1) {
+            if (depotSpinner.selectedItemPosition == -1) {
+                createDialog(requireActivity(), R.string.edit_item_no_depot_dialog_message)
+            } else if (categorySpinner.selectedItemPosition == -1) {
                 createDialog(requireActivity(), R.string.edit_item_no_category_dialog_message)
             } else {
                 val depotId = allDepots[depotSpinner.selectedItemPosition].uid
