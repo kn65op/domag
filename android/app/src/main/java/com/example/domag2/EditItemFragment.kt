@@ -1,11 +1,11 @@
 package com.example.domag2
 
-import android.content.DialogInterface
 import android.os.Bundle
 import android.util.Log
 import android.view.*
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import com.example.domag2.database.database.AppDatabase
@@ -14,6 +14,7 @@ import com.example.domag2.database.entities.Category
 import com.example.domag2.database.entities.Depot
 import com.example.domag2.database.entities.Item
 import com.example.domag2.ui.common.FragmentWithActionBar
+import com.example.domag2.ui.common.constructItemFullName
 import com.example.domag2.ui.common.createDialog
 import com.google.android.material.textfield.TextInputEditText
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner
@@ -48,6 +49,15 @@ class EditItemFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedList
         categorySpinner = root.findViewById(R.id.edit_item_category_spinner)
         amountField = root.findViewById(R.id.edit_item_amount_value)
         descriptionField = root.findViewById(R.id.edit_item_description)
+        descriptionField.doOnTextChanged { _, _, _, _ ->
+            val categoryPosition = categorySpinner.selectedItemPosition
+            if (categoryPosition != -1) {
+                actionBar()?.title = constructItemFullName(
+                    allCategories[categorySpinner.selectedItemPosition].name,
+                    descriptionField.text.toString()
+                )
+            }
+        }
 
         depotSpinner.setTitle(context?.getString(R.string.edit_item_depot_spinner_title))
         depotSpinner.setPositiveButton(context?.getString(R.string.spinner_select_text))
@@ -127,32 +137,35 @@ class EditItemFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedList
             } else if (categorySpinner.selectedItemPosition == -1) {
                 createDialog(requireActivity(), R.string.edit_item_no_category_dialog_message)
             } else {
-                val depotId = allDepots[depotSpinner.selectedItemPosition].uid
-                val categoryId = allCategories[categorySpinner.selectedItemPosition].uid
-                try {
-                    val amount = FixedPointNumber(amountField.text.toString().toDouble())
-                    if (depotId != null && categoryId != null) {
-                        lifecycleScope.launch {
-                            val item = Item(
-                                depotId = depotId,
-                                categoryId = categoryId,
-                                description = descriptionField.text.toString(),
-                                amount = amount
-                            )
-                            val dao = db.itemDao()
-                            dao.insert(item)
-                        }
-
-                    }
-                    activity?.onBackPressed()
-                } catch (ex: NumberFormatException) {
-                    Log.e(LOG_TAG, "Amount can't be converted: $ex")
-                    createDialog(requireActivity(), R.string.edit_item_no_amount_dialog_message)
-                }
+                createItem(db)
             }
             true
         }
         else -> super.onOptionsItemSelected(item)
+    }
+
+    private fun createItem(db: AppDatabase) {
+        val depotId = allDepots[depotSpinner.selectedItemPosition].uid
+        val categoryId = allCategories[categorySpinner.selectedItemPosition].uid
+        try {
+            val amount = FixedPointNumber(amountField.text.toString().toDouble())
+            if (depotId != null && categoryId != null) {
+                lifecycleScope.launch {
+                    val item = Item(
+                        depotId = depotId,
+                        categoryId = categoryId,
+                        description = descriptionField.text.toString(),
+                        amount = amount
+                    )
+                    val dao = db.itemDao()
+                    dao.insert(item)
+                }
+            }
+            activity?.onBackPressed()
+        } catch (ex: NumberFormatException) {
+            Log.e(LOG_TAG, "Amount can't be converted: $ex")
+            createDialog(requireActivity(), R.string.edit_item_no_amount_dialog_message)
+        }
     }
 
     companion object {

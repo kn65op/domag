@@ -111,6 +111,10 @@ open class ItemsPartBase {
         typeNewTextOnId(R.id.edit_item_amount_value, amount.toString())
     }
 
+    internal fun writeDescription(description: String) {
+        typeNewTextOnId(R.id.edit_item_description, description)
+    }
+
     internal fun setCategory(name: String) {
         clickOnId(R.id.edit_item_category_spinner)
         clickOnText(name)
@@ -324,6 +328,18 @@ open class ItemsPartTestSuite : ItemsPartBase() {
         setCategory(someCategory)
 
         asserTitleIs(someCategory)
+    }
+
+    @Test
+    fun addItemTitleShouldBeDescriptionAndCategory() {
+        openAddItem()
+
+        val someCategory = mainCategory1Name
+        val description = "FINE"
+
+        writeDescription(description)
+
+        asserTitleIs("$description$descriptionCategoryDelimiter$someCategory")
     }
 
     @Test
