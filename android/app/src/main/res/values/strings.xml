@@ -34,6 +34,7 @@
     <string name="edit_item_depot_spinner_title">Depot</string>
     <string name="edit_item_category_spinner_title">Category</string>
     <string name="edit_item_description">Description</string>
-    <string name="edit_item_no_amount_dialog_message">Amount can\'t be empty</string>
+    <string name="edit_item_no_amount_dialog_message">Amount can\'t be empty.</string>
     <string name="ok">OK</string>
+    <string name="edit_item_no_category_dialog_message">Category can\'t be empty.</string>
 </resources>

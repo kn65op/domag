@@ -1,13 +1,11 @@
 package com.example.domag2
 
-import android.app.AlertDialog
 import android.content.DialogInterface
 import android.os.Bundle
 import android.util.Log
 import android.view.*
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import com.example.domag2.database.database.AppDatabase
@@ -16,11 +14,11 @@ import com.example.domag2.database.entities.Category
 import com.example.domag2.database.entities.Depot
 import com.example.domag2.database.entities.Item
 import com.example.domag2.ui.common.FragmentWithActionBar
+import com.example.domag2.ui.common.createDialog
 import com.google.android.material.textfield.TextInputEditText
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner
 import io.github.kn65op.android.lib.type.FixedPointNumber
 import kotlinx.coroutines.launch
-import java.lang.NumberFormatException
 
 private const val DEPOT_ID_PARAMETER = "depotId"
 
@@ -124,30 +122,31 @@ class EditItemFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedList
     override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
         R.id.edit_depot_menu_confirm -> {
             val db = dbFactory.factory.createDatabase(requireContext())
-            val depotId = allDepots[depotSpinner.selectedItemPosition].uid
-            val categoryId = allCategories[categorySpinner.selectedItemPosition].uid
-            try {
-                val amount = FixedPointNumber(amountField.text.toString().toDouble())
-                if (depotId != null && categoryId != null) {
-                    lifecycleScope.launch {
-                        val item = Item(
-                            depotId = depotId,
-                            categoryId = categoryId,
-                            description = descriptionField.text.toString(),
-                            amount = amount
-                        )
-                        val dao = db.itemDao()
-                        dao.insert(item)
-                    }
+            if (categorySpinner.selectedItemPosition == -1) {
+                createDialog(requireActivity(), R.string.edit_item_no_category_dialog_message)
+            } else {
+                val depotId = allDepots[depotSpinner.selectedItemPosition].uid
+                val categoryId = allCategories[categorySpinner.selectedItemPosition].uid
+                try {
+                    val amount = FixedPointNumber(amountField.text.toString().toDouble())
+                    if (depotId != null && categoryId != null) {
+                        lifecycleScope.launch {
+                            val item = Item(
+                                depotId = depotId,
+                                categoryId = categoryId,
+                                description = descriptionField.text.toString(),
+                                amount = amount
+                            )
+                            val dao = db.itemDao()
+                            dao.insert(item)
+                        }
 
+                    }
+                    activity?.onBackPressed()
+                } catch (ex: NumberFormatException) {
+                    Log.e(LOG_TAG, "Amount can't be converted: $ex")
+                    createDialog(requireActivity(), R.string.edit_item_no_amount_dialog_message)
                 }
-                activity?.onBackPressed()
-            } catch (ex: NumberFormatException) {
-                Log.e(LOG_TAG, "Amount can't be converted: $ex")
-                val builder: AlertDialog.Builder = AlertDialog.Builder(requireActivity())
-                builder.setMessage(R.string.edit_item_no_amount_dialog_message)
-                builder.setPositiveButton(R.string.ok, DialogInterface.OnClickListener { _, _ -> })
-                builder.create().show()
             }
             true
         }
