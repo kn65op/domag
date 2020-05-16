@@ -92,7 +92,10 @@ class EditItemFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedList
                 override fun onItemSelected(
                     p0: AdapterView<*>?, p1: View?, selected: Int, p3: Long
                 ) {
-                    actionBar()?.title = allCategories[selected].name
+                    actionBar()?.title = constructItemFullName(
+                        allCategories[selected].name,
+                        descriptionField.text.toString()
+                    )
                 }
 
                 override fun onNothingSelected(p0: AdapterView<*>?) {

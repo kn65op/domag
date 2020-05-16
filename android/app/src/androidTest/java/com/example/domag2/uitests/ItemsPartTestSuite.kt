@@ -334,10 +334,24 @@ open class ItemsPartTestSuite : ItemsPartBase() {
     fun addItemTitleShouldBeDescriptionAndCategory() {
         openAddItem()
 
-        val someCategory = mainCategory1Name
+        val someCategory = mainCategory2Name
+        val description = "FINE"
+
+        setCategory(someCategory)
+        writeDescription(description)
+
+        asserTitleIs("$description$descriptionCategoryDelimiter$someCategory")
+    }
+
+    @Test
+    fun addItemTitleShouldBeDescriptionAndCategoryWhenChangeCategoryLater() {
+        openAddItem()
+
+        val someCategory = mainCategory2Name
         val description = "FINE"
 
         writeDescription(description)
+        setCategory(someCategory)
 
         asserTitleIs("$description$descriptionCategoryDelimiter$someCategory")
     }
