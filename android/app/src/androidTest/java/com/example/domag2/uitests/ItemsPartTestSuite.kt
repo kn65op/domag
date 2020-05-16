@@ -270,6 +270,17 @@ open class ItemsPartTestSuite {
     }
 
     @Test
+    fun addItemTitleShouldBeCategory() {
+        openAddItem()
+
+        val someCategory = category2InMainCategory1Name
+
+        setCategory(someCategory)
+
+        asserTitleIs(someCategory)
+    }
+
+    @Test
     fun addedItemShouldBeShown() {
         clickOnText(mainDepot1Name)
 

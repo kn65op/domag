@@ -15,6 +15,7 @@ import com.example.domag2.database.database.DatabaseFactoryImpl
 import com.example.domag2.database.entities.Category
 import com.example.domag2.database.entities.Depot
 import com.example.domag2.database.entities.Item
+import com.example.domag2.ui.common.FragmentWithActionBar
 import com.google.android.material.textfield.TextInputEditText
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner
 import io.github.kn65op.android.lib.type.FixedPointNumber
@@ -23,7 +24,7 @@ import java.lang.NumberFormatException
 
 private const val DEPOT_ID_PARAMETER = "depotId"
 
-class EditItemFragment : Fragment(), AdapterView.OnItemSelectedListener {
+class EditItemFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedListener {
     private val dbFactory = DatabaseFactoryImpl()
     private var depotId = 0
     private lateinit var depotSpinner: SearchableSpinner
@@ -66,15 +67,30 @@ class EditItemFragment : Fragment(), AdapterView.OnItemSelectedListener {
         val rootObjects = db?.categoryDao()?.getAll()
         rootObjects?.observe(viewLifecycleOwner, Observer { categories ->
             if (categories != null) {
-                allCategories = categories
-                Log.i(LOG_TAG, "Observed all categories: ${allCategories.size}")
-                val list =
-                    ArrayAdapter<String>(requireContext(), android.R.layout.simple_spinner_item)
-                list.addAll(categories.map { it.name })
-                categorySpinner.adapter = list
-                categorySpinner.onItemSelectedListener = this
+                prepareAllCategoriesSpinner(categories)
             }
         })
+    }
+
+    private fun prepareAllCategoriesSpinner(categories: List<Category>) {
+        allCategories = categories
+        Log.i(LOG_TAG, "Observed all categories: ${allCategories.size}")
+        val list =
+            ArrayAdapter<String>(requireContext(), android.R.layout.simple_spinner_item)
+        list.addAll(categories.map { it.name })
+        categorySpinner.adapter = list
+        categorySpinner.onItemSelectedListener =
+            object : AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(
+                    p0: AdapterView<*>?, p1: View?, selected: Int, p3: Long
+                ) {
+                    actionBar()?.title = allCategories[selected].name
+                }
+
+                override fun onNothingSelected(p0: AdapterView<*>?) {
+                    Log.i(LOG_TAG, "Nothing selected")
+                }
+            }
     }
 
     private fun collectAllDepots(db: AppDatabase?) {
@@ -130,7 +146,7 @@ class EditItemFragment : Fragment(), AdapterView.OnItemSelectedListener {
                 Log.e(LOG_TAG, "Amount can't be converted: $ex")
                 val builder: AlertDialog.Builder = AlertDialog.Builder(requireActivity())
                 builder.setMessage(R.string.edit_item_no_amount_dialog_message)
-                builder.setPositiveButton(R.string.ok, DialogInterface.OnClickListener{_, _ -> })
+                builder.setPositiveButton(R.string.ok, DialogInterface.OnClickListener { _, _ -> })
                 builder.create().show()
             }
             true
