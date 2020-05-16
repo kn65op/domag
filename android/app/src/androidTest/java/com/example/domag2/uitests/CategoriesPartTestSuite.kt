@@ -133,7 +133,7 @@ open class CategoriesPartTestSuite {
         clickOnText(mainCategory1Name)
 
         assertCategoryInContents(category1InMainCategory1Name)
-        assertCategoryInContents(mainCategory1Name)
+        assertCategoryInContents(category2InMainCategory1Name)
         assertCategoryInContents(mainCategory1Unit)
     }
 

@@ -141,7 +141,7 @@ open class ItemsPartTestSuite {
         clickOnText(mainDepot1Name)
 
         assertDepotInContents(depot1InMainDepot1Name)
-        assertDepotInContents(mainCategory1Name)
+        assertDepotInContents(depot2InMainDepot1Name)
         assertDepotInContents(mainCategory1Unit)
     }
 
