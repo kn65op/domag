@@ -23,11 +23,11 @@ import io.github.kn65op.android.lib.type.FixedPointNumber
 import kotlinx.coroutines.launch
 
 private const val ITEM_ID_PARAMETER = "itemId"
-private const val DEPOT_ID_PARAMETER = "itemId"
+private const val DEPOT_ID_PARAMETER = "depotId"
 
 class EditItemFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedListener {
     private val dbFactory = DatabaseFactoryImpl()
-    private var itemDepotId: Int? = null
+    private var initialDepoId: Int? = null
     private var itemCategoryId: Int? = null
     private var itemId: Int? = null
     private var currentItem: Item? = null
@@ -42,7 +42,10 @@ class EditItemFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedList
 
     override fun onCreate(savedInstanceState: Bundle?) {
         itemId = arguments?.getInt(ITEM_ID_PARAMETER)
-        if (itemId == 0) itemId = null
+        if (itemId == 0) {
+            itemId = null
+            initialDepoId = arguments?.getInt(DEPOT_ID_PARAMETER)
+        }
         Log.i(LOG_TAG, "Item is $itemId")
         super.onCreate(savedInstanceState)
     }
@@ -60,7 +63,7 @@ class EditItemFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedList
                 .observe(viewLifecycleOwner, Observer { item ->
                     item?.let {
                         currentItem = item
-                        itemDepotId = item.depotId
+                        initialDepoId = item.depotId
                         itemCategoryId = item.categoryId
                         item.description?.let { it1 -> descriptionField.replaceText(it1) }
                         amountField.replaceText(item.amount.toString())
@@ -147,9 +150,10 @@ class EditItemFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedList
 
     private fun selectProperSpinnerEntry() {
         if (allDepots.isNotEmpty() && allCategories.isNotEmpty()) {
-            currentItem?.let {item ->
-                depotSpinner.setSelection(allDepots.indexOfFirst { it.uid == item.depotId})
-                categorySpinner.setSelection(allCategories.indexOfFirst { it.uid == item.categoryId})
+            Log.i(LOG_TAG, "Depot: $initialDepoId")
+            depotSpinner.setSelection(allDepots.indexOfFirst { it.uid == initialDepoId })
+            currentItem?.let { item ->
+                categorySpinner.setSelection(allCategories.indexOfFirst { it.uid == item.categoryId })
             }
         }
     }

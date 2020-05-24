@@ -105,6 +105,14 @@ open class ItemsPartBase {
         clickOnId(R.id.items_add_item_fab)
     }
 
+    internal fun addItem(amount: FixedPointNumber) {
+        openAddItem()
+
+        writeItemAmount(amount)
+
+        apply()
+    }
+
     internal fun addItem(categoryName: String, amount: FixedPointNumber) {
         openAddItem()
 
@@ -386,6 +394,20 @@ open class ItemsPartTestSuite : ItemsPartBase() {
         assertEmptyAmountDialog()
 
         clickOnText("OK")
+    }
+
+    @Test
+    fun whenAddItemShouldAddItemInDepotWhereAddItemWasClicked() {
+        clickOnText(mainDepot2Name)
+
+        val amount = FixedPointNumber(1.1)
+        addItem(amount)
+
+        assertItemInContents(
+            "$mainCategory1Name",
+            mainCategory1Unit,
+            amount
+        )
     }
 
     @Test
