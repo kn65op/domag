@@ -8,6 +8,7 @@ import com.example.domag2.database.entities.Item
 import com.example.domag2.database.entities.Depot
 import com.example.domag2.database.relations.CategoryWithContents
 import com.example.domag2.database.relations.DepotWithContents
+import com.example.domag2.uitests.common.descriptionCategoryDelimiter
 import io.github.kn65op.android.lib.type.FixedPointNumber
 import kotlinx.coroutines.runBlocking
 
@@ -61,8 +62,12 @@ val itemAmount6 = FixedPointNumber(0.8)
 val itemAmount7 = FixedPointNumber(1.8)
 
 const val item1Description = "Good"
+const val item1WholeNameWithCategory = "$item1Description$descriptionCategoryDelimiter$mainCategory1Name"
 const val item2Description = "BAD"
 const val item3Description = "Natoher descirption"
+const val item3WholeNameWithCategory = "$item3Description$descriptionCategoryDelimiter$mainCategory2Name"
+
+
 
 val item1 = Item(uid = 1, depotId = 1, categoryId = 1, amount = itemAmount1, description = item1Description)
 val item2 = Item(uid = 2, depotId = 3, categoryId = 3, amount = itemAmount2, description = item2Description)

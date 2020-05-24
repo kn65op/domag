@@ -183,6 +183,15 @@ class EditItemFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedList
             }
             true
         }
+        R.id.edit_depot_menu_remove_depot_item -> {
+            val dao = dbFactory.factory.createDatabase(requireContext()).itemDao()
+            currentItem?.let {
+                lifecycleScope.launch { dao.delete(it) }
+            }
+            activity?.onBackPressed()
+            true
+
+        }
         else -> super.onOptionsItemSelected(item)
     }
 

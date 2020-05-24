@@ -65,6 +65,11 @@ open class ItemsPartBase {
         clickOnId(R.id.edit_depot_menu_remove_depot_item)
     }
 
+    internal fun removeItem(itemName : String) {
+        clickOnText(itemName)
+        clickOnId(R.id.edit_depot_menu_remove_depot_item)
+    }
+
     private fun clickEditDepot() {
         clickOnId(R.id.items_edit_depot_menu_item)
     }
@@ -432,12 +437,12 @@ open class ItemsPartTestSuite : ItemsPartBase() {
     @Test
     fun ediItemWithoutChangesShouldWriteSameItem() {
         clickOnText(mainDepot1Name)
-        clickOnText("$item1Description$descriptionCategoryDelimiter$mainCategory1Name")
+        clickOnText(item1WholeNameWithCategory)
 
         apply()
 
         assertItemInContents(
-            "$item1Description$descriptionCategoryDelimiter$mainCategory1Name",
+            item1WholeNameWithCategory,
             mainCategory1Unit,
             itemAmount1
         )
@@ -448,16 +453,27 @@ open class ItemsPartTestSuite : ItemsPartBase() {
     @Test
     fun ediItemWithoutChangesShouldWriteItemInTheSameDepot() {
         clickOnText(mainDepot2Name)
-        clickOnText("$item3Description$descriptionCategoryDelimiter$mainCategory2Name")
+        clickOnText(item3WholeNameWithCategory)
 
         apply()
 
         assertItemInContents(
-            "$item3Description$descriptionCategoryDelimiter$mainCategory2Name",
+            item3WholeNameWithCategory,
             mainCategory2Unit,
             itemAmount3
         )
 
         assertDepotContentSize(2)
+    }
+
+    @Test
+    fun removeItemShouldRemoveItem() {
+        clickOnText(mainDepot1Name)
+        assertDepotContentSize(4)
+
+        removeItem(item1WholeNameWithCategory)
+
+        assertDepotContentSize(3)
+
     }
 }
