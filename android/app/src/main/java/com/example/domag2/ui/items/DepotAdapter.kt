@@ -93,22 +93,33 @@ class DepotAdapter(
         val depotContent = depot.value
         if (depotContent != null) {
             val itemPosition = position - depotContent.depots.size
+            val item = depotContent.items[itemPosition]
             val db = dbFactory.factory.createDatabase(context)
             val category =
-                db.categoryDao().findById(depotContent.items[itemPosition].categoryId)
+                db.categoryDao().findById(item.categoryId)
             Log.i(
                 LOG_TAG,
-                "Seach for category: ${depotContent.items[itemPosition].categoryId}"
+                "Seach for category: ${item.categoryId}"
             )
             val itemViewHolder = holder as ItemViewHolder
             Log.i(LOG_TAG, "Show item: $itemPosition")
             category.observe(lifecycleOwner, Observer {
                 Log.i(LOG_TAG, "Category for $itemPosition: ${it?.name}")
-                it?.let {category ->
+                it?.let { category ->
                     itemViewHolder.amountViewHolder.text =
                         depotContent.items[itemPosition].amount.toString()
                     itemViewHolder.unitViewHolder.text = category.unit
-                    itemViewHolder.nameViewHolder.text = constructItemFullName(category.name, depotContent.items[itemPosition].description)
+                    itemViewHolder.nameViewHolder.text = constructItemFullName(
+                        category.name,
+                        depotContent.items[itemPosition].description
+                    )
+                }
+                item.uid?.let { uid ->
+                    holder.itemView.setOnClickListener {
+                        val action =
+                            ItemsFragmentDirections.actionNavItemsToFragmentEditItem(uid)
+                        holder.itemView.findNavController().navigate(action)
+                    }
                 }
             })
         }

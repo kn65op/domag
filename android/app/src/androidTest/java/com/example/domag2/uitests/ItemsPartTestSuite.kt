@@ -7,6 +7,9 @@ import androidx.test.rule.ActivityTestRule
 import com.example.domag2.R
 import com.example.domag2.dbtests.data.*
 import com.example.domag2.uitests.common.*
+import com.natpryce.hamkrest.assertion.assertThat
+import com.natpryce.hamkrest.equalTo
+import com.natpryce.hamkrest.hasSize
 import io.github.kn65op.android.lib.type.FixedPointNumber
 import org.junit.After
 import org.junit.Before
@@ -43,12 +46,16 @@ open class ItemsPartBase {
     }
 
     internal fun assertItemInContents(name: String, unit: String, amount: FixedPointNumber) {
-        viewOrChildHasText(R.id.fragment_items_layout, name)
-        viewOrChildHasText(R.id.fragment_items_layout, unit)
-        viewOrChildHasText(R.id.fragment_items_layout, amount.toString())
+         viewOrChildHasText(R.id.fragment_items_layout, name)
+         viewOrChildHasText(R.id.fragment_items_layout, unit)
+         viewOrChildHasText(R.id.fragment_items_layout, amount.toString())
     }
 
-    internal fun setParentDepot(name: String) {
+    internal fun assertDepotContentSize(size: Int){
+        viewHasChildCount(R.id.items_recycler_view, size)
+    }
+
+    private fun setParentDepot(name: String) {
         clickOnId(R.id.edit_depot_fragment_parent_spinner)
         clickOnText(name)
     }
@@ -58,7 +65,7 @@ open class ItemsPartBase {
         clickOnId(R.id.edit_depot_menu_remove_depot_item)
     }
 
-    internal fun clickEditDepot() {
+    private fun clickEditDepot() {
         clickOnId(R.id.items_edit_depot_menu_item)
     }
 
@@ -136,8 +143,7 @@ open class ItemsPartBase {
 @RunWith(AndroidJUnit4::class)
 open class ItemsPartWithEmptyDbTestSuite : ItemsPartBase() {
     @Test
-    fun WhenNoDepotShouldNotAddItem()
-    {
+    fun WhenNoDepotShouldNotAddItem() {
         openAddItem()
         writeItemAmount(FixedPointNumber(1))
         apply()
@@ -148,8 +154,7 @@ open class ItemsPartWithEmptyDbTestSuite : ItemsPartBase() {
     }
 
     @Test
-    fun WhenNoCategoryShouldNotAddItem()
-    {
+    fun WhenNoCategoryShouldNotAddItem() {
         addDepot(mainDepot1Name)
 
         openAddItem()
@@ -311,7 +316,11 @@ open class ItemsPartTestSuite : ItemsPartBase() {
     fun shouldPrintItemInContainer() {
         clickOnText(mainDepot1Name)
 
-        assertItemInContents("$item1Description$descriptionCategoryDelimiter$mainCategory1Name", mainCategory1Unit, itemAmount1)
+        assertItemInContents(
+            "$item1Description$descriptionCategoryDelimiter$mainCategory1Name",
+            mainCategory1Unit,
+            itemAmount1
+        )
         assertItemInContents(
             category1InMainCategory1Name,
             category1InMainCategory1Unit,
@@ -367,7 +376,8 @@ open class ItemsPartTestSuite : ItemsPartBase() {
         assertItemInContents(mainCategory2Name, mainCategory2Unit, itemAmount)
     }
 
-    @Test fun shouldNotAllowAddItemWithEmptyAmount() {
+    @Test
+    fun shouldNotAllowAddItemWithEmptyAmount() {
         clickOnText(mainDepot1Name)
 
         openAddItem()
@@ -376,5 +386,40 @@ open class ItemsPartTestSuite : ItemsPartBase() {
         assertEmptyAmountDialog()
 
         clickOnText("OK")
+    }
+
+    @Test
+    fun ediItem() {
+        clickOnText(mainDepot1Name)
+        clickOnText("$item1Description$descriptionCategoryDelimiter$mainCategory1Name")
+
+        val amount = FixedPointNumber(3.4)
+        writeItemAmount(amount)
+
+        apply()
+
+        assertItemInContents(
+            "$item1Description$descriptionCategoryDelimiter$mainCategory1Name",
+            mainCategory1Unit,
+           amount
+        )
+
+        assertDepotContentSize(4)
+    }
+
+    @Test
+    fun ediItemWithoutChangesShouldWriteSameItem() {
+        clickOnText(mainDepot1Name)
+        clickOnText("$item1Description$descriptionCategoryDelimiter$mainCategory1Name")
+
+        apply()
+
+        assertItemInContents(
+            "$item1Description$descriptionCategoryDelimiter$mainCategory1Name",
+            mainCategory1Unit,
+           itemAmount1
+        )
+
+        assertDepotContentSize(4)
     }
 }

@@ -37,10 +37,13 @@
             android:id="@+id/action_nav_items_to_fragmentEditItem"
             app:destination="@id/fragmentEditItem">
             <argument
+                android:name="itemId"
+                android:defaultValue="0"
+                app:argType="integer" />
+            <argument
                 android:name="depotId"
                 android:defaultValue="0"
                 app:argType="integer" />
-
         </action>
     </fragment>
 

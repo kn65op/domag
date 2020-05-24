@@ -16,16 +16,21 @@ import com.example.domag2.database.entities.Item
 import com.example.domag2.ui.common.FragmentWithActionBar
 import com.example.domag2.ui.common.constructItemFullName
 import com.example.domag2.ui.common.createDialog
+import com.example.domag2.ui.utils.replaceText
 import com.google.android.material.textfield.TextInputEditText
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner
 import io.github.kn65op.android.lib.type.FixedPointNumber
 import kotlinx.coroutines.launch
 
-private const val DEPOT_ID_PARAMETER = "depotId"
+private const val ITEM_ID_PARAMETER = "itemId"
+private const val DEPOT_ID_PARAMETER = "itemId"
 
 class EditItemFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedListener {
     private val dbFactory = DatabaseFactoryImpl()
-    private var depotId = 0
+    private var itemDepotId: Int? = null
+    private var itemCategoryId: Int? = null
+    private var itemId: Int? = null
+    private var currentItem: Item? = null
     private lateinit var depotSpinner: SearchableSpinner
     private lateinit var categorySpinner: SearchableSpinner
     private lateinit var amountField: TextInputEditText
@@ -34,7 +39,9 @@ class EditItemFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedList
     private var allDepots = emptyList<Depot>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        depotId = arguments?.getInt(DEPOT_ID_PARAMETER) ?: 0
+        itemId = arguments?.getInt(ITEM_ID_PARAMETER)
+        if (itemId == 0) itemId = null
+        Log.i(LOG_TAG, "Item is $itemId")
         super.onCreate(savedInstanceState)
     }
 
@@ -44,6 +51,20 @@ class EditItemFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedList
     ): View? {
         val root = inflater.inflate(R.layout.fragment_edit_item, container, false)
         setHasOptionsMenu(true)
+
+        itemId?.let()
+        {
+            dbFactory.factory.createDatabase(requireContext()).itemDao().findById(it)
+                .observe(viewLifecycleOwner, Observer { item ->
+                    item?.let {
+                        currentItem = item
+                        itemDepotId = item.depotId
+                        itemCategoryId = item.categoryId
+                        item.description?.let { it1 -> descriptionField.replaceText(it1) }
+                        //selectProperSpinnerEntry()
+                    }
+                })
+        }
 
         depotSpinner = root.findViewById(R.id.edit_item_depot_spinner)
         categorySpinner = root.findViewById(R.id.edit_item_category_spinner)
@@ -147,6 +168,17 @@ class EditItemFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedList
         else -> super.onOptionsItemSelected(item)
     }
 
+    private fun writeItemToDb(item: Item, db: AppDatabase) {
+        lifecycleScope.launch {
+            val dao = db.itemDao()
+            if (item.uid == null) {
+                dao.insert(item)
+            } else {
+                dao.update(item)
+            }
+        }
+    }
+
     private fun createItem(db: AppDatabase) {
         val depotId = allDepots[depotSpinner.selectedItemPosition].uid
         val categoryId = allCategories[categorySpinner.selectedItemPosition].uid
@@ -155,13 +187,13 @@ class EditItemFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedList
             if (depotId != null && categoryId != null) {
                 lifecycleScope.launch {
                     val item = Item(
+                        uid = itemId,
                         depotId = depotId,
                         categoryId = categoryId,
                         description = descriptionField.text.toString(),
                         amount = amount
                     )
-                    val dao = db.itemDao()
-                    dao.insert(item)
+                    writeItemToDb(item, db)
                 }
             }
             activity?.onBackPressed()

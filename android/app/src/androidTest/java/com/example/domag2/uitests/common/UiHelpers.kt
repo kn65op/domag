@@ -13,6 +13,10 @@ fun viewOrChildHasText(id: Int, text: String) {
     onView(withId(id)).check(matches(hasDescendant(withText(text))))
 }
 
+fun viewHasChildCount(id: Int, count: Int) {
+    onView(withId(id)).check(matches(hasChildCount(count)))
+}
+
 fun viewDoNotHasText(text: String) {
     val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
     val element = device.findObject(UiSelector().text(text))
