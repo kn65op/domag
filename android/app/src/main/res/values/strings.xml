@@ -38,4 +38,5 @@
     <string name="ok">OK</string>
     <string name="edit_item_no_category_dialog_message">Category can\'t be empty.</string>
     <string name="edit_item_no_depot_dialog_message">Depot can\'t be empty.</string>
+    <string name="edit_item_menu_consume_label">Consume</string>
 </resources>
