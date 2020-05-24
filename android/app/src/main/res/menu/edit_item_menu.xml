@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/edit_item_menu_confirm"
+        android:icon="@android:drawable/ic_menu_save"
+        android:orderInCategory="100"
+        android:title="@string/edit_depot_menu_confirm_text"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/edit_item_menu_remove_item_item"
+        android:icon="@android:drawable/ic_menu_delete"
+        android:title="@string/edit_depot_menu_remove_depot_item_text"
+        app:showAsAction="ifRoom" />
+</menu>

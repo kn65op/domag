@@ -7,9 +7,6 @@ import androidx.test.rule.ActivityTestRule
 import com.example.domag2.R
 import com.example.domag2.dbtests.data.*
 import com.example.domag2.uitests.common.*
-import com.natpryce.hamkrest.assertion.assertThat
-import com.natpryce.hamkrest.equalTo
-import com.natpryce.hamkrest.hasSize
 import io.github.kn65op.android.lib.type.FixedPointNumber
 import org.junit.After
 import org.junit.Before
@@ -37,8 +34,12 @@ open class ItemsPartBase {
         typeNewTextOnId(R.id.edit_depot_depot_name, name)
     }
 
-    internal fun apply() {
+    internal fun applyDepot() {
         clickOnId(R.id.edit_depot_menu_confirm)
+    }
+
+    internal fun applyItem() {
+        clickOnId(R.id.edit_item_menu_confirm)
     }
 
     internal fun assertDepotInContents(name: String) {
@@ -67,7 +68,7 @@ open class ItemsPartBase {
 
     internal fun removeItem(itemName : String) {
         clickOnText(itemName)
-        clickOnId(R.id.edit_depot_menu_remove_depot_item)
+        clickOnId(R.id.edit_item_menu_remove_item_item)
     }
 
     private fun clickEditDepot() {
@@ -77,28 +78,28 @@ open class ItemsPartBase {
     internal fun addDepot(name: String) {
         openAddDepot()
         writeDepotName(name)
-        apply()
+        applyDepot()
     }
 
     internal fun addDepotWithParent(parentName: String, name: String) {
         openAddDepot()
         writeDepotName(name)
         setParentDepot(parentName)
-        apply()
+        applyDepot()
     }
 
     internal fun renameDepot(oldName: String, newName: String) {
         clickOnText(oldName)
         clickEditDepot()
         writeDepotName(newName)
-        apply()
+        applyDepot()
     }
 
     internal fun changeParent(name: String, parentName: String) {
         clickOnText(name)
         clickEditDepot()
         setParentDepot(parentName)
-        apply()
+        applyDepot()
     }
 
     internal fun asserTitleIs(title: String) {
@@ -115,7 +116,7 @@ open class ItemsPartBase {
 
         writeItemAmount(amount)
 
-        apply()
+        applyItem()
     }
 
     internal fun addItem(categoryName: String, amount: FixedPointNumber) {
@@ -124,7 +125,7 @@ open class ItemsPartBase {
         setCategory(categoryName)
         writeItemAmount(amount)
 
-        apply()
+        applyItem()
     }
 
     internal fun writeItemAmount(amount: FixedPointNumber) {
@@ -159,7 +160,7 @@ open class ItemsPartWithEmptyDbTestSuite : ItemsPartBase() {
     fun WhenNoDepotShouldNotAddItem() {
         openAddItem()
         writeItemAmount(FixedPointNumber(1))
-        apply()
+        applyItem()
 
         assertEmptyDepotDialog()
 
@@ -172,7 +173,7 @@ open class ItemsPartWithEmptyDbTestSuite : ItemsPartBase() {
 
         openAddItem()
         writeItemAmount(FixedPointNumber(1))
-        apply()
+        applyItem()
 
         assertEmptyCategoryDialog()
 
@@ -242,7 +243,7 @@ open class ItemsPartTestSuite : ItemsPartBase() {
         openAddDepot()
 
         writeDepotName(name)
-        apply()
+        applyDepot()
 
         assertDepotInContents(name)
     }
@@ -394,7 +395,7 @@ open class ItemsPartTestSuite : ItemsPartBase() {
         clickOnText(mainDepot1Name)
 
         openAddItem()
-        apply()
+        applyItem()
 
         assertEmptyAmountDialog()
 
@@ -423,7 +424,7 @@ open class ItemsPartTestSuite : ItemsPartBase() {
         val amount = FixedPointNumber(3.4)
         writeItemAmount(amount)
 
-        apply()
+        applyItem()
 
         assertItemInContents(
             "$item1Description$descriptionCategoryDelimiter$mainCategory1Name",
@@ -439,7 +440,7 @@ open class ItemsPartTestSuite : ItemsPartBase() {
         clickOnText(mainDepot1Name)
         clickOnText(item1WholeNameWithCategory)
 
-        apply()
+        applyItem()
 
         assertItemInContents(
             item1WholeNameWithCategory,
@@ -455,7 +456,7 @@ open class ItemsPartTestSuite : ItemsPartBase() {
         clickOnText(mainDepot2Name)
         clickOnText(item3WholeNameWithCategory)
 
-        apply()
+        applyItem()
 
         assertItemInContents(
             item3WholeNameWithCategory,

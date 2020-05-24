@@ -167,12 +167,12 @@ class EditItemFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedList
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.edit_depot_menu, menu)
+        inflater.inflate(R.menu.edit_item_menu, menu)
         super.onCreateOptionsMenu(menu, inflater)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
-        R.id.edit_depot_menu_confirm -> {
+        R.id.edit_item_menu_confirm -> {
             val db = dbFactory.factory.createDatabase(requireContext())
             if (depotSpinner.selectedItemPosition == -1) {
                 createDialog(requireActivity(), R.string.edit_item_no_depot_dialog_message)
@@ -183,7 +183,7 @@ class EditItemFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedList
             }
             true
         }
-        R.id.edit_depot_menu_remove_depot_item -> {
+        R.id.edit_item_menu_remove_item_item -> {
             val dao = dbFactory.factory.createDatabase(requireContext()).itemDao()
             currentItem?.let {
                 lifecycleScope.launch { dao.delete(it) }
