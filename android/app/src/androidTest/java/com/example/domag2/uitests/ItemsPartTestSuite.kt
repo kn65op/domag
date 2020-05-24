@@ -46,12 +46,12 @@ open class ItemsPartBase {
     }
 
     internal fun assertItemInContents(name: String, unit: String, amount: FixedPointNumber) {
-         viewOrChildHasText(R.id.fragment_items_layout, name)
-         viewOrChildHasText(R.id.fragment_items_layout, unit)
-         viewOrChildHasText(R.id.fragment_items_layout, amount.toString())
+        viewOrChildHasText(R.id.fragment_items_layout, name)
+        viewOrChildHasText(R.id.fragment_items_layout, unit)
+        viewOrChildHasText(R.id.fragment_items_layout, amount.toString())
     }
 
-    internal fun assertDepotContentSize(size: Int){
+    internal fun assertDepotContentSize(size: Int) {
         viewHasChildCount(R.id.items_recycler_view, size)
     }
 
@@ -401,7 +401,7 @@ open class ItemsPartTestSuite : ItemsPartBase() {
         assertItemInContents(
             "$item1Description$descriptionCategoryDelimiter$mainCategory1Name",
             mainCategory1Unit,
-           amount
+            amount
         )
 
         assertDepotContentSize(4)
@@ -417,9 +417,25 @@ open class ItemsPartTestSuite : ItemsPartBase() {
         assertItemInContents(
             "$item1Description$descriptionCategoryDelimiter$mainCategory1Name",
             mainCategory1Unit,
-           itemAmount1
+            itemAmount1
         )
 
         assertDepotContentSize(4)
+    }
+
+    @Test
+    fun ediItemWithoutChangesShouldWriteItemInTheSameDepot() {
+        clickOnText(mainDepot2Name)
+        clickOnText("$item3Description$descriptionCategoryDelimiter$mainCategory2Name")
+
+        apply()
+
+        assertItemInContents(
+            "$item3Description$descriptionCategoryDelimiter$mainCategory2Name",
+            mainCategory2Unit,
+            itemAmount3
+        )
+
+        assertDepotContentSize(2)
     }
 }

@@ -31,6 +31,8 @@ class EditItemFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedList
     private var itemCategoryId: Int? = null
     private var itemId: Int? = null
     private var currentItem: Item? = null
+
+    //private var fromDepotDepotId : Int?  = null
     private lateinit var depotSpinner: SearchableSpinner
     private lateinit var categorySpinner: SearchableSpinner
     private lateinit var amountField: TextInputEditText
@@ -61,7 +63,8 @@ class EditItemFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedList
                         itemDepotId = item.depotId
                         itemCategoryId = item.categoryId
                         item.description?.let { it1 -> descriptionField.replaceText(it1) }
-                        //selectProperSpinnerEntry()
+                        amountField.replaceText(item.amount.toString())
+                        selectProperSpinnerEntry()
                     }
                 })
         }
@@ -97,6 +100,7 @@ class EditItemFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedList
         rootObjects?.observe(viewLifecycleOwner, Observer { categories ->
             if (categories != null) {
                 prepareAllCategoriesSpinner(categories)
+                selectProperSpinnerEntry()
             }
         })
     }
@@ -136,8 +140,18 @@ class EditItemFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedList
                 list.addAll(depots.map { it.name })
                 depotSpinner.adapter = list
                 depotSpinner.onItemSelectedListener = this
+                selectProperSpinnerEntry()
             }
         })
+    }
+
+    private fun selectProperSpinnerEntry() {
+        if (allDepots.isNotEmpty() && allCategories.isNotEmpty()) {
+            currentItem?.let {item ->
+                depotSpinner.setSelection(allDepots.indexOfFirst { it.uid == item.depotId})
+                categorySpinner.setSelection(allCategories.indexOfFirst { it.uid == item.categoryId})
+            }
+        }
     }
 
     override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
