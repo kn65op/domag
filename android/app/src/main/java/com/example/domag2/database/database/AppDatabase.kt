@@ -12,7 +12,7 @@ import com.example.domag2.database.entities.Item
 import com.example.domag2.database.entities.Depot
 import io.github.kn65op.android.lib.type.FixedPointNumberConverter
 
-@Database(entities = [Depot::class, Item::class, Category::class, Consume::class], version = 2)
+@Database(entities = [Depot::class, Item::class, Category::class, Consume::class], version = 1)
 @TypeConverters(FixedPointNumberConverter::class, ZoneDateTimeConverters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun depotDao(): DepotDao

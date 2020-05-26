@@ -68,7 +68,8 @@ open class ItemsPartBase {
 
     internal fun removeItem(itemName : String) {
         clickOnText(itemName)
-        clickOnId(R.id.edit_item_menu_remove_item_item)
+        openActionBarMenu()
+        clickOnIdOrText(R.id.edit_item_menu_remove_item_item, R.string.edit_depot_menu_remove_depot_item_text)
     }
 
     private fun clickEditDepot() {
