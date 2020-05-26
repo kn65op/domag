@@ -5,7 +5,9 @@ import android.util.Log
 import android.view.*
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.TextView
 import androidx.core.widget.doOnTextChanged
+import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import com.example.domag2.database.database.AppDatabase
@@ -19,13 +21,16 @@ import com.example.domag2.ui.common.createDialog
 import com.example.domag2.ui.utils.replaceText
 import com.google.android.material.textfield.TextInputEditText
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner
+import io.github.kn65op.android.lib.gui.dialogs.LocalDatePickerDialog
 import io.github.kn65op.android.lib.type.FixedPointNumber
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 
 private const val ITEM_ID_PARAMETER = "itemId"
 private const val DEPOT_ID_PARAMETER = "depotId"
 
-class EditItemFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedListener {
+class EditItemFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedListener,
+    LocalDatePickerDialog.DatePickerListener {
     private val dbFactory = DatabaseFactoryImpl()
     private var initialDepoId: Int? = null
     private var itemCategoryId: Int? = null
@@ -37,6 +42,7 @@ class EditItemFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedList
     private lateinit var categorySpinner: SearchableSpinner
     private lateinit var amountField: TextInputEditText
     private lateinit var descriptionField: TextInputEditText
+    private lateinit var bestBeforeField: TextView
     private var allCategories = emptyList<Category>()
     private var allDepots = emptyList<Depot>()
 
@@ -76,6 +82,8 @@ class EditItemFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedList
         categorySpinner = root.findViewById(R.id.edit_item_category_spinner)
         amountField = root.findViewById(R.id.edit_item_amount_value)
         descriptionField = root.findViewById(R.id.edit_item_description)
+        bestBeforeField = root.findViewById(R.id.edit_item_best_before_field)
+
         descriptionField.doOnTextChanged { _, _, _, _ ->
             val categoryPosition = categorySpinner.selectedItemPosition
             if (categoryPosition != -1) {
@@ -90,6 +98,10 @@ class EditItemFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedList
         depotSpinner.setPositiveButton(context?.getString(R.string.spinner_select_text))
         categorySpinner.setTitle(context?.getString(R.string.edit_item_category_spinner_title))
         categorySpinner.setPositiveButton(context?.getString(R.string.spinner_select_text))
+        bestBeforeField.setOnClickListener { _ -> val dialog  =LocalDatePickerDialog(this)
+            dialog.show(requireActivity().supportFragmentManager, "Date picker")
+
+        }
 
         val db = dbFactory.factory.createDatabase(requireContext())
         collectAllCategories(db)
@@ -228,6 +240,10 @@ class EditItemFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedList
             Log.e(LOG_TAG, "Amount can't be converted: $ex")
             createDialog(requireActivity(), R.string.edit_item_no_amount_dialog_message)
         }
+    }
+
+    override fun onDateSet(dialog: DialogFragment, localDate: LocalDate) {
+        Log.i(LOG_TAG, "Was set $localDate")
     }
 
     companion object {
