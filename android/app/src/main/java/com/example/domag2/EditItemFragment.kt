@@ -24,7 +24,8 @@ import com.toptoche.searchablespinnerlibrary.SearchableSpinner
 import io.github.kn65op.android.lib.gui.dialogs.LocalDatePickerDialog
 import io.github.kn65op.android.lib.type.FixedPointNumber
 import kotlinx.coroutines.launch
-import java.time.LocalDate
+import java.time.*
+import java.time.format.DateTimeFormatter
 
 private const val ITEM_ID_PARAMETER = "itemId"
 private const val DEPOT_ID_PARAMETER = "depotId"
@@ -36,6 +37,8 @@ class EditItemFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedList
     private var itemCategoryId: Int? = null
     private var itemId: Int? = null
     private var currentItem: Item? = null
+    private val timeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("ccc dd-MMMM-yyyy")
+    private var bestBefore: ZonedDateTime = ZonedDateTime.now()
 
     //private var fromDepotDepotId : Int?  = null
     private lateinit var depotSpinner: SearchableSpinner
@@ -74,6 +77,7 @@ class EditItemFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedList
                         item.description?.let { it1 -> descriptionField.replaceText(it1) }
                         amountField.replaceText(item.amount.toString())
                         selectProperSpinnerEntry()
+                        item.bestBefore?.let { bestBefore -> setDate(bestBefore) }
                     }
                 })
         }
@@ -98,7 +102,8 @@ class EditItemFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedList
         depotSpinner.setPositiveButton(context?.getString(R.string.spinner_select_text))
         categorySpinner.setTitle(context?.getString(R.string.edit_item_category_spinner_title))
         categorySpinner.setPositiveButton(context?.getString(R.string.spinner_select_text))
-        bestBeforeField.setOnClickListener { _ -> val dialog  =LocalDatePickerDialog(this)
+        bestBeforeField.setOnClickListener { _ ->
+            val dialog = LocalDatePickerDialog(this)
             dialog.show(requireActivity().supportFragmentManager, "Date picker")
 
         }
@@ -230,7 +235,8 @@ class EditItemFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedList
                         depotId = depotId,
                         categoryId = categoryId,
                         description = descriptionField.text.toString(),
-                        amount = amount
+                        amount = amount,
+                        bestBefore = bestBefore
                     )
                     writeItemToDb(item, db)
                 }
@@ -244,6 +250,22 @@ class EditItemFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedList
 
     override fun onDateSet(dialog: DialogFragment, localDate: LocalDate) {
         Log.i(LOG_TAG, "Was set $localDate")
+        setDate(localDate)
+    }
+
+    private fun setDate(localDate: ZonedDateTime?) {
+        bestBeforeField.text = localDate?.format(timeFormatter)
+        localDate?.let { bestBefore = it }
+    }
+
+    private fun setDate(localDate: LocalDate?) {
+        bestBeforeField.text = localDate?.format(timeFormatter)
+        localDate?.let {
+            bestBefore = ZonedDateTime.of(
+                localDate, LocalTime.now(),
+                ZoneId.systemDefault()
+            )
+        }
     }
 
     companion object {
