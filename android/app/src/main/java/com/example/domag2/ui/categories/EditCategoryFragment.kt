@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.*
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
@@ -15,6 +16,7 @@ import com.example.domag2.R
 import com.example.domag2.database.database.AppDatabase
 import com.example.domag2.database.database.DatabaseFactoryImpl
 import com.example.domag2.database.entities.Category
+import com.example.domag2.database.operations.deleteCategory
 import com.example.domag2.database.relations.CategoryWithContents
 import com.example.domag2.ui.common.FragmentWithActionBar
 import com.example.domag2.ui.utils.replaceText
@@ -49,7 +51,7 @@ class EditCategoryFragment : FragmentWithActionBar(), AdapterView.OnItemSelected
         if (currentParent == null)
             currentParent = arguments?.getInt(PARENT_ID_ACTION_PARAMETER)
         categoryId = arguments?.getInt(CURRENT_CATEGORY_ID_PARAMETER)
-        Log.i(LOG_TAG, "Passed depotId: $categoryId")
+        Log.i(LOG_TAG, "Passed categoryId: $categoryId")
         val savedId = savedInstanceState?.getInt(CURRENT_CATEGORY_ID_PARAMETER)
         savedId?.let {
             if (it != 0) {
@@ -57,7 +59,7 @@ class EditCategoryFragment : FragmentWithActionBar(), AdapterView.OnItemSelected
             }
         }
         Log.i(LOG_TAG, "Using depotId: $categoryId")
-        Log.i(LOG_TAG, "Editing depot: $categoryId: $currentName with parent: $currentParent")
+        Log.i(LOG_TAG, "Editing category: $categoryId: $currentName with parent: $currentParent")
     }
 
     private fun readDepot() {
@@ -73,7 +75,7 @@ class EditCategoryFragment : FragmentWithActionBar(), AdapterView.OnItemSelected
                                 currentUnit = it.category.unit
                                 Log.i(
                                     LOG_TAG,
-                                    "Editing depot: ${it.category.uid}: ${it.category.name} with parent: ${it.category.parentId}"
+                                    "Editing category: ${it.category.uid}: ${it.category.name} with parent: ${it.category.parentId}"
                                 )
                             }
                         })
@@ -84,13 +86,13 @@ class EditCategoryFragment : FragmentWithActionBar(), AdapterView.OnItemSelected
 
     private fun getAllCategories(db: AppDatabase?) {
         val rootObjects = db?.categoryDao()?.getAll()
-        rootObjects?.observe(viewLifecycleOwner, Observer { depots ->
-            if (depots != null) {
-                allCategories = depots
+        rootObjects?.observe(viewLifecycleOwner, Observer { categories ->
+            if (categories != null) {
+                allCategories = categories
                 Log.i(LOG_TAG, "Observed all objects: ${allCategories.size}")
-                val parents = ArrayAdapter<String>(context!!, android.R.layout.simple_spinner_item)
+                val parents = ArrayAdapter<String>(requireContext(), android.R.layout.simple_spinner_item)
                 parents.add(context?.getString(R.string.edit_depot_parent_select_no_parent))
-                parents.addAll(depots.filter { it.uid != categoryId }.map { it.name })
+                parents.addAll(categories.filter { it.uid != categoryId }.map { it.name })
                 spinner.adapter = parents
                 Log.i(LOG_TAG, "AllDepots: ${allCategories.size}")
                 val parentDepotPosition =
@@ -116,11 +118,11 @@ class EditCategoryFragment : FragmentWithActionBar(), AdapterView.OnItemSelected
         spinner = root.findViewById(R.id.edit_category_fragment_parent_spinner)
         recyclerView = root.findViewById(R.id.edit_category_content_view)
 
-        spinner.setTitle(context?.getString(R.string.edit_depot_parent_text))
-        spinner.setPositiveButton(context?.getString(R.string.edit_depot_parent_select_text))
+        spinner.setTitle(context?.getString(R.string.edit_category_parent_text))
+        spinner.setPositiveButton(context?.getString(R.string.spinner_select_text))
 
         viewManager = LinearLayoutManager(context)
-        viewAdapter = CategoryAdapter(currentCategory, context!!, this)
+        viewAdapter = CategoryAdapter(currentCategory, requireContext(), this)
 
         recyclerView.apply {
             setHasFixedSize(true)
@@ -175,7 +177,12 @@ class EditCategoryFragment : FragmentWithActionBar(), AdapterView.OnItemSelected
                     lifecycleScope.launch {
                         Log.i(LOG_TAG, "Edit $name")
                         currentCategory.value?.category?.let {
-                            val depot = Category(uid = it.uid, unit=edit_category_unit_field.text.toString(), name = name, parentId = currentParent)
+                            val depot = Category(
+                                uid = it.uid,
+                                unit = edit_category_unit_field.text.toString(),
+                                name = name,
+                                parentId = currentParent
+                            )
                             dao?.update(depot)
                         }
                         Log.i(LOG_TAG, "Edited $name")
@@ -187,11 +194,10 @@ class EditCategoryFragment : FragmentWithActionBar(), AdapterView.OnItemSelected
         }
         R.id.edit_depot_menu_remove_depot_item -> {
             val db = context?.let { it1 -> dbFactory.factory.createDatabase(it1) }
-            val dao = db?.categoryDao()
             currentCategory.value?.let {
                 val parent = it.category.parentId
                 lifecycleScope.launch {
-                    dao?.deleteWithChildren(it.category)
+                    db?.deleteCategory(it)
                 }
                 val action =
                     EditCategoryFragmentDirections.actionEditCategoryToNavCategories(

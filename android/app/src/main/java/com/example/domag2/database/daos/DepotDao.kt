@@ -53,15 +53,6 @@ interface DepotDao {
     @Update
     suspend fun update(depot: Depot)
 
-    suspend fun deleteWithChildren(depot: Depot) {
-        depot.uid?.let { uid ->
-            findWithContentsByIdImmediate(uid).depots.forEach {
-                deleteWithChildren(it)
-            }
-        }
-        deleteOnly(depot)
-    }
-
     @Delete
-    suspend fun deleteOnly(depot: Depot)
+    suspend fun delete(depot: Depot)
 }

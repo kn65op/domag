@@ -2,14 +2,16 @@ package com.example.domag2.uitests.common
 
 import androidx.test.espresso.Espresso
 import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu
 import androidx.test.espresso.ViewInteraction
 import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.contrib.DrawerActions
 import androidx.test.espresso.contrib.NavigationViewActions
 import androidx.test.espresso.matcher.ViewMatchers
-import androidx.test.espresso.matcher.ViewMatchers.withContentDescription
-import androidx.test.espresso.matcher.ViewMatchers.withId
+import androidx.test.espresso.matcher.ViewMatchers.*
+import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
 import com.example.domag2.R
+import org.hamcrest.Matchers.anyOf
 import java.lang.Thread.sleep
 
 
@@ -25,8 +27,17 @@ private fun typeNewTextOn(view: ViewInteraction, text: String) {
     )
 }
 
+
+fun openActionBarMenu() {
+    openActionBarOverflowOrOptionsMenu(getInstrumentation().getTargetContext())
+}
+
 fun clickOnId(id: Int) {
     clickOn(Espresso.onView(ViewMatchers.withId(id)))
+}
+
+fun clickOnIdOrText(id: Int, text:Int) {
+    onView(anyOf(withText(text), withId(id))).perform(click());
 }
 
 fun clickOnText(text: String) {
@@ -44,7 +55,7 @@ fun clickHomeIcon() {
 
 }
 
-fun openPart(part : String) {
+fun openPart(part: String) {
     onView(withId(R.id.drawer_layout)).perform(DrawerActions.open());
     onView(withId(R.id.nav_view)).perform(NavigationViewActions.navigateTo(R.id.nav_categories));
     sleep(500)

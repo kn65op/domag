@@ -7,6 +7,7 @@ import androidx.test.rule.ActivityTestRule
 import com.example.domag2.R
 import com.example.domag2.dbtests.data.*
 import com.example.domag2.uitests.common.*
+import io.github.kn65op.android.lib.type.FixedPointNumber
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -105,14 +106,20 @@ open class CategoriesPartTestSuite {
         apply()
     }
 
-    private fun asserTitleIs(title: String) {
+    private fun assertTitleIs(title: String) {
         viewOrChildHasText(R.id.toolbar, title)
     }
 
+    private fun assertItemInContents(name: String, unit: String, amount: FixedPointNumber) {
+        viewOrChildHasText(R.id.fragment_categories_layout, name)
+        viewOrChildHasText(R.id.fragment_categories_layout, unit)
+        viewOrChildHasText(R.id.fragment_categories_layout, amount.toString())
+    }
+
     @Test
-    fun onStartShouldPrintItems() {
+    fun onStartShouldPrintCategories() {
         val title = "Categories"
-        asserTitleIs(title)
+        assertTitleIs(title)
     }
 
     @Test
@@ -126,7 +133,7 @@ open class CategoriesPartTestSuite {
         clickOnText(mainCategory1Name)
 
         assertCategoryInContents(category1InMainCategory1Name)
-        assertCategoryInContents(mainCategory1Name)
+        assertCategoryInContents(category2InMainCategory1Name)
         assertCategoryInContents(mainCategory1Unit)
     }
 
@@ -134,7 +141,7 @@ open class CategoriesPartTestSuite {
     fun onClickCategoryShouldPrintItNameInBar() {
         clickOnText(mainCategory1Name)
 
-        asserTitleIs(mainCategory1Name)
+        assertTitleIs(mainCategory1Name)
     }
 
     @Test
@@ -142,7 +149,7 @@ open class CategoriesPartTestSuite {
         clickOnText(mainCategory1Name)
         Espresso.pressBack()
 
-        asserTitleIs("Categories")
+        assertTitleIs("Categories")
     }
 
     @Test
@@ -210,7 +217,7 @@ open class CategoriesPartTestSuite {
         removeCategory()
 
         viewDoNotHasText(category1InMainCategory1Name)
-        asserTitleIs(mainCategory1Name)
+        assertTitleIs(mainCategory1Name)
     }
 
     @Test
@@ -218,7 +225,7 @@ open class CategoriesPartTestSuite {
         val newName = "NewName"
         renameCategory(mainCategory1Name, newName)
 
-        asserTitleIs(newName)
+        assertTitleIs(newName)
     }
 
     @Test
@@ -247,6 +254,16 @@ open class CategoriesPartTestSuite {
 
         Espresso.pressBack()
 
-        asserTitleIs(mainCategory2Name)
+        assertTitleIs(mainCategory2Name)
+    }
+
+    @Test
+    fun shouldPrintItem() {
+        clickOnText(mainCategory1Name)
+        clickOnText(category1InMainCategory1Name)
+
+        assertItemInContents("$item2Description$descriptionCategoryDelimiter$depot1InMainDepot1Name", category1InMainCategory1Unit, itemAmount2)
+        assertItemInContents(mainDepot1Name, category1InMainCategory1Unit, itemAmount4)
+        assertItemInContents(depot1InMainDepot1Name, category1InMainCategory1Unit, itemAmount5)
     }
 }

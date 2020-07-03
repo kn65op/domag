@@ -55,13 +55,4 @@ interface CategoryDao {
 
     @Delete
     suspend fun delete(category: Category)
-
-    suspend fun deleteWithChildren(category: Category) {
-        category.uid?.let { uid ->
-            findWithContentsByIdImmediately(uid).categories.forEach {
-                deleteWithChildren(it)
-            }
-        }
-        delete(category)
-    }
 }

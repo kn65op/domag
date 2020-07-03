@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.domag2.R
 import com.example.domag2.database.database.DatabaseFactoryImpl
 import com.example.domag2.database.relations.CategoryWithContents
+import com.example.domag2.ui.common.constructItemFullName
 
 class CategoryAdapter(
     var category: LiveData<CategoryWithContents>,
@@ -89,24 +90,30 @@ class CategoryAdapter(
         position: Int,
         holder: ViewHolder
     ) {
-        val depotContent = category.value
-        if (depotContent != null) {
-            val itemPosition = position - depotContent.categories.size
+        val categoryContent = category.value
+        if (categoryContent != null) {
+            val itemPosition = position - categoryContent.categories.size
             val db = dbFactory.factory.createDatabase(context)
-            val category =
-                db.categoryDao().findById(depotContent.items[itemPosition].categoryId)
+            val depot =
+                db.depotDao().findById(categoryContent.items[itemPosition].depotId)
             Log.i(
                 LOG_TAG,
-                "Seach for category: ${depotContent.items[itemPosition].categoryId}"
+                "Seach for category: ${categoryContent.items[itemPosition].categoryId}"
             )
             val itemViewHolder = holder as ItemViewHolder
             Log.i(LOG_TAG, "Show item: $itemPosition")
-            itemViewHolder.amountViewHolder.text =
-                depotContent.items[itemPosition].cos
-            category.observe(lifecycleOwner, Observer {
+            depot.observe(lifecycleOwner, Observer {
                 Log.i(LOG_TAG, "Category for $itemPosition: ${it?.name}")
-                itemViewHolder.nameViewHolder.text = it?.name
-                itemViewHolder.unitViewHolder.text = it?.unit
+                it?.let {
+                    depot ->
+                    itemViewHolder.amountViewHolder.text =
+                        categoryContent.items[itemPosition].amount.toString()
+                    itemViewHolder.nameViewHolder.text = constructItemFullName(
+                        depot.name,
+                        categoryContent.items[itemPosition].description
+                    )
+                    itemViewHolder.unitViewHolder.text = categoryContent.category.unit
+                }
             })
         }
     }

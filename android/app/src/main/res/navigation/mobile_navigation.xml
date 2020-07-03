@@ -32,6 +32,19 @@
                 android:defaultValue="0"
                 app:argType="integer" />
         </action>
+
+        <action
+            android:id="@+id/action_nav_items_to_fragmentEditItem"
+            app:destination="@id/fragmentEditItem">
+            <argument
+                android:name="itemId"
+                android:defaultValue="0"
+                app:argType="integer" />
+            <argument
+                android:name="depotId"
+                android:defaultValue="0"
+                app:argType="integer" />
+        </action>
     </fragment>
 
     <fragment
@@ -59,11 +72,12 @@
         tools:layout="@layout/fragment_categories">
         <action
             android:id="@+id/action_nav_categories_self"
-            app:destination="@id/nav_categories" />
-        <argument
-            android:name="categoryId"
-            android:defaultValue="0"
-            app:argType="integer" />
+            app:destination="@id/nav_categories">
+            <argument
+                android:name="categoryId"
+                android:defaultValue="0"
+                app:argType="integer" />
+        </action>
         <action
             android:id="@+id/action_nav_categories_to_editCategory"
             app:destination="@id/editCategory">
@@ -111,5 +125,14 @@
                 android:defaultValue="0"
                 app:argType="integer" />
         </action>
+    </fragment>
+    <fragment
+        android:id="@+id/fragmentEditItem"
+        android:name="com.example.domag2.EditItemFragment"
+        android:label="fragment_edit_item"
+        tools:layout="@layout/fragment_edit_item">
+        <action
+            android:id="@+id/action_fragmentEditItem_to_nav_items"
+            app:destination="@id/nav_items" />
     </fragment>
 </navigation>

@@ -7,25 +7,16 @@ import androidx.test.rule.ActivityTestRule
 import com.example.domag2.R
 import com.example.domag2.dbtests.data.*
 import com.example.domag2.uitests.common.*
+import io.github.kn65op.android.lib.type.FixedPointNumber
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
-
-@RunWith(AndroidJUnit4::class)
-open class ItemsPartTestSuite {
-
+open class ItemsPartBase {
     @get:Rule
     var activityRule = ActivityTestRule(activityFactory, true, true)
-
-    @Before
-    fun fillDb() {
-        val db = factory.createDatabase(ApplicationProvider.getApplicationContext())
-        fillData(db)
-        Thread.sleep(500) // WA for aynschronous DB calls
-    }
 
     @After
     fun clearDb() {
@@ -34,21 +25,35 @@ open class ItemsPartTestSuite {
         Thread.sleep(500) // WA for aynschronous DB calls
     }
 
-    private fun openAddDepot() {
+    internal fun openAddDepot() {
         clickOnId(R.id.items_general_fab)
         clickOnId(R.id.items_add_depot_fab)
     }
 
-    private fun writeDepotName(name: String) {
+    internal fun writeDepotName(name: String) {
         typeNewTextOnId(R.id.edit_depot_depot_name, name)
     }
 
-    private fun apply() {
+    internal fun applyDepot() {
         clickOnId(R.id.edit_depot_menu_confirm)
     }
 
-    private fun assertDepotInContents(name: String) {
+    internal fun applyItem() {
+        clickOnId(R.id.edit_item_menu_confirm)
+    }
+
+    internal fun assertDepotInContents(name: String) {
         viewOrChildHasText(R.id.fragment_items_layout, name)
+    }
+
+    internal fun assertItemInContents(name: String, unit: String, amount: FixedPointNumber) {
+        viewOrChildHasText(R.id.fragment_items_layout, name)
+        viewOrChildHasText(R.id.fragment_items_layout, unit)
+        viewOrChildHasText(R.id.fragment_items_layout, amount.toString())
+    }
+
+    internal fun assertDepotContentSize(size: Int) {
+        viewHasChildCount(R.id.items_recycler_view, size)
     }
 
     private fun setParentDepot(name: String) {
@@ -56,38 +61,137 @@ open class ItemsPartTestSuite {
         clickOnText(name)
     }
 
-    private fun removeDepot() {
+    internal fun removeDepot() {
         clickEditDepot()
         clickOnId(R.id.edit_depot_menu_remove_depot_item)
+    }
+
+    internal fun removeItem(itemName : String) {
+        clickOnText(itemName)
+        openActionBarMenu()
+        clickOnIdOrText(R.id.edit_item_menu_remove_item_item, R.string.edit_depot_menu_remove_depot_item_text)
     }
 
     private fun clickEditDepot() {
         clickOnId(R.id.items_edit_depot_menu_item)
     }
 
-    private fun addDepotWithParent(parentName: String, name: String) {
+    internal fun addDepot(name: String) {
+        openAddDepot()
+        writeDepotName(name)
+        applyDepot()
+    }
+
+    internal fun addDepotWithParent(parentName: String, name: String) {
         openAddDepot()
         writeDepotName(name)
         setParentDepot(parentName)
-        apply()
+        applyDepot()
     }
 
-    private fun renameDepot(oldName: String, newName: String) {
+    internal fun renameDepot(oldName: String, newName: String) {
         clickOnText(oldName)
         clickEditDepot()
         writeDepotName(newName)
-        apply()
+        applyDepot()
     }
 
-    private fun changeParent(name:String, parentName: String) {
+    internal fun changeParent(name: String, parentName: String) {
         clickOnText(name)
         clickEditDepot()
         setParentDepot(parentName)
-        apply()
+        applyDepot()
     }
 
-    private fun asserTitleIs(title: String) {
+    internal fun asserTitleIs(title: String) {
         viewOrChildHasText(R.id.toolbar, title)
+    }
+
+    internal fun openAddItem() {
+        clickOnId(R.id.items_general_fab)
+        clickOnId(R.id.items_add_item_fab)
+    }
+
+    internal fun addItem(amount: FixedPointNumber) {
+        openAddItem()
+
+        writeItemAmount(amount)
+
+        applyItem()
+    }
+
+    internal fun addItem(categoryName: String, amount: FixedPointNumber) {
+        openAddItem()
+
+        setCategory(categoryName)
+        writeItemAmount(amount)
+
+        applyItem()
+    }
+
+    internal fun writeItemAmount(amount: FixedPointNumber) {
+        typeNewTextOnId(R.id.edit_item_amount_value, amount.toString())
+    }
+
+    internal fun writeDescription(description: String) {
+        typeNewTextOnId(R.id.edit_item_description, description)
+    }
+
+    internal fun setCategory(name: String) {
+        clickOnId(R.id.edit_item_category_spinner)
+        clickOnText(name)
+    }
+
+    internal fun assertEmptyAmountDialog() {
+        dialogWithText("Amount can't be empty.")
+    }
+
+    internal fun assertEmptyCategoryDialog() {
+        dialogWithText("Category can't be empty.")
+    }
+
+    internal fun assertEmptyDepotDialog() {
+        dialogWithText("Depot can't be empty.")
+    }
+}
+
+@RunWith(AndroidJUnit4::class)
+open class ItemsPartWithEmptyDbTestSuite : ItemsPartBase() {
+    @Test
+    fun WhenNoDepotShouldNotAddItem() {
+        openAddItem()
+        writeItemAmount(FixedPointNumber(1))
+        applyItem()
+
+        assertEmptyDepotDialog()
+
+        clickOnText("OK")
+    }
+
+    @Test
+    fun WhenNoCategoryShouldNotAddItem() {
+        addDepot(mainDepot1Name)
+
+        openAddItem()
+        writeItemAmount(FixedPointNumber(1))
+        applyItem()
+
+        assertEmptyCategoryDialog()
+
+        clickOnText("OK")
+    }
+
+}
+
+
+@RunWith(AndroidJUnit4::class)
+open class ItemsPartTestSuite : ItemsPartBase() {
+
+    @Before
+    fun fillDb() {
+        val db = factory.createDatabase(ApplicationProvider.getApplicationContext())
+        fillData(db)
+        Thread.sleep(500) // WA for aynschronous DB calls
     }
 
     @Test
@@ -107,7 +211,7 @@ open class ItemsPartTestSuite {
         clickOnText(mainDepot1Name)
 
         assertDepotInContents(depot1InMainDepot1Name)
-        assertDepotInContents(mainCategory1Name)
+        assertDepotInContents(depot2InMainDepot1Name)
         assertDepotInContents(mainCategory1Unit)
     }
 
@@ -140,7 +244,7 @@ open class ItemsPartTestSuite {
         openAddDepot()
 
         writeDepotName(name)
-        apply()
+        applyDepot()
 
         assertDepotInContents(name)
     }
@@ -221,5 +325,157 @@ open class ItemsPartTestSuite {
         Espresso.pressBack()
 
         asserTitleIs(mainDepot2Name)
+    }
+
+    @Test
+    fun shouldPrintItemInContainer() {
+        clickOnText(mainDepot1Name)
+
+        assertItemInContents(
+            "$item1Description$descriptionCategoryDelimiter$mainCategory1Name",
+            mainCategory1Unit,
+            itemAmount1
+        )
+        assertItemInContents(
+            category1InMainCategory1Name,
+            category1InMainCategory1Unit,
+            itemAmount4
+        )
+    }
+
+    @Test
+    fun addItemTitleShouldBeCategory() {
+        openAddItem()
+
+        val someCategory = category2InMainCategory1Name
+
+        setCategory(someCategory)
+
+        asserTitleIs(someCategory)
+    }
+
+    @Test
+    fun addItemTitleShouldBeDescriptionAndCategory() {
+        openAddItem()
+
+        val someCategory = mainCategory2Name
+        val description = "FINE"
+
+        setCategory(someCategory)
+        writeDescription(description)
+
+        asserTitleIs("$description$descriptionCategoryDelimiter$someCategory")
+    }
+
+    @Test
+    fun addItemTitleShouldBeDescriptionAndCategoryWhenChangeCategoryLater() {
+        openAddItem()
+
+        val someCategory = mainCategory2Name
+        val description = "FINE"
+
+        writeDescription(description)
+        setCategory(someCategory)
+
+        asserTitleIs("$description$descriptionCategoryDelimiter$someCategory")
+    }
+
+    @Test
+    fun addedItemShouldBeShown() {
+        clickOnText(mainDepot1Name)
+
+        val itemAmount = FixedPointNumber(8)
+
+        addItem(mainCategory2Name, itemAmount)
+
+        assertItemInContents(mainCategory2Name, mainCategory2Unit, itemAmount)
+    }
+
+    @Test
+    fun shouldNotAllowAddItemWithEmptyAmount() {
+        clickOnText(mainDepot1Name)
+
+        openAddItem()
+        applyItem()
+
+        assertEmptyAmountDialog()
+
+        clickOnText("OK")
+    }
+
+    @Test
+    fun whenAddItemShouldAddItemInDepotWhereAddItemWasClicked() {
+        clickOnText(mainDepot2Name)
+
+        val amount = FixedPointNumber(1.1)
+        addItem(amount)
+
+        assertItemInContents(
+            "$mainCategory1Name",
+            mainCategory1Unit,
+            amount
+        )
+    }
+
+    @Test
+    fun ediItem() {
+        clickOnText(mainDepot1Name)
+        clickOnText("$item1Description$descriptionCategoryDelimiter$mainCategory1Name")
+
+        val amount = FixedPointNumber(3.4)
+        writeItemAmount(amount)
+
+        applyItem()
+
+        assertItemInContents(
+            "$item1Description$descriptionCategoryDelimiter$mainCategory1Name",
+            mainCategory1Unit,
+            amount
+        )
+
+        assertDepotContentSize(4)
+    }
+
+    @Test
+    fun ediItemWithoutChangesShouldWriteSameItem() {
+        clickOnText(mainDepot1Name)
+        clickOnText(item1WholeNameWithCategory)
+
+        applyItem()
+
+        assertItemInContents(
+            item1WholeNameWithCategory,
+            mainCategory1Unit,
+            itemAmount1
+        )
+
+        assertDepotContentSize(4)
+    }
+
+    @Test
+    fun ediItemWithoutChangesShouldWriteItemInTheSameDepot() {
+        clickOnText(mainDepot2Name)
+        clickOnText(item3WholeNameWithCategory)
+
+        applyItem()
+
+        assertItemInContents(
+            item3WholeNameWithCategory,
+            mainCategory2Unit,
+            itemAmount3
+        )
+
+        assertDepotContentSize(2)
+    }
+
+    @Test
+    fun removeItemShouldRemoveItem() {
+        clickOnText(mainDepot1Name)
+        assertDepotContentSize(4)
+
+        removeItem(item1WholeNameWithCategory)
+
+        assertDepotContentSize(3)
+
     }
 }

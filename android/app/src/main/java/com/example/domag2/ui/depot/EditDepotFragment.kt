@@ -15,6 +15,7 @@ import com.example.domag2.R
 import com.example.domag2.database.database.AppDatabase
 import com.example.domag2.database.database.DatabaseFactoryImpl
 import com.example.domag2.database.entities.Depot
+import com.example.domag2.database.operations.deleteDepot
 import com.example.domag2.database.relations.DepotWithContents
 import com.example.domag2.ui.common.FragmentWithActionBar
 import com.example.domag2.ui.items.DepotAdapter
@@ -114,7 +115,7 @@ class EditDepotFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedLis
         recyclerView = root.findViewById(R.id.edit_depot_content_view)
 
         spinner.setTitle(context?.getString(R.string.edit_depot_parent_text))
-        spinner.setPositiveButton(context?.getString(R.string.edit_depot_parent_select_text))
+        spinner.setPositiveButton(context?.getString(R.string.spinner_select_text))
 
         viewManager = LinearLayoutManager(context)
         viewAdapter = DepotAdapter(currentDepot, context!!, this)
@@ -178,11 +179,10 @@ class EditDepotFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedLis
         }
         R.id.edit_depot_menu_remove_depot_item -> {
             val db = context?.let { it1 -> dbFactory.factory.createDatabase(it1) }
-            val dao = db?.depotDao()
             currentDepot.value?.let {
                 val parent = it.depot.parentId
                 lifecycleScope.launch {
-                    dao?.deleteWithChildren(it.depot)
+                    db?.deleteDepot(it)
                 }
                 val action =
                     EditDepotFragmentDirections.actionEditContainerToNavItems(

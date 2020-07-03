@@ -1,10 +1,7 @@
 package com.example.domag2.dbtests
 
-import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import androidx.test.core.app.ApplicationProvider
-import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.example.domag2.database.daos.CategoryDao
-import com.example.domag2.database.database.AppDatabase
+import com.example.domag2.dbtests.common.DatabaseTest
 import com.example.domag2.dbtests.common.getFromLiveData
 import com.example.domag2.dbtests.data.*
 import com.example.domag2.matchers.isEqualRegardlessId
@@ -13,18 +10,11 @@ import org.hamcrest.CoreMatchers.*
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.greaterThan
 import org.hamcrest.collection.IsArrayContainingInAnyOrder.arrayContainingInAnyOrder
-import org.junit.After
 import org.junit.Before
-import org.junit.Rule
 import org.junit.Test
-import org.junit.runner.RunWith
 
-@RunWith(AndroidJUnit4::class)
-open class CategoryDatabaseTest {
-    @get:Rule
-    var instantTaskExecutorRule = InstantTaskExecutorRule()
+open class CategoryDatabaseTest  : DatabaseTest() {
     private lateinit var categoryDao: CategoryDao
-    private lateinit var db: AppDatabase
     val matchCategoryStartingWithName =
         arrayContainingInAnyOrder(
             isEqualRegardlessId(mainCategory1.category),
@@ -32,20 +22,8 @@ open class CategoryDatabaseTest {
         )
 
     @Before
-    fun createDb() {
-        db = com.example.domag2.dbtests.data.createDb(ApplicationProvider.getApplicationContext())
+    fun createDao() {
         categoryDao = db.categoryDao()
-    }
-
-    @Before
-    fun fillDatabase() {
-        fillData(db)
-    }
-
-    @After
-    fun closeDb() {
-        db.clearAllTables()
-        db.close()
     }
 
     @Test
@@ -120,23 +98,6 @@ open class CategoryDatabaseTest {
             all,
             not(hasItem(toRemove[0]))
         )
-    }
-
-    @Test
-    fun deleteShouldDeleteAlsoAllCategoriesInside() = runBlocking {
-        val toRemove = getFromLiveData(categoryDao.findByName(mainCategory1.category.name)).plus(
-            getFromLiveData(categoryDao.findByName(category2InMainCategory1Name))).plus(
-            getFromLiveData(categoryDao.findByName(category1InMainCategory1Name)))
-        assertThat(toRemove.size, equalTo(3))
-
-        categoryDao.deleteWithChildren(toRemove[0])
-
-        val all = getFromLiveData(categoryDao.getAll())
-
-        assertThat(all, not(hasItem(toRemove[0])))
-        assertThat(all, not(hasItem(toRemove[1])))
-        assertThat(all, not(hasItem(toRemove[2])))
-
     }
 
     @Test
