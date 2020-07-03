@@ -20,6 +20,7 @@ import com.example.domag2.ui.common.constructItemFullName
 import com.example.domag2.ui.common.createDialog
 import com.example.domag2.ui.utils.replaceText
 import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner
 import io.github.kn65op.android.lib.gui.dialogs.LocalDatePickerDialog
 import io.github.kn65op.android.lib.type.FixedPointNumber
@@ -46,6 +47,7 @@ class EditItemFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedList
     private lateinit var amountField: TextInputEditText
     private lateinit var descriptionField: TextInputEditText
     private lateinit var bestBeforeField: TextView
+    private lateinit var bestBeforeLayout: TextInputLayout
     private var allCategories = emptyList<Category>()
     private var allDepots = emptyList<Depot>()
 
@@ -87,6 +89,8 @@ class EditItemFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedList
         amountField = root.findViewById(R.id.edit_item_amount_value)
         descriptionField = root.findViewById(R.id.edit_item_description)
         bestBeforeField = root.findViewById(R.id.edit_item_best_before_field)
+        bestBeforeLayout = root.findViewById(R.id.edit_item_best_before_layout)
+        bestBeforeField.text
 
         descriptionField.doOnTextChanged { _, _, _, _ ->
             val categoryPosition = categorySpinner.selectedItemPosition
@@ -102,17 +106,20 @@ class EditItemFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedList
         depotSpinner.setPositiveButton(context?.getString(R.string.spinner_select_text))
         categorySpinner.setTitle(context?.getString(R.string.edit_item_category_spinner_title))
         categorySpinner.setPositiveButton(context?.getString(R.string.spinner_select_text))
-        bestBeforeField.setOnClickListener { _ ->
-            val dialog = LocalDatePickerDialog(this)
-            dialog.show(requireActivity().supportFragmentManager, "Date picker")
-
-        }
+        bestBeforeField.setOnClickListener { _ -> startDatePicker() }
+        bestBeforeField.setOnFocusChangeListener{ _ , gained-> if (gained) startDatePicker() }
 
         val db = dbFactory.factory.createDatabase(requireContext())
         collectAllCategories(db)
         collectAllDepots(db)
 
         return root
+    }
+
+    private fun startDatePicker() {
+
+        val dialog = LocalDatePickerDialog(this)
+        dialog.show(requireActivity().supportFragmentManager, "Date picker")
     }
 
     private fun collectAllCategories(db: AppDatabase?) {
