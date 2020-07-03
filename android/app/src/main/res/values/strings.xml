@@ -40,4 +40,7 @@
     <string name="edit_item_no_depot_dialog_message">Depot can\'t be empty.</string>
     <string name="edit_item_menu_consume_label">Consume</string>
     <string name="edit_item_best_before_label">Best before</string>
+    <string name="edit_item_remove_best_before">Remove best before</string>
+    <string name="edit_item_category_text">Category</string>
+    <string name="edit_item_depot_text">Depot</string>
 </resources>

@@ -13,10 +13,10 @@ import io.github.kn65op.android.lib.type.FixedPointNumber
 import kotlinx.coroutines.runBlocking
 import java.time.ZonedDateTime
 
-val mainDepot1Name = "name3"
-val mainDepot2Name = "name2"
-val depot1InMainDepot1Name = "depotName"
-val depot2InMainDepot1Name = "depot anoname 2"
+const val mainDepot1Name = "name3"
+const val mainDepot2Name = "name2"
+const val depot1InMainDepot1Name = "depotName"
+const val depot2InMainDepot1Name = "depot anoname 2"
 
 val mainDepot1 = DepotWithContents(depot = Depot(name = mainDepot1Name))
 val mainDepot2 = DepotWithContents(depot = Depot(name = mainDepot2Name))
@@ -68,12 +68,12 @@ const val item2Description = "BAD"
 const val item3Description = "Natoher descirption"
 const val item3WholeNameWithCategory = "$item3Description$descriptionCategoryDelimiter$mainCategory2Name"
 
-const val bestBeforeItem1 = ZonedDateTime.now().plusDays(7)!!
-const val bestBeforeItem2 = ZonedDateTime.now().minusDays(7)!!
-const val bestBeforeItem3 = ZonedDateTime.now()!!
-const val bestBeforeItem5 = ZonedDateTime.now().plusDays(1)!!
-const val bestBeforeItem6 = ZonedDateTime.now().plusYears(7)!!
-const val bestBeforeItem7 = ZonedDateTime.now().plusDays(87)!!
+val bestBeforeItem1 = ZonedDateTime.now().plusDays(7)!!
+val bestBeforeItem2 = ZonedDateTime.now().minusDays(7)!!
+val bestBeforeItem3 = ZonedDateTime.now()!!
+val bestBeforeItem5 = ZonedDateTime.now().plusDays(1)!!
+val bestBeforeItem6 = ZonedDateTime.now().plusYears(7)!!
+val bestBeforeItem7 = ZonedDateTime.now().plusDays(87)!!
 
 val item1 = Item(uid = 1, depotId = 1, categoryId = 1, amount = itemAmount1, description = item1Description, bestBefore = bestBeforeItem1)
 val item2 = Item(uid = 2, depotId = 3, categoryId = 3, amount = itemAmount2, description = item2Description, bestBefore = bestBeforeItem2)
