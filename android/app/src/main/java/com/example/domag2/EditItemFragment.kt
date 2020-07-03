@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.*
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.ImageButton
 import android.widget.TextView
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.DialogFragment
@@ -39,7 +40,7 @@ class EditItemFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedList
     private var itemId: Int? = null
     private var currentItem: Item? = null
     private val timeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("ccc dd-MMMM-yyyy")
-    private var bestBefore: ZonedDateTime = ZonedDateTime.now()
+    private var bestBefore: ZonedDateTime? = ZonedDateTime.now()
 
     //private var fromDepotDepotId : Int?  = null
     private lateinit var depotSpinner: SearchableSpinner
@@ -48,6 +49,7 @@ class EditItemFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedList
     private lateinit var descriptionField: TextInputEditText
     private lateinit var bestBeforeField: TextView
     private lateinit var bestBeforeLayout: TextInputLayout
+    private lateinit var bestBeforeRemoveButton: ImageButton
     private var allCategories = emptyList<Category>()
     private var allDepots = emptyList<Depot>()
 
@@ -90,6 +92,7 @@ class EditItemFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedList
         descriptionField = root.findViewById(R.id.edit_item_description)
         bestBeforeField = root.findViewById(R.id.edit_item_best_before_field)
         bestBeforeLayout = root.findViewById(R.id.edit_item_best_before_layout)
+        bestBeforeRemoveButton = root.findViewById(R.id.edit_item_remove_best_before_button)
         bestBeforeField.text
 
         descriptionField.doOnTextChanged { _, _, _, _ ->
@@ -108,6 +111,7 @@ class EditItemFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedList
         categorySpinner.setPositiveButton(context?.getString(R.string.spinner_select_text))
         bestBeforeField.setOnClickListener { _ -> startDatePicker() }
         bestBeforeField.setOnFocusChangeListener{ _ , gained-> if (gained) startDatePicker() }
+        bestBeforeRemoveButton.setOnClickListener{clearDate()}
 
         val db = dbFactory.factory.createDatabase(requireContext())
         collectAllCategories(db)
@@ -117,7 +121,6 @@ class EditItemFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedList
     }
 
     private fun startDatePicker() {
-
         val dialog = LocalDatePickerDialog(this)
         dialog.show(requireActivity().supportFragmentManager, "Date picker")
     }
@@ -259,6 +262,12 @@ class EditItemFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedList
         Log.i(LOG_TAG, "Was set $localDate")
         setDate(localDate)
     }
+
+    private fun clearDate() {
+        bestBeforeField.text = ""
+        bestBefore = null
+    }
+
 
     private fun setDate(localDate: ZonedDateTime?) {
         bestBeforeField.text = localDate?.format(timeFormatter)
