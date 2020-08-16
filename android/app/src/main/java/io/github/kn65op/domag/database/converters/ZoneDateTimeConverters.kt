@@ -19,6 +19,6 @@ class ZoneDateTimeConverters {
         date?.format(timeFormatter)
 
     companion object {
-        private val timeFormatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME
+        private val timeFormatter = DateTimeFormatter.ISO_ZONED_DATE_TIME
     }
 }
