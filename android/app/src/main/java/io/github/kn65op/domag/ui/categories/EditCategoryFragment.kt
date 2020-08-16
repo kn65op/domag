@@ -59,6 +59,7 @@ class EditCategoryFragment : FragmentWithActionBar(), AdapterView.OnItemSelected
         }
         Log.i(LOG_TAG, "Using depotId: $categoryId")
         Log.i(LOG_TAG, "Editing category: $categoryId: $currentName with parent: $currentParent")
+        actionBar()?.title = if (currentName.isNullOrEmpty()) context?.getString(R.string.edit_category_new_category) else currentName
     }
 
     private fun readDepot() {
@@ -76,6 +77,7 @@ class EditCategoryFragment : FragmentWithActionBar(), AdapterView.OnItemSelected
                                     LOG_TAG,
                                     "Editing category: ${it.category.uid}: ${it.category.name} with parent: ${it.category.parentId}"
                                 )
+                                actionBar()?.title = currentName
                             }
                         })
                 }

@@ -145,6 +145,14 @@ open class CategoriesPartTestSuite {
     }
 
     @Test
+    fun onClickEditCategoryShouldPrintItNameInBar() {
+        clickOnText(mainCategory1Name)
+        clickEditCategory()
+
+        assertTitleIs(mainCategory1Name)
+    }
+
+    @Test
     fun goBackShouldPrintCategoriesInTitle() {
         clickOnText(mainCategory1Name)
         Espresso.pressBack()
@@ -158,6 +166,14 @@ open class CategoriesPartTestSuite {
         Espresso.pressBack()
 
         assertCategoryInContents(mainCategory2Name)
+    }
+
+    @Test
+    fun openAddCategoryShouldHaveNewCategoryTitle() {
+        val name = "New category"
+        openAddCategory()
+
+        assertTitleIs(name)
     }
 
     @Test
