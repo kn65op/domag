@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/nav_items"
-        android:name="io.github.kn65op.domag2.ui.items.ItemsFragment"
+        android:name="io.github.kn65op.domag.ui.items.ItemsFragment"
         android:label="@string/menu_items"
         tools:layout="@layout/fragment_items">
 
@@ -49,25 +49,25 @@
 
     <fragment
         android:id="@+id/nav_shortage"
-        android:name="io.github.kn65op.domag2.ui.shortage.GalleryFragment"
+        android:name="io.github.kn65op.domag.ui.shortage.GalleryFragment"
         android:label="@string/menu_shortage"
         tools:layout="@layout/fragment_gallery" />
 
     <fragment
         android:id="@+id/nav_short_term"
-        android:name="io.github.kn65op.domag2.ui.shortTerm.SlideshowFragment"
+        android:name="io.github.kn65op.domag.ui.shortTerm.SlideshowFragment"
         android:label="@string/menu_short_term"
         tools:layout="@layout/fragment_slideshow" />
 
     <fragment
         android:id="@+id/nav_shopping_lists"
-        android:name="io.github.kn65op.domag2.ui.shoppingList.ToolsFragment"
+        android:name="io.github.kn65op.domag.ui.shoppingList.ToolsFragment"
         android:label="@string/menu_shopping_lists"
         tools:layout="@layout/fragment_tools" />
 
     <fragment
         android:id="@+id/nav_categories"
-        android:name="io.github.kn65op.domag2.ui.categories.CategoriesFragment"
+        android:name="io.github.kn65op.domag.ui.categories.CategoriesFragment"
         android:label="@string/menu_categories"
         tools:layout="@layout/fragment_categories">
         <action
@@ -94,13 +94,13 @@
 
     <fragment
         android:id="@+id/nav_send"
-        android:name="io.github.kn65op.domag2.ui.settings.SendFragment"
+        android:name="io.github.kn65op.domag.ui.settings.SendFragment"
         android:label="@string/menu_settings"
         tools:layout="@layout/fragment_send" />
 
     <fragment
         android:id="@+id/editContainer"
-        android:name="io.github.kn65op.domag2.ui.depot.EditDepotFragment"
+        android:name="io.github.kn65op.domag.ui.depot.EditDepotFragment"
         android:label="fragment_edit_container"
         tools:layout="@layout/fragment_edit_depot">
         <action
@@ -114,7 +114,7 @@
     </fragment>
     <fragment
         android:id="@+id/editCategory"
-        android:name="io.github.kn65op.domag2.ui.categories.EditCategoryFragment"
+        android:name="io.github.kn65op.domag.ui.categories.EditCategoryFragment"
         android:label="fragment_edit_category"
         tools:layout="@layout/fragment_edit_category">
         <action
@@ -128,7 +128,7 @@
     </fragment>
     <fragment
         android:id="@+id/fragmentEditItem"
-        android:name="io.github.kn65op.domag2.EditItemFragment"
+        android:name="io.github.kn65op.domag.EditItemFragment"
         android:label="fragment_edit_item"
         tools:layout="@layout/fragment_edit_item">
         <action
