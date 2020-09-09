@@ -130,4 +130,9 @@ class DepotDatabaseTest : DatabaseTest() {
             )
         )
     }
+
+    @Test
+    fun getName() = runBlocking {
+        assertThat(depotDao.getDepotName(1), equalTo(mainDepot1Name))
+    }
 }

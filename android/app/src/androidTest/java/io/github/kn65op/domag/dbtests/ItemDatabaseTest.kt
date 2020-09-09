@@ -12,6 +12,8 @@ import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Before
 import org.junit.Test
+import java.time.OffsetDateTime
+import java.time.ZonedDateTime
 
 class ItemDatabaseTest : DatabaseTest() {
     private lateinit var itemDao: ItemDao
@@ -59,6 +61,17 @@ class ItemDatabaseTest : DatabaseTest() {
 
         assertNoItemInDb(itemToUpdate, db)
         assertItemInDb(updatedItem, db)
+    }
+
+    @Test
+    fun getItesmsWithBetsBeforeBeforeDate() = runBlocking {
+        val items = getFromLiveData(
+            itemDao.getWithBestBeforeBefore(
+                ZonedDateTime.now().plusDays(7).minusHours(1)
+            )
+        )
+
+        assertThat(items, equalTo(listOf(item2, item3, item5, item7)))
     }
 
     @Test

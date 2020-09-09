@@ -37,7 +37,7 @@ open class CategoriesPartTestSuite {
     }
 
     private fun goToCategories() {
-        openPart("Categories")
+        openPart(R.id.nav_categories)
     }
 
     private fun openAddCategory() {

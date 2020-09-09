@@ -66,12 +66,6 @@ open class ItemsPartBase {
         clickOnId(R.id.edit_depot_menu_remove_depot_item)
     }
 
-    internal fun removeItem(itemName : String) {
-        clickOnText(itemName)
-        openActionBarMenu()
-        clickOnIdOrText(R.id.edit_item_menu_remove_item_item, R.string.edit_depot_menu_remove_depot_item_text)
-    }
-
     private fun clickEditDepot() {
         clickOnId(R.id.items_edit_depot_menu_item)
     }
@@ -153,6 +147,12 @@ open class ItemsPartBase {
     internal fun assertEmptyDepotDialog() {
         dialogWithText("Depot can't be empty.")
     }
+
+    fun removeItem(itemName : String) {
+        clickOnText(itemName)
+        removeItem()
+    }
+
 }
 
 @RunWith(AndroidJUnit4::class)

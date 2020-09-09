@@ -44,6 +44,12 @@ interface CategoryDao {
     @Query("SELECT rowid, * FROM category WHERE parentId IS NULL")
     fun findRootDepots(): LiveData<List<Category>>
 
+    @Query("SELECT name FROM category WHERE rowId = :id")
+    fun getCategoryName(id:Int) : String
+
+    @Query("SELECT unit FROM category WHERE rowId = :id")
+    fun getCategoryUnit(id:Int) : String
+
     @Insert
     suspend fun insert(categorys: List<Category>)
 

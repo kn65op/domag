@@ -73,7 +73,7 @@ val bestBeforeItem2 = ZonedDateTime.now().minusDays(7)!!
 val bestBeforeItem3 = ZonedDateTime.now()!!
 val bestBeforeItem5 = ZonedDateTime.now().plusDays(1)!!
 val bestBeforeItem6 = ZonedDateTime.now().plusYears(7)!!
-val bestBeforeItem7 = ZonedDateTime.now().plusDays(87)!!
+val bestBeforeItem7 = ZonedDateTime.now().plusDays(6)!!
 
 val item1 = Item(uid = 1, depotId = 1, categoryId = 1, amount = itemAmount1, description = item1Description, bestBefore = bestBeforeItem1)
 val item2 = Item(uid = 2, depotId = 3, categoryId = 3, amount = itemAmount2, description = item2Description, bestBefore = bestBeforeItem2)

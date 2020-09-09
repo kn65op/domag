@@ -53,9 +53,14 @@ fun clickHomeIcon() {
 
 }
 
-fun openPart(part: String) {
+fun removeItem() {
+    openActionBarMenu()
+    clickOnIdOrText(R.id.edit_item_menu_remove_item_item, R.string.edit_depot_menu_remove_depot_item_text)
+}
+
+fun openPart(id: Int) {
     onView(withId(R.id.drawer_layout)).perform(DrawerActions.open());
-    onView(withId(R.id.nav_view)).perform(NavigationViewActions.navigateTo(R.id.nav_categories));
+    onView(withId(R.id.nav_view)).perform(NavigationViewActions.navigateTo(id));
     sleep(500)
     /*
     // Open Drawer to click on navigation.

@@ -3,6 +3,8 @@ package io.github.kn65op.domag.database.daos
 import androidx.lifecycle.LiveData
 import androidx.room.*
 import io.github.kn65op.domag.database.entities.Item
+import java.time.OffsetDateTime
+import java.time.ZonedDateTime
 
 @Dao
 interface ItemDao {
@@ -20,6 +22,9 @@ interface ItemDao {
 
     @Query("SELECT * FROM item WHERE rowid IN (:itemIds)")
     fun findByIdsImmediately(itemIds: Array<Int>): List<Item>
+
+    @Query("SELECT * FROM item WHERE bestBefore < :date")
+    fun getWithBestBeforeBefore(date: ZonedDateTime?): LiveData<List<Item>>
 
     @Insert
     suspend fun insert(items: List<Item>)

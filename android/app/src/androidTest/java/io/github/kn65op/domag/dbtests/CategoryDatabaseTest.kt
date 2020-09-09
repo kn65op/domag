@@ -101,6 +101,11 @@ open class CategoryDatabaseTest  : DatabaseTest() {
     }
 
     @Test
+    fun getName() = runBlocking {
+        assertThat(categoryDao.getCategoryName(1), equalTo(mainCategory1Name))
+    }
+
+    @Test
     fun categoryWithItems() = runBlocking {
         val categoryWithItems = getFromLiveData(categoryDao.findWithContentsById(3))
 
@@ -121,5 +126,10 @@ open class CategoryDatabaseTest  : DatabaseTest() {
                 )
             )
         )
+    }
+
+    @Test
+    fun getUnit() = runBlocking {
+        assertThat(categoryDao.getCategoryUnit(1), equalTo(mainCategory1Unit))
     }
 }

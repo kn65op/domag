@@ -55,9 +55,18 @@
 
     <fragment
         android:id="@+id/nav_short_term"
-        android:name="io.github.kn65op.domag.ui.shortTerm.SlideshowFragment"
+        android:name="io.github.kn65op.domag.ui.shortTerm.ShortTermFragment"
         android:label="@string/menu_short_term"
-        tools:layout="@layout/fragment_slideshow" />
+        tools:layout="@layout/fragment_short_term" >
+        <action
+            android:id="@+id/action_nav_short_term_to_fragmentEditItem"
+            app:destination="@id/fragmentEditItem" >
+            <argument
+                android:name="itemId"
+                android:defaultValue="0"
+                app:argType="integer" />
+        </action>
+    </fragment>
 
     <fragment
         android:id="@+id/nav_shopping_lists"
