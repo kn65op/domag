@@ -14,7 +14,6 @@
     <string name="menu_categories">Categories</string>
     <string name="menu_settings">Settings</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="edit_container_container_name">Name</string>
     <string name="edit_container_parent_container">In</string>
@@ -45,4 +44,5 @@
     <string name="edit_item_category_text">Category</string>
     <string name="edit_item_depot_text">Depot</string>
     <string name="search">Search</string>
+    <string name="inside">in</string>
 </resources>
