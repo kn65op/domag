@@ -86,7 +86,7 @@ class EditDepotFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedLis
             if (depots != null) {
                 allDepots = depots
                 Log.i(LOG_TAG, "Observed all objects: ${allDepots.size}")
-                val parents = ArrayAdapter<String>(context!!, android.R.layout.simple_spinner_item)
+                val parents = ArrayAdapter<String>(requireContext(), android.R.layout.simple_spinner_item)
                 parents.add(context?.getString(R.string.edit_depot_parent_select_no_parent))
                 parents.addAll(depots.filter { it.uid != depotId }.map { it.name })
                 spinner.adapter = parents
@@ -118,14 +118,14 @@ class EditDepotFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedLis
         spinner.setPositiveButton(context?.getString(R.string.spinner_select_text))
 
         viewManager = LinearLayoutManager(context)
-        viewAdapter = DepotAdapter(currentDepot, context!!, this)
+        viewAdapter = DepotAdapter(currentDepot, requireContext(), this)
 
         recyclerView.apply {
             setHasFixedSize(true)
             layoutManager = viewManager
             adapter = viewAdapter
         }
-        currentDepot.observe(this, Observer {
+        currentDepot.observe(viewLifecycleOwner, Observer {
             activity?.runOnUiThread {
                 if (!recyclerView.isComputingLayout) {
                     recyclerView.adapter?.notifyDataSetChanged()

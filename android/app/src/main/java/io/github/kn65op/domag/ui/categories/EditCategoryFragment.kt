@@ -130,7 +130,7 @@ class EditCategoryFragment : FragmentWithActionBar(), AdapterView.OnItemSelected
             layoutManager = viewManager
             adapter = viewAdapter
         }
-        currentCategory.observe(this, Observer {
+        currentCategory.observe(viewLifecycleOwner, Observer {
             activity?.runOnUiThread {
                 if (!recyclerView.isComputingLayout) {
                     recyclerView.adapter?.notifyDataSetChanged()
