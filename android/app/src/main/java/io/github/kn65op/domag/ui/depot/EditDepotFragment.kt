@@ -39,7 +39,7 @@ class EditDepotFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedLis
     private lateinit var recyclerView: RecyclerView
     private lateinit var spinner: SearchableSpinner
     private var currentDepot = MutableLiveData<DepotWithContents>()
-    private var allDepots = emptyList<Depot>()
+    private var depotsThatCanBeParents = emptyList<Depot>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -84,15 +84,16 @@ class EditDepotFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedLis
         val rootObjects = db?.depotDao()?.getAll()
         rootObjects?.observe(viewLifecycleOwner, Observer { depots ->
             if (depots != null) {
-                allDepots = depots
-                Log.i(LOG_TAG, "Observed all objects: ${allDepots.size}")
-                val parents = ArrayAdapter<String>(requireContext(), android.R.layout.simple_spinner_item)
-                parents.add(context?.getString(R.string.edit_depot_parent_select_no_parent))
-                parents.addAll(depots.filter { it.uid != depotId }.map { it.name })
-                spinner.adapter = parents
-                Log.i(LOG_TAG, "AllDepots: ${allDepots.size}")
+                Log.i(LOG_TAG, "Depots in database: ${depots.size}")
+                depotsThatCanBeParents = depots.filter { it.uid != depotId }
+                val possibleParents =
+                    ArrayAdapter<String>(requireContext(), android.R.layout.simple_spinner_item)
+                possibleParents.add(context?.getString(R.string.edit_depot_parent_select_no_parent))
+                possibleParents.addAll(depotsThatCanBeParents.map { it.name })
+                spinner.adapter = possibleParents
+                Log.i(LOG_TAG, "All depots that can be parents: ${depotsThatCanBeParents.size}")
                 val parentDepotPosition =
-                    allDepots.indexOfFirst {
+                    depotsThatCanBeParents.indexOfFirst {
                         Log.i(LOG_TAG, "${it.uid} ? ${currentParent})")
                         it.uid == currentParent
                     } + PARENT_SHIFT
@@ -204,10 +205,7 @@ class EditDepotFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedLis
     }
 
     override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
-        if (p2 == 0)
-            currentParent = null
-        else
-            currentParent = allDepots[p2 - PARENT_SHIFT].uid
+        currentParent = if (p2 == 0) null else depotsThatCanBeParents[p2 - PARENT_SHIFT].uid
         Log.i(LOG_TAG, "Set parent id $currentParent")
     }
 

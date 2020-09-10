@@ -478,4 +478,16 @@ open class ItemsPartTestSuite : ItemsPartBase() {
         assertDepotContentSize(3)
 
     }
+
+    @Test
+    fun moveContainerToAnotherContainer() {
+        clickOnText(mainDepot1Name)
+
+        changeParent(depot1InMainDepot1Name, depot2InMainDepot1Name)
+
+        Espresso.pressBack()
+
+        assertDepotInContents(depot1InMainDepot1Name)
+        asserTitleIs(depot2InMainDepot1Name)
+    }
 }
