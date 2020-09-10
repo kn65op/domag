@@ -40,7 +40,7 @@ class EditCategoryFragment : FragmentWithActionBar(), AdapterView.OnItemSelected
     private lateinit var recyclerView: RecyclerView
     private lateinit var spinner: SearchableSpinner
     private var currentCategory = MutableLiveData<CategoryWithContents>()
-    private var allCategories = emptyList<Category>()
+    private var possibleParentCategories = emptyList<Category>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -89,15 +89,15 @@ class EditCategoryFragment : FragmentWithActionBar(), AdapterView.OnItemSelected
         val rootObjects = db?.categoryDao()?.getAll()
         rootObjects?.observe(viewLifecycleOwner, Observer { categories ->
             if (categories != null) {
-                allCategories = categories
-                Log.i(LOG_TAG, "Observed all objects: ${allCategories.size}")
-                val parents = ArrayAdapter<String>(requireContext(), android.R.layout.simple_spinner_item)
-                parents.add(context?.getString(R.string.edit_depot_parent_select_no_parent))
-                parents.addAll(categories.filter { it.uid != categoryId }.map { it.name })
-                spinner.adapter = parents
-                Log.i(LOG_TAG, "AllDepots: ${allCategories.size}")
+                Log.i(LOG_TAG, "Observed all objects: ${categories.size}")
+                possibleParentCategories = categories.filter { it.uid != categoryId }
+                val possibleParents = ArrayAdapter<String>(requireContext(), android.R.layout.simple_spinner_item)
+                possibleParents.add(context?.getString(R.string.edit_depot_parent_select_no_parent))
+                possibleParents.addAll(possibleParentCategories.map { it.name })
+                spinner.adapter = possibleParents
+                Log.i(LOG_TAG, "AllDepots: ${possibleParentCategories.size}")
                 val parentDepotPosition =
-                    allCategories.indexOfFirst {
+                    possibleParentCategories.indexOfFirst {
                         Log.i(LOG_TAG, "${it.uid} ? ${currentParent})")
                         it.uid == currentParent
                     } + PARENT_SHIFT
@@ -224,7 +224,7 @@ class EditCategoryFragment : FragmentWithActionBar(), AdapterView.OnItemSelected
         if (position == 0)
             currentParent = null
         else
-            currentParent = allCategories[position - PARENT_SHIFT].uid
+            currentParent = possibleParentCategories[position - PARENT_SHIFT].uid
         Log.i(LOG_TAG, "Set parent id $currentParent")
     }
 
