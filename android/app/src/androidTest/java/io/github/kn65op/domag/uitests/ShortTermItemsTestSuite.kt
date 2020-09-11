@@ -53,7 +53,7 @@ class ShortTermItemsTestSuite {
         description: String,
         category: String,
         depot: String
-    ) = "$description($category) in $depot"
+    ) = "$description ($category) in $depot"
 
     private fun categoryAndDepot(category: String, depot: String) = "$category in $depot"
 

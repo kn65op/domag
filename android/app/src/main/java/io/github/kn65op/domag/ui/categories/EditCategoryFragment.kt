@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.*
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
@@ -19,7 +20,9 @@ import io.github.kn65op.domag.database.entities.Category
 import io.github.kn65op.domag.database.operations.deleteCategory
 import io.github.kn65op.domag.database.relations.CategoryWithContents
 import io.github.kn65op.domag.ui.common.FragmentWithActionBar
+import io.github.kn65op.domag.ui.depot.EditDepotFragment
 import io.github.kn65op.domag.ui.utils.replaceText
+import io.github.kn65op.domag.utils.getAllButNotItAndDescendants
 import kotlinx.android.synthetic.main.fragment_edit_category.*
 import kotlinx.coroutines.launch
 
@@ -40,7 +43,8 @@ class EditCategoryFragment : FragmentWithActionBar(), AdapterView.OnItemSelected
     private lateinit var recyclerView: RecyclerView
     private lateinit var spinner: SearchableSpinner
     private var currentCategory = MutableLiveData<CategoryWithContents>()
-    private var allCategories = emptyList<Category>()
+    private var possibleParentCategories = emptyList<Category>()
+    private var categories: List<Category>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,7 +63,8 @@ class EditCategoryFragment : FragmentWithActionBar(), AdapterView.OnItemSelected
         }
         Log.i(LOG_TAG, "Using depotId: $categoryId")
         Log.i(LOG_TAG, "Editing category: $categoryId: $currentName with parent: $currentParent")
-        actionBar()?.title = if (currentName.isNullOrEmpty()) context?.getString(R.string.edit_category_new_category) else currentName
+        actionBar()?.title =
+            if (currentName.isNullOrEmpty()) context?.getString(R.string.edit_category_new_category) else currentName
     }
 
     private fun readDepot() {
@@ -78,6 +83,7 @@ class EditCategoryFragment : FragmentWithActionBar(), AdapterView.OnItemSelected
                                     "Editing category: ${it.category.uid}: ${it.category.name} with parent: ${it.category.parentId}"
                                 )
                                 actionBar()?.title = currentName
+                                prepareCategorySelectorIfReady(currentCategory, categories)
                             }
                         })
                 }
@@ -87,25 +93,40 @@ class EditCategoryFragment : FragmentWithActionBar(), AdapterView.OnItemSelected
 
     private fun getAllCategories(db: AppDatabase?) {
         val rootObjects = db?.categoryDao()?.getAll()
-        rootObjects?.observe(viewLifecycleOwner, Observer { categories ->
-            if (categories != null) {
-                allCategories = categories
-                Log.i(LOG_TAG, "Observed all objects: ${allCategories.size}")
-                val parents = ArrayAdapter<String>(requireContext(), android.R.layout.simple_spinner_item)
-                parents.add(context?.getString(R.string.edit_depot_parent_select_no_parent))
-                parents.addAll(categories.filter { it.uid != categoryId }.map { it.name })
-                spinner.adapter = parents
-                Log.i(LOG_TAG, "AllDepots: ${allCategories.size}")
-                val parentDepotPosition =
-                    allCategories.indexOfFirst {
-                        Log.i(LOG_TAG, "${it.uid} ? ${currentParent})")
-                        it.uid == currentParent
-                    } + PARENT_SHIFT
-                Log.i(LOG_TAG, "Index $parentDepotPosition")
-                spinner.setSelection(parentDepotPosition)
-                spinner.onItemSelectedListener = this
-            }
+        rootObjects?.observe(viewLifecycleOwner, Observer {
+            Log.i(LOG_TAG, "Observed all objects: ${it.size}")
+            categories = it
+            prepareCategorySelectorIfReady(currentCategory, categories)
         })
+    }
+
+    private fun prepareCategorySelectorIfReady(
+        categoryLiveData: MutableLiveData<CategoryWithContents>,
+        categories: List<Category>?
+    ) {
+        if (categories != null)
+            prepareCategorySelector(categoryLiveData.value?.category, categories)
+        else
+            Log.i(LOG_TAG, "Categories are not ready to be prepared")
+    }
+
+    private fun prepareCategorySelector(category: Category?, categories: List<Category>) {
+        possibleParentCategories =
+            if (category == null) categories else getAllButNotItAndDescendants(category, categories)
+        val possibleParents =
+            ArrayAdapter<String>(requireContext(), android.R.layout.simple_spinner_item)
+        possibleParents.add(context?.getString(R.string.edit_depot_parent_select_no_parent))
+        possibleParents.addAll(possibleParentCategories.map { it.name })
+        spinner.adapter = possibleParents
+        Log.i(LOG_TAG, "Possible parent categories: ${possibleParentCategories.size}")
+        val parentDepotPosition =
+            possibleParentCategories.indexOfFirst {
+                Log.i(LOG_TAG, "${it.uid} ? ${currentParent})")
+                it.uid == currentParent
+            } + PARENT_SHIFT
+        Log.i(LOG_TAG, "Index $parentDepotPosition")
+        spinner.setSelection(parentDepotPosition)
+        spinner.onItemSelectedListener = this
     }
 
     override fun onCreateView(
@@ -224,7 +245,7 @@ class EditCategoryFragment : FragmentWithActionBar(), AdapterView.OnItemSelected
         if (position == 0)
             currentParent = null
         else
-            currentParent = allCategories[position - PARENT_SHIFT].uid
+            currentParent = possibleParentCategories[position - PARENT_SHIFT].uid
         Log.i(LOG_TAG, "Set parent id $currentParent")
     }
 
