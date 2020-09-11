@@ -10,6 +10,4 @@ fun <T> getFromLiveData(ld: LiveData<T>): T {
     throw ValueIsEmptyException();
 }
 
-class ValueIsEmptyException : Throwable() {
-
-}
+class ValueIsEmptyException : Throwable()

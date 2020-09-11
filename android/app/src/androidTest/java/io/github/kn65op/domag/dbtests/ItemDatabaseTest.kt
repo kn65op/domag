@@ -42,13 +42,13 @@ class ItemDatabaseTest : DatabaseTest() {
 
     @Test
     fun getItemsByIds() = runBlocking {
-        val items = getFromLiveData(itemDao.findByIds(arrayOf(2, 5)))
+        val items = getFromLiveData(itemDao.findByIds(arrayOf(2, 5).toIntArray()))
         assertThat(items, equalTo(listOf(item2, item5)))
     }
 
     @Test
     fun getItemsByIdsImmediately() = runBlocking {
-        val items = itemDao.findByIdsImmediately(arrayOf(1, 3))
+        val items = itemDao.findByIdsImmediately(arrayOf(1, 3).toIntArray())
         assertThat(items, equalTo(listOf(item1, item3)))
     }
 

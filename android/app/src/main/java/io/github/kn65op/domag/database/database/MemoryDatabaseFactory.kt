@@ -18,11 +18,11 @@ class MemoryDatabaseFactory :
     companion object {
         private var instance: AppDatabase? = null
 
-        fun getInstance(applicationContext: Context): AppDatabase = (instance ?: synchronized(this)
+        fun getInstance(applicationContext: Context): AppDatabase = instance ?: synchronized(this)
         {
             Log.i(DatabaseFactory.LOG_TAG, "get memory instance")
             instance ?: buildDatabase(applicationContext).also { instance = it }
-        })
+        }
 
         fun setToNull() {
             instance?.clearAllTables()

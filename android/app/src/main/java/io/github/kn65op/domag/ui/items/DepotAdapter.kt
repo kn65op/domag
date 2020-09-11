@@ -22,8 +22,7 @@ class DepotAdapter(
     private val lifecycleOwner: LifecycleOwner
 ) :
     RecyclerView.Adapter<DepotAdapter.ViewHolder>() {
-    open class ViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
-    }
+    open class ViewHolder(private val view: View) : RecyclerView.ViewHolder(view)
 
     class DepotViewHolder(private val view: View) : ViewHolder(view) {
         val nameViewHolder: TextView = view.findViewById(R.id.depot_row_name)

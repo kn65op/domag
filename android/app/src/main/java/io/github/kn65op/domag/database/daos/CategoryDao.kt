@@ -25,13 +25,13 @@ interface CategoryDao {
 
     @Transaction
     @Query("SELECT rowid, * FROM category WHERE rowid IN (:categoryIds)")
-    fun findWithContentsById(categoryIds: Array<Int>): LiveData<List<CategoryWithContents>>
+    fun findWithContentsById(categoryIds: IntArray): LiveData<List<CategoryWithContents>>
 
     @Query("SELECT rowid, * FROM category WHERE rowid = :categoryIds")
     fun findById(categoryIds: Int): LiveData<Category>
 
     @Query("SELECT rowid, * FROM category WHERE rowid IN (:categoryIds)")
-    fun findById(categoryIds: Array<Int>): LiveData<List<Category>>
+    fun findById(categoryIds: IntArray): LiveData<List<Category>>
 
     @Transaction
     @Query("SELECT rowid, * FROM category WHERE name MATCH :name")
@@ -45,10 +45,10 @@ interface CategoryDao {
     fun findRootDepots(): LiveData<List<Category>>
 
     @Query("SELECT name FROM category WHERE rowId = :id")
-    fun getCategoryName(id:Int) : String
+    fun getCategoryName(id: Int): String
 
     @Query("SELECT unit FROM category WHERE rowId = :id")
-    fun getCategoryUnit(id:Int) : String
+    fun getCategoryUnit(id: Int): String
 
     @Insert
     suspend fun insert(categorys: List<Category>)

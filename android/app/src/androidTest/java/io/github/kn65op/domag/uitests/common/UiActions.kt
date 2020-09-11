@@ -47,13 +47,6 @@ fun typeNewTextOnId(id: Int, text: String) {
     typeNewTextOn(onView(withId(id)), text)
 }
 
-fun clickHomeIcon() {
-    //TODO: To be used in tests
-    //onView(androidHomeMatcher()).perform(click())
-    onView(withContentDescription(R.string.abc_action_bar_up_description)).perform(click());
-
-}
-
 fun removeItem() {
     openActionBarMenu()
     clickOnIdOrText(

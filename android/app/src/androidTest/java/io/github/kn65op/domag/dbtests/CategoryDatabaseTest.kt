@@ -77,7 +77,7 @@ open class CategoryDatabaseTest  : DatabaseTest() {
 
         val found =
             getFromLiveData(categoryDao.findWithContentsById(toFind.map { it.uid as Int }
-                .toTypedArray()))
+                .toIntArray()))
 
         assertThat(
             found.map { it.category }.toTypedArray(),

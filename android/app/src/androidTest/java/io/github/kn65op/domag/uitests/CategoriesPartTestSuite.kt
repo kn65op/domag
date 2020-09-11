@@ -193,15 +193,6 @@ open class CategoriesPartTestSuite {
     }
 
     @Test
-    fun removeCategoryShouldRemoveItsChildren() {
-        clickOnText(mainCategory1Name)
-
-        removeCategory()
-
-        //TODO: Search for removed childer
-    }
-
-    @Test
     fun removeCategoryShouldNotBePrintedAndGoToParent() {
         clickOnText(mainCategory1Name)
         clickOnText(category1InMainCategory1Name)

@@ -25,13 +25,13 @@ interface DepotDao {
 
     @Transaction
     @Query("SELECT rowid, * FROM depot WHERE rowid IN (:depotIds)")
-    fun findWithContentsById(depotIds: Array<Int>): LiveData<List<DepotWithContents>>
+    fun findWithContentsById(depotIds: IntArray): LiveData<List<DepotWithContents>>
 
     @Query("SELECT rowid, * FROM depot WHERE rowid = :depotIds")
     fun findById(depotIds: Int): LiveData<Depot>
 
     @Query("SELECT rowid, * FROM depot WHERE rowid IN (:depotIds)")
-    fun findById(depotIds: Array<Int>): LiveData<List<Depot>>
+    fun findById(depotIds: IntArray): LiveData<List<Depot>>
 
     @Transaction
     @Query("SELECT rowid, * FROM depot WHERE name MATCH :name")
@@ -45,7 +45,7 @@ interface DepotDao {
     fun findRootDepots(): LiveData<List<Depot>>
 
     @Query("SELECT name FROM depot WHERE rowId = :id")
-    fun getDepotName(id:Int) : String
+    fun getDepotName(id: Int): String
 
     @Insert
     suspend fun insert(depots: List<Depot>)

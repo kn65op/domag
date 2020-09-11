@@ -22,8 +22,7 @@ class CategoryAdapter(
     private val lifecycleOwner: LifecycleOwner
 ) :
     RecyclerView.Adapter<CategoryAdapter.ViewHolder>() {
-    open class ViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
-    }
+    open class ViewHolder(private val view: View) : RecyclerView.ViewHolder(view)
 
     class CategoryViewHolder(private val view: View) : ViewHolder(view) {
         val nameViewHolder: TextView = view.findViewById(R.id.category_row_name)
@@ -104,8 +103,7 @@ class CategoryAdapter(
             Log.i(LOG_TAG, "Show item: $itemPosition")
             depot.observe(lifecycleOwner, Observer {
                 Log.i(LOG_TAG, "Category for $itemPosition: ${it?.name}")
-                it?.let {
-                    depot ->
+                it?.let { depot ->
                     itemViewHolder.amountViewHolder.text =
                         categoryContent.items[itemPosition].amount.toString()
                     itemViewHolder.nameViewHolder.text = constructItemFullName(

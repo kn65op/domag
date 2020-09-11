@@ -13,11 +13,11 @@ class SqlDatabaseFactory : DatabaseFactory {
     companion object {
         private var instance: AppDatabase? = null
 
-        fun getInstance(applicationContext: Context): AppDatabase = (instance ?: synchronized(this)
+        fun getInstance(applicationContext: Context): AppDatabase = instance ?: synchronized(this)
         {
             Log.i(DatabaseFactory.LOG_TAG, "get SQL instance")
             instance ?: buildDatabase(applicationContext).also { instance = it }
-        })
+        }
 
         private fun buildDatabase(applicationContext: Context) =
             Room.databaseBuilder(

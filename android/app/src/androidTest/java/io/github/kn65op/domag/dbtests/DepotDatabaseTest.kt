@@ -77,7 +77,7 @@ class DepotDatabaseTest : DatabaseTest() {
 
         val found =
             getFromLiveData(depotDao.findWithContentsById(toFind.map { it.uid as Int }
-                .toTypedArray()))
+                .toIntArray()))
 
         assertThat(
             found.map { it.depot }.toTypedArray(),

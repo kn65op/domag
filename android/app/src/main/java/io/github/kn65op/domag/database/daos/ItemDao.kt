@@ -18,10 +18,10 @@ interface ItemDao {
     fun findById(itemIds: Int): LiveData<Item>
 
     @Query("SELECT * FROM item WHERE rowid IN (:itemIds)")
-    fun findByIds(itemIds: Array<Int>): LiveData<List<Item>>
+    fun findByIds(itemIds: IntArray): LiveData<List<Item>>
 
     @Query("SELECT * FROM item WHERE rowid IN (:itemIds)")
-    fun findByIdsImmediately(itemIds: Array<Int>): List<Item>
+    fun findByIdsImmediately(itemIds: IntArray): List<Item>
 
     @Query("SELECT * FROM item WHERE bestBefore < :date")
     fun getWithBestBeforeBefore(date: ZonedDateTime?): LiveData<List<Item>>

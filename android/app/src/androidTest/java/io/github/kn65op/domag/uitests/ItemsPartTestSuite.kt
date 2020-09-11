@@ -225,15 +225,6 @@ open class ItemsPartTestSuite : ItemsPartBase() {
     }
 
     @Test
-    fun removeDepotShouldRemoveItsChildren() {
-        clickOnText(mainDepot1Name)
-
-        removeDepot()
-
-        //TODO: Search for removed childer
-    }
-
-    @Test
     fun removeDepotShouldNotBePrintedAndGoToParent() {
         clickOnText(mainDepot1Name)
         clickOnText(depot1InMainDepot1Name)

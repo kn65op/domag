@@ -11,7 +11,6 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
-@RunWith(AndroidJUnit4::class)
 open class DatabaseTest {
     @get:Rule
     var instantTaskExecutorRule = InstantTaskExecutorRule()
@@ -31,10 +30,5 @@ open class DatabaseTest {
     fun closeDb() {
         db.clearAllTables()
         db.close()
-    }
-
-    @Test
-    fun dummyTest() {
-
     }
 }
