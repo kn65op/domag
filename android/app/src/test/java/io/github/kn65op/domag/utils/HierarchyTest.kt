@@ -13,6 +13,29 @@ class TestUidAndParent(parentId: Int?, uid: Int?) : HasParent, HasUid {
 
 class HierarchyTest {
     private val nullParent = TestUidAndParent(null, null)
+    private val notInList = TestUidAndParent(100, 200)
+    private val root1 = TestUidAndParent(null, 1)
+    private val root2 = TestUidAndParent(null, 2)
+    private val root1Object1 = TestUidAndParent(1, 3)
+    private val root1Object2 = TestUidAndParent(1, 4)
+    private val root1Object3 = TestUidAndParent(1, 5)
+    private val root1Object3Object1 = TestUidAndParent(5, 6)
+    private val root1Object3Object1Object1 = TestUidAndParent(7, 7)
+    private val root2Object1 = TestUidAndParent(2, 8)
+    private val root2Object1Object1 = TestUidAndParent(8, 9)
+    private val root2Object2 = TestUidAndParent(2, 10)
+    private val objects = listOf(
+        root1,
+        root1Object1,
+        root1Object2,
+        root1Object3,
+        root1Object3Object1,
+        root1Object3Object1Object1,
+        root2,
+        root2Object1,
+        root2Object1Object1,
+        root2Object2
+    )
 
     @Test
     fun `Given empty list should return empty list`() {
@@ -20,8 +43,8 @@ class HierarchyTest {
     }
 
     @Test
-    fun `Test`(){
-        val cat = Category(name = "A", unit = "A")
-        getAllButNotDescendants(cat, emptyList())
+    fun `Given object not in list should return same list`() {
+        assertThat(getAllButNotDescendants(notInList, objects), equalTo(objects))
     }
+
 }
