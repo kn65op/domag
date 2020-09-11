@@ -8,14 +8,12 @@ interface HasUid {
     val uid: Int?
 }
 
-fun <WithParent> getAllButNotDescendants(
+fun <WithParent> getAllButNotItAndDescendants(
     parent: WithParent,
     objects: List<WithParent>
 ): List<WithParent> where WithParent : HasParent, WithParent : HasUid {
-    return objects
-    //parent.uid
-    //val mappedObjects = objects.map { it.uid to it }.toMap()
-    //return objects.filter { isItOrOneOfAncestor(parent.uid, it.uid, mappedObjects) }
+    val mappedObjects = objects.map { it.uid to it }.toMap()
+    return objects.filter { isItOrOneOfAncestor(parent.uid, it.uid, mappedObjects) }
 }
 
 private fun <WithParent> isItOrOneOfAncestor(
@@ -24,12 +22,12 @@ private fun <WithParent> isItOrOneOfAncestor(
     mappedObjects: Map<Int?, WithParent>
 ): Boolean where WithParent : HasParent, WithParent : HasUid = when {
     //tested == null -> false
-    //parent == tested -> true
+    parent == tested ->false
     //mappedObjects[tested]?.parentId == null -> false
     //else -> isItOrOneOfAncestor(
         //parent = parent,
         //tested = mappedObjects[tested]?.parentId,
         //mappedObjects = mappedObjects
     //)
-    else -> true
+    else ->true
 }
