@@ -95,7 +95,7 @@ class EditCategoryFragment : FragmentWithActionBar(), AdapterView.OnItemSelected
                 possibleParents.add(context?.getString(R.string.edit_depot_parent_select_no_parent))
                 possibleParents.addAll(possibleParentCategories.map { it.name })
                 spinner.adapter = possibleParents
-                Log.i(LOG_TAG, "AllDepots: ${possibleParentCategories.size}")
+                Log.i(LOG_TAG, "Possible parent categories: ${possibleParentCategories.size}")
                 val parentDepotPosition =
                     possibleParentCategories.indexOfFirst {
                         Log.i(LOG_TAG, "${it.uid} ? ${currentParent})")
