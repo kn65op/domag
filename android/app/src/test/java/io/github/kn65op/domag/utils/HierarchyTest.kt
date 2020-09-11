@@ -20,7 +20,7 @@ class HierarchyTest {
     private val root1Object2 = TestUidAndParent(1, 4)
     private val root1Object3 = TestUidAndParent(1, 5)
     private val root1Object3Object1 = TestUidAndParent(5, 6)
-    private val root1Object3Object1Object1 = TestUidAndParent(7, 7)
+    private val root1Object3Object1Object1 = TestUidAndParent(6, 7)
     private val root2Object1 = TestUidAndParent(2, 8)
     private val root2Object1Object1 = TestUidAndParent(8, 9)
     private val root2Object2 = TestUidAndParent(2, 10)
@@ -56,4 +56,19 @@ class HierarchyTest {
         )
     }
 
+    @Test
+    fun `Given objects that has objects below should remove it also`() {
+        assertThat(
+            getAllButNotItAndDescendants(root2Object1, objects),
+            equalTo(objects - root2Object1 - root2Object1Object1)
+        )
+    }
+
+    @Test
+    fun `Given root object shuold remove only others root objects`() {
+        assertThat(
+            getAllButNotItAndDescendants(root1, objects),
+            equalTo(listOf(root2, root2Object1, root2Object1Object1, root2Object2, nullObject))
+        )
+    }
 }
