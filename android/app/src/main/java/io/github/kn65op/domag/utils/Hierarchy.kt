@@ -1,12 +1,7 @@
 package io.github.kn65op.domag.utils
 
-interface HasParent {
-    val parentId: Int?
-}
-
-interface HasUid {
-    val uid: Int?
-}
+import io.github.kn65op.domag.utils.types.HasParent
+import io.github.kn65op.domag.utils.types.HasUid
 
 fun <WithParent> getAllButNotItAndDescendants(
     parent: WithParent,

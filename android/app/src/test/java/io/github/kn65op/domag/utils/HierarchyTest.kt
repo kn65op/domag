@@ -2,6 +2,8 @@ package io.github.kn65op.domag.utils
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
+import io.github.kn65op.domag.utils.types.HasParent
+import io.github.kn65op.domag.utils.types.HasUid
 import org.junit.Test
 
 data class TestUidAndParent(

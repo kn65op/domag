@@ -4,8 +4,8 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Fts4
 import androidx.room.PrimaryKey
-import io.github.kn65op.domag.utils.HasParent
-import io.github.kn65op.domag.utils.HasUid
+import io.github.kn65op.domag.utils.types.HasParent
+import io.github.kn65op.domag.utils.types.HasUid
 
 @Fts4
 @Entity
