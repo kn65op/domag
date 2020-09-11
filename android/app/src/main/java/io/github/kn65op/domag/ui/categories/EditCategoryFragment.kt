@@ -20,6 +20,7 @@ import io.github.kn65op.domag.database.entities.Category
 import io.github.kn65op.domag.database.operations.deleteCategory
 import io.github.kn65op.domag.database.relations.CategoryWithContents
 import io.github.kn65op.domag.ui.common.FragmentWithActionBar
+import io.github.kn65op.domag.ui.depot.EditDepotFragment
 import io.github.kn65op.domag.ui.utils.replaceText
 import io.github.kn65op.domag.utils.getAllButNotItAndDescendants
 import kotlinx.android.synthetic.main.fragment_edit_category.*
@@ -106,10 +107,7 @@ class EditCategoryFragment : FragmentWithActionBar(), AdapterView.OnItemSelected
         if (categories != null)
             prepareCategorySelector(categoryLiveData.value?.category, categories)
         else
-            Log.i(
-                LOG_TAG,
-                "Wait for more data: category ${categoryLiveData.value}, categories: ${categories?.size}"
-            )
+            Log.i(LOG_TAG, "Categories are not ready to be prepared")
     }
 
     private fun prepareCategorySelector(category: Category?, categories: List<Category>) {

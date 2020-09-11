@@ -21,6 +21,7 @@ import io.github.kn65op.domag.database.relations.DepotWithContents
 import io.github.kn65op.domag.ui.common.FragmentWithActionBar
 import io.github.kn65op.domag.ui.items.DepotAdapter
 import io.github.kn65op.domag.ui.utils.replaceText
+import io.github.kn65op.domag.utils.getAllButNotItAndDescendants
 import kotlinx.android.synthetic.main.fragment_edit_depot.*
 import kotlinx.coroutines.launch
 
@@ -40,6 +41,7 @@ class EditDepotFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedLis
     private lateinit var spinner: SearchableSpinner
     private var currentDepot = MutableLiveData<DepotWithContents>()
     private var depotsThatCanBeParents = emptyList<Depot>()
+    private var depots: List<Depot>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -74,6 +76,7 @@ class EditDepotFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedLis
                                     "Editing depot: ${it.depot.uid}: ${it.depot.name} with parent: ${it.depot.parentId}"
                                 )
                             }
+                            prepareParentDepotSelectorIfReady(currentDepot, depots)
                         })
                 }
             }
@@ -82,26 +85,40 @@ class EditDepotFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedLis
 
     private fun getAllDepots(db: AppDatabase?) {
         val rootObjects = db?.depotDao()?.getAll()
-        rootObjects?.observe(viewLifecycleOwner, Observer { depots ->
-            if (depots != null) {
-                Log.i(LOG_TAG, "Depots in database: ${depots.size}")
-                depotsThatCanBeParents = depots.filter { it.uid != depotId }
-                val possibleParents =
-                    ArrayAdapter<String>(requireContext(), android.R.layout.simple_spinner_item)
-                possibleParents.add(context?.getString(R.string.edit_depot_parent_select_no_parent))
-                possibleParents.addAll(depotsThatCanBeParents.map { it.name })
-                spinner.adapter = possibleParents
-                Log.i(LOG_TAG, "All depots that can be parents: ${depotsThatCanBeParents.size}")
-                val parentDepotPosition =
-                    depotsThatCanBeParents.indexOfFirst {
-                        Log.i(LOG_TAG, "${it.uid} ? ${currentParent})")
-                        it.uid == currentParent
-                    } + PARENT_SHIFT
-                Log.i(LOG_TAG, "Index $parentDepotPosition")
-                spinner.setSelection(parentDepotPosition)
-                spinner.onItemSelectedListener = this
-            }
+        rootObjects?.observe(viewLifecycleOwner, Observer {
+            Log.i(LOG_TAG, "Depots in database: ${depots?.size}")
+            depots = it
+            prepareParentDepotSelectorIfReady(currentDepot, depots)
         })
+    }
+
+    private fun prepareParentDepotSelectorIfReady(
+        depotLiveData: MutableLiveData<DepotWithContents>,
+        depots: List<Depot>?
+    ) {
+        if (depots != null)
+            prepareParentDepotSelector(depotLiveData.value?.depot, depots)
+        else
+            Log.i(LOG_TAG, "Depots are not ready to be prepared")
+    }
+
+    private fun prepareParentDepotSelector(depot: Depot?, depots: List<Depot>) {
+        depotsThatCanBeParents =
+            if (depot == null) depots else getAllButNotItAndDescendants(depot, depots)
+        val possibleParents =
+            ArrayAdapter<String>(requireContext(), android.R.layout.simple_spinner_item)
+        possibleParents.add(context?.getString(R.string.edit_depot_parent_select_no_parent))
+        possibleParents.addAll(depotsThatCanBeParents.map { it.name })
+        spinner.adapter = possibleParents
+        Log.i(LOG_TAG, "All depots that can be parents: ${depotsThatCanBeParents.size}")
+        val parentDepotPosition =
+            depotsThatCanBeParents.indexOfFirst {
+                Log.i(LOG_TAG, "${it.uid} ? ${currentParent})")
+                it.uid == currentParent
+            } + PARENT_SHIFT
+        Log.i(LOG_TAG, "Index $parentDepotPosition")
+        spinner.setSelection(parentDepotPosition)
+        spinner.onItemSelectedListener = this
     }
 
     override fun onCreateView(
