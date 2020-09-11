@@ -45,6 +45,9 @@
                 android:defaultValue="0"
                 app:argType="integer" />
         </action>
+        <action
+            android:id="@+id/action_nav_items_to_editCategory"
+            app:destination="@id/editCategory" />
     </fragment>
 
     <fragment
@@ -96,6 +99,17 @@
                 app:argType="integer" />
             <argument
                 android:name="parentId"
+                android:defaultValue="0"
+                app:argType="integer" />
+        </action>
+        <action
+            android:id="@+id/action_nav_categories_to_editContainer"
+            app:destination="@id/editContainer" />
+        <action
+            android:id="@+id/action_nav_categories_to_fragmentEditItem"
+            app:destination="@id/fragmentEditItem" >
+            <argument
+                android:name="categoryId"
                 android:defaultValue="0"
                 app:argType="integer" />
         </action>

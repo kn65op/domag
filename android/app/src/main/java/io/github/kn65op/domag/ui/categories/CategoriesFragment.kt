@@ -15,7 +15,7 @@ import io.github.kn65op.domag.database.database.DatabaseFactoryImpl
 import io.github.kn65op.domag.database.entities.Category
 import io.github.kn65op.domag.database.relations.CategoryWithContents
 import io.github.kn65op.domag.ui.common.FragmentWithActionBar
-import com.google.android.material.floatingactionbutton.FloatingActionButton
+import io.github.kn65op.domag.ui.common.prepareFabs
 
 class CategoriesFragment : FragmentWithActionBar() {
     val storedCategoryId = "categoryId"
@@ -85,17 +85,26 @@ class CategoriesFragment : FragmentWithActionBar() {
         } else {
             Log.e(LOG_TAG, "Unable to fill recycler view, no context")
         }
-        prepareFabs(root)
+        prepareFabMenu(root)
         setHasOptionsMenu(true)
         return root
     }
 
-    private fun prepareFabs(root: View) {
-        val addCategoryFab: FloatingActionButton =
-            root.findViewById(R.id.categories_add_category_fab)
-        addCategoryFab.setOnClickListener {
+    private fun prepareFabMenu(root: View) {
+        val addDepotAction = View.OnClickListener {
             Log.i(LOG_TAG, "Clicked add depot")
-            Log.i(LOG_TAG, "Wiato for to go")
+            val action = CategoriesFragmentDirections.actionNavCategoriesToEditContainer()
+            root.findNavController().navigate(action)
+        }
+        val addItemAction = View.OnClickListener {
+            Log.i(LOG_TAG, "Clicked add item")
+            val action = CategoriesFragmentDirections.actionNavCategoriesToFragmentEditItem(
+                categoryId = currentCategory.value?.category?.uid ?: 0
+            )
+            root.findNavController().navigate(action)
+        }
+        val addCategoryAction = View.OnClickListener {
+            Log.i(LOG_TAG, "Clicked add category")
             val action =
                 CategoriesFragmentDirections.actionNavCategoriesToEditCategory(
                     parentId = currentCategory.value?.category?.uid ?: 0
@@ -103,6 +112,13 @@ class CategoriesFragment : FragmentWithActionBar() {
             Log.i(LOG_TAG, "${currentCategory.value?.category?.uid}")
             root.findNavController().navigate(action)
         }
+        prepareFabs(
+            root,
+            addDepotAction = addDepotAction,
+            addCategoryAction = addCategoryAction,
+            addItemAction = addItemAction,
+            backgroundId = R.id.categories_fab_background,
+        )
     }
 
     private fun getCategory(db: AppDatabase?, depotId: Int) {

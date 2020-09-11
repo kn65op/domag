@@ -25,23 +25,6 @@ open class ItemsPartBase {
         Thread.sleep(500) // WA for aynschronous DB calls
     }
 
-    internal fun openAddDepot() {
-        clickOnId(R.id.items_general_fab)
-        clickOnId(R.id.items_add_depot_fab)
-    }
-
-    internal fun writeDepotName(name: String) {
-        typeNewTextOnId(R.id.edit_depot_depot_name, name)
-    }
-
-    internal fun applyDepot() {
-        clickOnId(R.id.edit_depot_menu_confirm)
-    }
-
-    internal fun applyItem() {
-        clickOnId(R.id.edit_item_menu_confirm)
-    }
-
     internal fun assertDepotInContents(name: String) {
         viewOrChildHasText(R.id.fragment_items_layout, name)
     }
@@ -70,12 +53,6 @@ open class ItemsPartBase {
         clickOnId(R.id.items_edit_depot_menu_item)
     }
 
-    internal fun addDepot(name: String) {
-        openAddDepot()
-        writeDepotName(name)
-        applyDepot()
-    }
-
     internal fun addDepotWithParent(parentName: String, name: String) {
         openAddDepot()
         writeDepotName(name)
@@ -101,39 +78,8 @@ open class ItemsPartBase {
         viewOrChildHasText(R.id.toolbar, title)
     }
 
-    internal fun openAddItem() {
-        clickOnId(R.id.items_general_fab)
-        clickOnId(R.id.items_add_item_fab)
-    }
-
-    internal fun addItem(amount: FixedPointNumber) {
-        openAddItem()
-
-        writeItemAmount(amount)
-
-        applyItem()
-    }
-
-    internal fun addItem(categoryName: String, amount: FixedPointNumber) {
-        openAddItem()
-
-        setCategory(categoryName)
-        writeItemAmount(amount)
-
-        applyItem()
-    }
-
-    internal fun writeItemAmount(amount: FixedPointNumber) {
-        typeNewTextOnId(R.id.edit_item_amount_value, amount.toString())
-    }
-
     internal fun writeDescription(description: String) {
         typeNewTextOnId(R.id.edit_item_description, description)
-    }
-
-    internal fun setCategory(name: String) {
-        clickOnId(R.id.edit_item_category_spinner)
-        clickOnText(name)
     }
 
     internal fun assertEmptyAmountDialog() {
@@ -148,7 +94,7 @@ open class ItemsPartBase {
         dialogWithText("Depot can't be empty.")
     }
 
-    fun removeItem(itemName : String) {
+    fun removeItem(itemName: String) {
         clickOnText(itemName)
         removeItem()
     }
@@ -349,7 +295,7 @@ open class ItemsPartTestSuite : ItemsPartBase() {
 
         val someCategory = category2InMainCategory1Name
 
-        setCategory(someCategory)
+        setItemCategory(someCategory)
 
         asserTitleIs(someCategory)
     }
@@ -361,7 +307,7 @@ open class ItemsPartTestSuite : ItemsPartBase() {
         val someCategory = mainCategory2Name
         val description = "FINE"
 
-        setCategory(someCategory)
+        setItemCategory(someCategory)
         writeDescription(description)
 
         asserTitleIs("$description$descriptionCategoryDelimiter$someCategory")
@@ -375,7 +321,7 @@ open class ItemsPartTestSuite : ItemsPartBase() {
         val description = "FINE"
 
         writeDescription(description)
-        setCategory(someCategory)
+        setItemCategory(someCategory)
 
         asserTitleIs("$description$descriptionCategoryDelimiter$someCategory")
     }
@@ -489,5 +435,19 @@ open class ItemsPartTestSuite : ItemsPartBase() {
 
         assertDepotInContents(depot1InMainDepot1Name)
         asserTitleIs(depot2InMainDepot1Name)
+    }
+
+    @Test
+    fun addCategoryFromItemsList() {
+        val newCategoryName = "New category"
+        val amount = FixedPointNumber(2.2)
+
+        addCategoryWithParent("(No parent)", newCategoryName)
+
+
+        clickOnText(mainDepot1Name)
+        addItem(newCategoryName, amount)
+
+        assertItemInContents(newCategoryName, "", amount)
     }
 }

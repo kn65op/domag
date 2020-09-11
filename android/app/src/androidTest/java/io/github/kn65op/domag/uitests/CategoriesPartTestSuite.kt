@@ -40,20 +40,8 @@ open class CategoriesPartTestSuite {
         openPart(R.id.nav_categories)
     }
 
-    private fun openAddCategory() {
-        clickOnId(R.id.categories_add_category_fab)
-    }
-
-    private fun writeCategoryName(name: String) {
-        typeNewTextOnId(R.id.edit_category_category_name, name)
-    }
-
     private fun writeUnitName(unit: String) {
         typeNewTextOnId(R.id.edit_category_unit_field, unit)
-    }
-
-    private fun apply() {
-        clickOnId(R.id.edit_depot_menu_confirm)
     }
 
     private fun assertCategoryInContents(name: String) {
@@ -62,11 +50,6 @@ open class CategoriesPartTestSuite {
 
     private fun assertUnitInContents(name: String) {
         viewOrChildHasText(R.id.fragment_categories_layout, name)
-    }
-
-    private fun setParentCategory(name: String) {
-        clickOnId(R.id.edit_category_fragment_parent_spinner)
-        clickOnText(name)
     }
 
     private fun removeCategory() {
@@ -78,32 +61,25 @@ open class CategoriesPartTestSuite {
         clickOnId(R.id.categories_menu_edit_category_menu_item)
     }
 
-    private fun addCategoryWithParent(parentName: String, name: String) {
-        openAddCategory()
-        writeCategoryName(name)
-        setParentCategory(parentName)
-        apply()
-    }
-
     private fun changeUnit(categoryName: String, newUnit: String) {
         clickOnText(categoryName)
         clickEditCategory()
         writeUnitName(newUnit)
-        apply()
+        applyCategory()
     }
 
     private fun renameCategory(oldName: String, newName: String) {
         clickOnText(oldName)
         clickEditCategory()
         writeCategoryName(newName)
-        apply()
+        applyCategory()
     }
 
     private fun changeParent(name: String, parentName: String) {
         clickOnText(name)
         clickEditCategory()
         setParentCategory(parentName)
-        apply()
+        applyCategory()
     }
 
     private fun assertTitleIs(title: String) {
@@ -182,7 +158,7 @@ open class CategoriesPartTestSuite {
         openAddCategory()
 
         writeCategoryName(name)
-        apply()
+        applyCategory()
 
         assertCategoryInContents(name)
     }
@@ -278,8 +254,36 @@ open class CategoriesPartTestSuite {
         clickOnText(mainCategory1Name)
         clickOnText(category1InMainCategory1Name)
 
-        assertItemInContents("$item2Description$descriptionCategoryDelimiter$depot1InMainDepot1Name", category1InMainCategory1Unit, itemAmount2)
+        assertItemInContents(
+            "$item2Description$descriptionCategoryDelimiter$depot1InMainDepot1Name",
+            category1InMainCategory1Unit,
+            itemAmount2
+        )
         assertItemInContents(mainDepot1Name, category1InMainCategory1Unit, itemAmount4)
         assertItemInContents(depot1InMainDepot1Name, category1InMainCategory1Unit, itemAmount5)
+    }
+
+    @Test
+    fun addDepotAndItemFromCategoriesList() {
+        clickOnText(mainCategory1Name)
+
+        val newDepotName = "New depot"
+        val amount = FixedPointNumber(2.34)
+        addDepot(newDepotName)
+        addItem(depotName = newDepotName, categoryName = mainCategory1Name, amount = amount)
+
+        assertItemInContents(name = newDepotName, unit = mainCategory1Unit, amount = amount)
+    }
+
+    @Test
+    fun addDepotAndItemFromCategoriesListWithDefaultCategory() {
+        clickOnText(mainCategory2Name)
+
+        val newDepotName = "New depot"
+        val amount = FixedPointNumber(2.34)
+        addDepot(newDepotName)
+        addItemWithDepotOnly(depotName = newDepotName, amount = amount)
+
+        assertItemInContents(name = newDepotName, unit = mainCategory2Unit, amount = amount)
     }
 }

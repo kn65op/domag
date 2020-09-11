@@ -31,12 +31,13 @@ import java.time.format.DateTimeFormatter
 
 private const val ITEM_ID_PARAMETER = "itemId"
 private const val DEPOT_ID_PARAMETER = "depotId"
+private const val CATEGORY_ID_PARAMETER = "categoryId"
 
 class EditItemFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedListener,
     LocalDatePickerDialog.DatePickerListener {
     private val dbFactory = DatabaseFactoryImpl()
     private var initialDepoId: Int? = null
-    private var itemCategoryId: Int? = null
+    private var initialCategoryId: Int? = null
     private var itemId: Int? = null
     private var currentItem: Item? = null
     private val timeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("ccc dd-MMMM-yyyy")
@@ -57,6 +58,7 @@ class EditItemFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedList
         if (itemId == 0) {
             itemId = null
             initialDepoId = arguments?.getInt(DEPOT_ID_PARAMETER)
+            initialCategoryId = arguments?.getInt(CATEGORY_ID_PARAMETER)
         }
         Log.i(LOG_TAG, "Item is $itemId")
         super.onCreate(savedInstanceState)
@@ -76,7 +78,7 @@ class EditItemFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedList
                     item?.let {
                         currentItem = item
                         initialDepoId = item.depotId
-                        itemCategoryId = item.categoryId
+                        initialCategoryId = item.categoryId
                         item.description?.let { it1 -> descriptionField.replaceText(it1) }
                         amountField.replaceText(item.amount.toString())
                         selectProperSpinnerEntry()
@@ -178,9 +180,7 @@ class EditItemFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedList
         if (allDepots.isNotEmpty() && allCategories.isNotEmpty()) {
             Log.i(LOG_TAG, "Depot: $initialDepoId")
             depotSpinner.setSelection(allDepots.indexOfFirst { it.uid == initialDepoId })
-            currentItem?.let { item ->
-                categorySpinner.setSelection(allCategories.indexOfFirst { it.uid == item.categoryId })
-            }
+            categorySpinner.setSelection(allCategories.indexOfFirst { it.uid == initialCategoryId })
         }
     }
 

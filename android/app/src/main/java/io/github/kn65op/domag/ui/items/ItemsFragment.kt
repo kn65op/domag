@@ -4,7 +4,6 @@ import android.os.Bundle
 import androidx.activity.addCallback
 import android.util.Log
 import android.view.*
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
@@ -16,7 +15,7 @@ import io.github.kn65op.domag.database.database.DatabaseFactoryImpl
 import io.github.kn65op.domag.database.entities.Depot
 import io.github.kn65op.domag.database.relations.DepotWithContents
 import io.github.kn65op.domag.ui.common.FragmentWithActionBar
-import com.google.android.material.floatingactionbutton.FloatingActionButton
+import io.github.kn65op.domag.ui.common.prepareFabs
 
 class ItemsFragment : FragmentWithActionBar() {
     val storedDepotTag = "depotId"
@@ -86,37 +85,13 @@ class ItemsFragment : FragmentWithActionBar() {
         } else {
             Log.e(LOG_TAG, "Unable to fill recycler view, no context")
         }
-        prepareFabs(root)
+        prepareFabMenu(root)
         setHasOptionsMenu(true)
         return root
     }
 
-    private fun prepareFabs(root: View) {
-        val fabBackground: View = root.findViewById(R.id.fab_background)
-        val fabGeneral: FloatingActionButton = root.findViewById(R.id.items_general_fab)
-        val addItemLayout: ConstraintLayout = root.findViewById(R.id.items_add_item_layout)
-        val addDepotLayout: ConstraintLayout = root.findViewById(R.id.items_add_depot_layout)
-        val fabClose: FloatingActionButton = root.findViewById(R.id.items_close_fab)
-        val hideFabMenu: (view: View) -> Unit = {
-            Log.d(LOG_TAG, "hide fabs")
-            addDepotLayout.visibility = View.GONE
-            addItemLayout.visibility = View.GONE
-            fabClose.visibility = View.GONE
-            fabGeneral.visibility = View.VISIBLE
-            fabBackground.visibility = View.GONE
-        }
-        fabGeneral.setOnClickListener {
-            Log.d(LOG_TAG, "show fabs")
-            addDepotLayout.visibility = View.VISIBLE
-            addItemLayout.visibility = View.VISIBLE
-            fabClose.visibility = View.VISIBLE
-            fabGeneral.visibility = View.GONE
-            fabBackground.visibility = View.VISIBLE
-        }
-        fabClose.setOnClickListener(hideFabMenu)
-        fabBackground.setOnClickListener(hideFabMenu)
-        val addDepotFab: FloatingActionButton = root.findViewById(R.id.items_add_depot_fab)
-        addDepotFab.setOnClickListener {
+    private fun prepareFabMenu(root: View) {
+        val addDepotAction = View.OnClickListener {
             Log.i(LOG_TAG, "Clicked add depot")
             val action =
                 ItemsFragmentDirections.actionNavItemsToEditContainer(
@@ -125,12 +100,26 @@ class ItemsFragment : FragmentWithActionBar() {
             Log.i(LOG_TAG, "${currentDepot.value?.depot?.uid}")
             root.findNavController().navigate(action)
         }
-        val addItemFab : FloatingActionButton = root.findViewById(R.id.items_add_item_fab)
-        addItemFab.setOnClickListener{
+        val addItemAction = View.OnClickListener {
             Log.i(LOG_TAG, "Clicked add item")
-            val action = ItemsFragmentDirections.actionNavItemsToFragmentEditItem(depotId = currentDepot.value?.depot?.uid ?: 0)
+            val action = ItemsFragmentDirections.actionNavItemsToFragmentEditItem(
+                depotId = currentDepot.value?.depot?.uid ?: 0
+            )
             root.findNavController().navigate(action)
         }
+        val addCategoryAction = View.OnClickListener {
+            Log.i(LOG_TAG, "Clicked add category")
+            val action = ItemsFragmentDirections.actionNavItemsToEditCategory()
+            root.findNavController().navigate(action)
+        }
+
+        prepareFabs(
+            root,
+            addDepotAction,
+            addItemAction,
+            addCategoryAction,
+            R.id.items_fab_background,
+        )
     }
 
     private fun getDepot(db: AppDatabase?, depotId: Int) {
