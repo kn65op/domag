@@ -21,7 +21,6 @@ private fun <WithParent> isItOrOneOfAncestor(
     tested: Int?,
     mappedObjects: Map<Int?, WithParent>
 ): Boolean where WithParent : HasParent, WithParent : HasUid = when {
-    //tested == null -> false
     parent == tested -> false
     mappedObjects[tested]?.parentId != null ->
         isItOrOneOfAncestor(
