@@ -14,6 +14,7 @@ data class TestUidAndParent(
 class HierarchyTest {
     private val nullObject = TestUidAndParent(null, null)
     private val notInList = TestUidAndParent(100, 200)
+    private val notInListWithoutParent = TestUidAndParent(null, 200)
     private val root1 = TestUidAndParent(null, 1)
     private val root2 = TestUidAndParent(null, 2)
     private val root1Object1 = TestUidAndParent(1, 3)
@@ -49,6 +50,11 @@ class HierarchyTest {
     }
 
     @Test
+    fun `Given object wihout parent not in list should return same list`() {
+        assertThat(getAllButNotItAndDescendants(notInListWithoutParent, objects), equalTo(objects))
+    }
+
+    @Test
     fun `Given last object in hierarchy should return list without this object`() {
         assertThat(
             getAllButNotItAndDescendants(root1Object2, objects),
@@ -71,4 +77,5 @@ class HierarchyTest {
             equalTo(listOf(root2, root2Object1, root2Object1Object1, root2Object2, nullObject))
         )
     }
+
 }
