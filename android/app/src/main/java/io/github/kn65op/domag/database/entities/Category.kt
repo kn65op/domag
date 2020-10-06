@@ -9,7 +9,7 @@ import io.github.kn65op.domag.utils.types.HasUid
 
 @Fts4
 @Entity
-data class Category (
+data class Category(
     @PrimaryKey @ColumnInfo(name = "rowid")
     override val uid: Int? = null,
 

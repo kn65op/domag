@@ -1,12 +1,14 @@
 package io.github.kn65op.domag.dbtests
 
 import io.github.kn65op.domag.database.daos.CategoryDao
+import io.github.kn65op.domag.database.entities.Category
 import io.github.kn65op.domag.dbtests.common.DatabaseTest
 import io.github.kn65op.domag.dbtests.common.getFromLiveData
 import io.github.kn65op.domag.dbtests.data.*
 import io.github.kn65op.domag.matchers.isEqualRegardlessId
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.CoreMatchers.*
+import org.hamcrest.Matcher
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.greaterThan
 import org.hamcrest.collection.IsArrayContainingInAnyOrder.arrayContainingInAnyOrder
@@ -15,7 +17,7 @@ import org.junit.Test
 
 open class CategoryDatabaseTest  : DatabaseTest() {
     private lateinit var categoryDao: CategoryDao
-    val matchCategoryStartingWithName =
+    private val matchCategoryStartingWithName: Matcher<Array<Category>> =
         arrayContainingInAnyOrder(
             isEqualRegardlessId(mainCategory1.category),
             isEqualRegardlessId(mainCategory2.category)

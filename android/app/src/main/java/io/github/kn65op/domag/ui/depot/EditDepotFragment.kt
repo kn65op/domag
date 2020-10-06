@@ -6,7 +6,6 @@ import android.view.*
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -67,7 +66,7 @@ class EditDepotFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedLis
                 context?.let { context ->
                     val db = dbFactory.factory.createDatabase(context)
                     db.depotDao().findWithContentsById(searchDepotId)
-                        .observe(viewLifecycleOwner, Observer {
+                        .observe(viewLifecycleOwner, {
                             if (it != null) {
                                 currentDepot.value = it
                                 currentParent = it.depot.parentId
@@ -85,7 +84,7 @@ class EditDepotFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedLis
 
     private fun getAllDepots(db: AppDatabase?) {
         val rootObjects = db?.depotDao()?.getAll()
-        rootObjects?.observe(viewLifecycleOwner, Observer {
+        rootObjects?.observe(viewLifecycleOwner, {
             Log.i(LOG_TAG, "Depots in database: ${depots?.size}")
             depots = it
             prepareParentDepotSelectorIfReady(currentDepot, depots)
@@ -143,7 +142,7 @@ class EditDepotFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedLis
             layoutManager = viewManager
             adapter = viewAdapter
         }
-        currentDepot.observe(viewLifecycleOwner, Observer {
+        currentDepot.observe(viewLifecycleOwner, {
             activity?.runOnUiThread {
                 if (!recyclerView.isComputingLayout) {
                     recyclerView.adapter?.notifyDataSetChanged()
@@ -240,7 +239,7 @@ class EditDepotFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedLis
                 }
             }
 
-        private val LOG_TAG = "EditDepotFragment";
+        private const val LOG_TAG = "EditDepotFragment"
         private const val PARENT_SHIFT = 1
     }
 }

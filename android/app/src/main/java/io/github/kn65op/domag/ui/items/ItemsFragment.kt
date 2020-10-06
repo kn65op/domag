@@ -1,11 +1,10 @@
 package io.github.kn65op.domag.ui.items
 
 import android.os.Bundle
-import androidx.activity.addCallback
 import android.util.Log
 import android.view.*
+import androidx.activity.addCallback
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -18,7 +17,7 @@ import io.github.kn65op.domag.ui.common.FragmentWithActionBar
 import io.github.kn65op.domag.ui.common.prepareFabs
 
 class ItemsFragment : FragmentWithActionBar() {
-    val storedDepotTag = "depotId"
+    private val storedDepotTag = "depotId"
 
     private val dbFactory = DatabaseFactoryImpl()
     private lateinit var recyclerView: RecyclerView
@@ -64,7 +63,7 @@ class ItemsFragment : FragmentWithActionBar() {
                 layoutManager = viewManager
                 adapter = viewAdapter
             }
-            currentDepot.observe(viewLifecycleOwner, Observer {
+            currentDepot.observe(viewLifecycleOwner, {
                 val callback = requireActivity().onBackPressedDispatcher.addCallback(this) {
                     val action =
                         ItemsFragmentDirections.actionNavItemsSelf(
@@ -124,8 +123,8 @@ class ItemsFragment : FragmentWithActionBar() {
 
     private fun getDepot(db: AppDatabase?, depotId: Int) {
         val objects = db?.depotDao()?.findWithContentsById(depotId)
-        objects?.observe(viewLifecycleOwner, Observer {
-            Log.i(LOG_TAG, "Observed objects: ${it}")
+        objects?.observe(viewLifecycleOwner, {
+            Log.i(LOG_TAG, "Observed objects: $it")
             if (it != null) {
                 currentDepot.value = it
                 actionBar()?.title = it.depot.name
@@ -135,8 +134,8 @@ class ItemsFragment : FragmentWithActionBar() {
 
     private fun getRootDepots(db: AppDatabase?) {
         val rootObjects = db?.depotDao()?.findRootDepots()
-        rootObjects?.observe(viewLifecycleOwner, Observer {
-            Log.i(LOG_TAG, "Observed root objects: ${it}")
+        rootObjects?.observe(viewLifecycleOwner, {
+            Log.i(LOG_TAG, "Observed root objects: $it")
             if (it != null) {
                 currentDepot.value = DepotWithContents(
                     depot = Depot(name = "Items - title"),
@@ -169,6 +168,6 @@ class ItemsFragment : FragmentWithActionBar() {
         }
 
     companion object {
-        private val LOG_TAG = "ItemsFragment";
+        private const val LOG_TAG = "ItemsFragment"
     }
 }

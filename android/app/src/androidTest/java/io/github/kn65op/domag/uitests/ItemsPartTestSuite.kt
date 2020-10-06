@@ -104,7 +104,7 @@ open class ItemsPartBase {
 @RunWith(AndroidJUnit4::class)
 open class ItemsPartWithEmptyDbTestSuite : ItemsPartBase() {
     @Test
-    fun WhenNoDepotShouldNotAddItem() {
+    fun whenNoDepotShouldNotAddItem() {
         openAddItem()
         writeItemAmount(FixedPointNumber(1))
         applyItem()
@@ -115,7 +115,7 @@ open class ItemsPartWithEmptyDbTestSuite : ItemsPartBase() {
     }
 
     @Test
-    fun WhenNoCategoryShouldNotAddItem() {
+    fun whenNoCategoryShouldNotAddItem() {
         addDepot(mainDepot1Name)
 
         openAddItem()
@@ -348,7 +348,7 @@ open class ItemsPartTestSuite : ItemsPartBase() {
         addItem(amount)
 
         assertItemInContents(
-            "$mainCategory1Name",
+            mainCategory1Name,
             mainCategory1Unit,
             amount
         )

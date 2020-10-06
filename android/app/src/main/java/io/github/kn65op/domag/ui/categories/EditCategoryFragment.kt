@@ -5,9 +5,7 @@ import android.util.Log
 import android.view.*
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -20,7 +18,6 @@ import io.github.kn65op.domag.database.entities.Category
 import io.github.kn65op.domag.database.operations.deleteCategory
 import io.github.kn65op.domag.database.relations.CategoryWithContents
 import io.github.kn65op.domag.ui.common.FragmentWithActionBar
-import io.github.kn65op.domag.ui.depot.EditDepotFragment
 import io.github.kn65op.domag.ui.utils.replaceText
 import io.github.kn65op.domag.utils.getAllButNotItAndDescendants
 import kotlinx.android.synthetic.main.fragment_edit_category.*
@@ -73,7 +70,7 @@ class EditCategoryFragment : FragmentWithActionBar(), AdapterView.OnItemSelected
                 context?.let { context ->
                     val db = dbFactory.factory.createDatabase(context)
                     db.categoryDao().findWithContentsById(searchCategoryId)
-                        .observe(viewLifecycleOwner, Observer {
+                        .observe(viewLifecycleOwner, {
                             if (it != null) {
                                 currentCategory.value = it
                                 currentParent = it.category.parentId
@@ -93,7 +90,7 @@ class EditCategoryFragment : FragmentWithActionBar(), AdapterView.OnItemSelected
 
     private fun getAllCategories(db: AppDatabase?) {
         val rootObjects = db?.categoryDao()?.getAll()
-        rootObjects?.observe(viewLifecycleOwner, Observer {
+        rootObjects?.observe(viewLifecycleOwner, {
             Log.i(LOG_TAG, "Observed all objects: ${it.size}")
             categories = it
             prepareCategorySelectorIfReady(currentCategory, categories)
@@ -151,7 +148,7 @@ class EditCategoryFragment : FragmentWithActionBar(), AdapterView.OnItemSelected
             layoutManager = viewManager
             adapter = viewAdapter
         }
-        currentCategory.observe(viewLifecycleOwner, Observer {
+        currentCategory.observe(viewLifecycleOwner, {
             activity?.runOnUiThread {
                 if (!recyclerView.isComputingLayout) {
                     recyclerView.adapter?.notifyDataSetChanged()
@@ -242,10 +239,10 @@ class EditCategoryFragment : FragmentWithActionBar(), AdapterView.OnItemSelected
     }
 
     override fun onItemSelected(p0: AdapterView<*>?, p1: View?, position: Int, p3: Long) {
-        if (position == 0)
-            currentParent = null
+        currentParent = if (position == 0)
+            null
         else
-            currentParent = possibleParentCategories[position - PARENT_SHIFT].uid
+            possibleParentCategories[position - PARENT_SHIFT].uid
         Log.i(LOG_TAG, "Set parent id $currentParent")
     }
 
@@ -264,7 +261,7 @@ class EditCategoryFragment : FragmentWithActionBar(), AdapterView.OnItemSelected
                 }
             }
 
-        private val LOG_TAG = "EditCategoryFragment";
+        private const val LOG_TAG = "EditCategoryFragment"
         private const val PARENT_SHIFT = 1
     }
 }

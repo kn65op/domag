@@ -4,7 +4,7 @@ import io.github.kn65op.domag.database.entities.Depot
 import org.hamcrest.BaseMatcher
 import org.hamcrest.Description
 
-class IsDepotEqualRegardlessId(val depot: Depot) : BaseMatcher<Depot>() {
+class IsDepotEqualRegardlessId(private val depot: Depot) : BaseMatcher<Depot>() {
     override fun matches(actual: Any?): Boolean =
         if (actual is Depot)
             depot.name == actual.name

@@ -5,7 +5,6 @@ import android.util.Log
 import android.view.*
 import androidx.activity.addCallback
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -18,7 +17,7 @@ import io.github.kn65op.domag.ui.common.FragmentWithActionBar
 import io.github.kn65op.domag.ui.common.prepareFabs
 
 class CategoriesFragment : FragmentWithActionBar() {
-    val storedCategoryId = "categoryId"
+    private val storedCategoryId = "categoryId"
 
     private val dbFactory = DatabaseFactoryImpl()
     private lateinit var recyclerView: RecyclerView
@@ -64,7 +63,7 @@ class CategoriesFragment : FragmentWithActionBar() {
                 layoutManager = viewManager
                 adapter = viewAdapter
             }
-            currentCategory.observe(viewLifecycleOwner, Observer {
+            currentCategory.observe(viewLifecycleOwner, {
                 val callback = requireActivity().onBackPressedDispatcher.addCallback(this) {
                     val action =
                         CategoriesFragmentDirections.actionNavCategoriesSelf(
@@ -123,8 +122,8 @@ class CategoriesFragment : FragmentWithActionBar() {
 
     private fun getCategory(db: AppDatabase?, depotId: Int) {
         val objects = db?.categoryDao()?.findWithContentsById(depotId)
-        objects?.observe(viewLifecycleOwner, Observer {
-            Log.i(LOG_TAG, "Observed objects: ${it}")
+        objects?.observe(viewLifecycleOwner, {
+            Log.i(LOG_TAG, "Observed objects: $it")
             if (it != null) {
                 currentCategory.value = it
                 actionBar()?.title = it.category.name
@@ -134,8 +133,8 @@ class CategoriesFragment : FragmentWithActionBar() {
 
     private fun getRootCategories(db: AppDatabase?) {
         val rootObjects = db?.categoryDao()?.findRootDepots()
-        rootObjects?.observe(viewLifecycleOwner, Observer {
-            Log.i(LOG_TAG, "Observed root objects: ${it}")
+        rootObjects?.observe(viewLifecycleOwner, {
+            Log.i(LOG_TAG, "Observed root objects: $it")
             if (it != null) {
                 currentCategory.value = CategoryWithContents(
                     category = Category(name = "Categories - title", unit = ""),
@@ -168,6 +167,6 @@ class CategoriesFragment : FragmentWithActionBar() {
         }
 
     companion object {
-        private val LOG_TAG = "CategoriesFragment";
+        private const val LOG_TAG = "CategoriesFragment"
     }
 }

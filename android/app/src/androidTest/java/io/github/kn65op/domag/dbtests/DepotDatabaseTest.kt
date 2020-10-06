@@ -1,12 +1,14 @@
 package io.github.kn65op.domag.dbtests
 
 import io.github.kn65op.domag.database.daos.DepotDao
+import io.github.kn65op.domag.database.entities.Depot
 import io.github.kn65op.domag.dbtests.common.DatabaseTest
 import io.github.kn65op.domag.dbtests.common.getFromLiveData
 import io.github.kn65op.domag.dbtests.data.*
 import io.github.kn65op.domag.matchers.isEqualRegardlessId
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.CoreMatchers.*
+import org.hamcrest.Matcher
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.greaterThan
 import org.hamcrest.collection.IsArrayContainingInAnyOrder.arrayContainingInAnyOrder
@@ -15,7 +17,7 @@ import org.junit.Test
 
 class DepotDatabaseTest : DatabaseTest() {
     private lateinit var depotDao: DepotDao
-    val matchDepotStartingWithName =
+    private val matchDepotStartingWithName: Matcher<Array<Depot>> =
         arrayContainingInAnyOrder(
             isEqualRegardlessId(mainDepot1.depot),
             isEqualRegardlessId(mainDepot2.depot)

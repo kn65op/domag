@@ -14,6 +14,7 @@ var activityFactory: SingleActivityFactory<MainActivity> =
     ) {
 
         override fun create(intent: Intent): MainActivity {
-            return MainActivity(DatabaseFactoryImpl(factory))
+            DatabaseFactoryImpl(factory)
+            return MainActivity()
         }
     }

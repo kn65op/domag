@@ -4,7 +4,7 @@ import io.github.kn65op.domag.database.entities.Category
 import org.hamcrest.BaseMatcher
 import org.hamcrest.Description
 
-class IsCategoryEqualRegardlessId(val category: Category) : BaseMatcher<Category>() {
+class IsCategoryEqualRegardlessId(private val category: Category) : BaseMatcher<Category>() {
     override fun matches(actual: Any?): Boolean =
         if (actual is Category)
             category.name == actual.name

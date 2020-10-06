@@ -28,7 +28,7 @@ private fun typeNewTextOn(view: ViewInteraction, text: String) {
 
 
 fun openActionBarMenu() {
-    openActionBarOverflowOrOptionsMenu(getInstrumentation().getTargetContext())
+    openActionBarOverflowOrOptionsMenu(getInstrumentation().targetContext)
 }
 
 fun clickOnId(id: Int) {
@@ -36,7 +36,7 @@ fun clickOnId(id: Int) {
 }
 
 fun clickOnIdOrText(id: Int, text: Int) {
-    onView(anyOf(withText(text), withId(id))).perform(click());
+    onView(anyOf(withText(text), withId(id))).perform(click())
 }
 
 fun clickOnText(text: String) {

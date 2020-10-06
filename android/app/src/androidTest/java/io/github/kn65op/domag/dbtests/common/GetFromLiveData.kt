@@ -7,7 +7,7 @@ fun <T> getFromLiveData(ld: LiveData<T>): T {
     val v = ld.value
     if (v != null)
         return v
-    throw ValueIsEmptyException();
+    throw ValueIsEmptyException()
 }
 
 class ValueIsEmptyException : Throwable()

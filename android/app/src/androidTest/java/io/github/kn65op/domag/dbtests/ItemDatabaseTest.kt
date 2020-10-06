@@ -12,7 +12,6 @@ import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Before
 import org.junit.Test
-import java.time.OffsetDateTime
 import java.time.ZonedDateTime
 
 class ItemDatabaseTest : DatabaseTest() {

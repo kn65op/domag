@@ -1,6 +1,6 @@
 package io.github.kn65op.domag.database.database
 
-class DatabaseFactoryImpl(val factoryInit: DatabaseFactory? = null) {
+class DatabaseFactoryImpl(factoryInit: DatabaseFactory? = null) {
     init {
         if (factoryInit != null)
             factoryInstance = factoryInit

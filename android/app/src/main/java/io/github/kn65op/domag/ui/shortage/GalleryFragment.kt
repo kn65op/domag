@@ -4,12 +4,11 @@ import android.os.Bundle
 import android.util.Log
 import android.view.*
 import android.widget.TextView
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import io.github.kn65op.domag.R
-import io.github.kn65op.domag.ui.common.FragmentWithActionBar
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
+import io.github.kn65op.domag.R
+import io.github.kn65op.domag.ui.common.FragmentWithActionBar
 
 class GalleryFragment : FragmentWithActionBar() {
 
@@ -24,7 +23,7 @@ class GalleryFragment : FragmentWithActionBar() {
             ViewModelProviders.of(this).get(GalleryViewModel::class.java)
         val root = inflater.inflate(R.layout.fragment_gallery, container, false)
         val textView: TextView = root.findViewById(R.id.text_gallery)
-        galleryViewModel.text.observe(viewLifecycleOwner, Observer {
+        galleryViewModel.text.observe(viewLifecycleOwner, {
             textView.text = it
         })
         setHasOptionsMenu(true)

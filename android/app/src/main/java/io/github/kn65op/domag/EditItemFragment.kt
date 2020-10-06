@@ -9,8 +9,12 @@ import android.widget.ImageButton
 import android.widget.TextView
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.DialogFragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
+import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
+import com.toptoche.searchablespinnerlibrary.SearchableSpinner
+import io.github.kn65op.android.lib.gui.dialogs.LocalDatePickerDialog
+import io.github.kn65op.android.lib.type.FixedPointNumber
 import io.github.kn65op.domag.database.database.AppDatabase
 import io.github.kn65op.domag.database.database.DatabaseFactoryImpl
 import io.github.kn65op.domag.database.entities.Category
@@ -20,13 +24,11 @@ import io.github.kn65op.domag.ui.common.FragmentWithActionBar
 import io.github.kn65op.domag.ui.common.constructItemFullName
 import io.github.kn65op.domag.ui.common.createDialog
 import io.github.kn65op.domag.ui.utils.replaceText
-import com.google.android.material.textfield.TextInputEditText
-import com.google.android.material.textfield.TextInputLayout
-import com.toptoche.searchablespinnerlibrary.SearchableSpinner
-import io.github.kn65op.android.lib.gui.dialogs.LocalDatePickerDialog
-import io.github.kn65op.android.lib.type.FixedPointNumber
 import kotlinx.coroutines.launch
-import java.time.*
+import java.time.LocalDate
+import java.time.LocalTime
+import java.time.ZoneId
+import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
 private const val ITEM_ID_PARAMETER = "itemId"
@@ -74,7 +76,7 @@ class EditItemFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedList
         itemId?.let()
         {
             dbFactory.factory.createDatabase(requireContext()).itemDao().findById(it)
-                .observe(viewLifecycleOwner, Observer { item ->
+                .observe(viewLifecycleOwner, { item ->
                     item?.let {
                         currentItem = item
                         initialDepoId = item.depotId
@@ -110,7 +112,7 @@ class EditItemFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedList
         depotSpinner.setPositiveButton(context?.getString(R.string.spinner_select_text))
         categorySpinner.setTitle(context?.getString(R.string.edit_item_category_spinner_title))
         categorySpinner.setPositiveButton(context?.getString(R.string.spinner_select_text))
-        bestBeforeField.setOnClickListener { _ -> startDatePicker() }
+        bestBeforeField.setOnClickListener { startDatePicker() }
         bestBeforeField.setOnFocusChangeListener { _, gained -> if (gained) startDatePicker() }
         bestBeforeRemoveButton.setOnClickListener { clearDate() }
 
@@ -128,7 +130,7 @@ class EditItemFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedList
 
     private fun collectAllCategories(db: AppDatabase?) {
         val rootObjects = db?.categoryDao()?.getAll()
-        rootObjects?.observe(viewLifecycleOwner, Observer { categories ->
+        rootObjects?.observe(viewLifecycleOwner, { categories ->
             if (categories != null) {
                 prepareAllCategoriesSpinner(categories)
                 selectProperSpinnerEntry()
@@ -162,7 +164,7 @@ class EditItemFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedList
 
     private fun collectAllDepots(db: AppDatabase?) {
         val rootObjects = db?.depotDao()?.getAll()
-        rootObjects?.observe(viewLifecycleOwner, Observer { depots ->
+        rootObjects?.observe(viewLifecycleOwner, { depots ->
             if (depots != null) {
                 allDepots = depots
                 Log.i(LOG_TAG, "Observed all depots: ${allCategories.size}")
@@ -200,12 +202,16 @@ class EditItemFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedList
     override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
         R.id.edit_item_menu_confirm -> {
             val db = dbFactory.factory.createDatabase(requireContext())
-            if (depotSpinner.selectedItemPosition == -1) {
-                createDialog(requireActivity(), R.string.edit_item_no_depot_dialog_message)
-            } else if (categorySpinner.selectedItemPosition == -1) {
-                createDialog(requireActivity(), R.string.edit_item_no_category_dialog_message)
-            } else {
-                createItem(db)
+            when {
+                depotSpinner.selectedItemPosition == -1 -> {
+                    createDialog(requireActivity(), R.string.edit_item_no_depot_dialog_message)
+                }
+                categorySpinner.selectedItemPosition == -1 -> {
+                    createDialog(requireActivity(), R.string.edit_item_no_category_dialog_message)
+                }
+                else -> {
+                    createItem(db)
+                }
             }
             true
         }
@@ -284,6 +290,6 @@ class EditItemFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedList
     }
 
     companion object {
-        private val LOG_TAG = "EditItemFragment";
+        private const val LOG_TAG = "EditItemFragment"
     }
 }

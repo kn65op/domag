@@ -10,10 +10,9 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
-import io.github.kn65op.domag.database.database.DatabaseFactoryImpl
 import com.google.android.material.navigation.NavigationView
 
-class MainActivity(val databaseFactory: DatabaseFactoryImpl = DatabaseFactoryImpl()) :
+class MainActivity() :
     AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration

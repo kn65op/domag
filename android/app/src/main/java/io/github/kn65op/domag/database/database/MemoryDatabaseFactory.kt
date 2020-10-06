@@ -11,10 +11,6 @@ class MemoryDatabaseFactory :
         return getInstance(applicationContext)
     }
 
-    fun clearDb() {
-        setToNull()
-    }
-
     companion object {
         private var instance: AppDatabase? = null
 
@@ -22,12 +18,6 @@ class MemoryDatabaseFactory :
         {
             Log.i(DatabaseFactory.LOG_TAG, "get memory instance")
             instance ?: buildDatabase(applicationContext).also { instance = it }
-        }
-
-        fun setToNull() {
-            instance?.clearAllTables()
-            //instance?.close()
-            //instance = null
         }
 
         private fun buildDatabase(applicationContext: Context) =

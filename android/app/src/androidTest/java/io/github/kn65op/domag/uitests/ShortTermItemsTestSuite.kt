@@ -4,7 +4,6 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.rule.ActivityTestRule
 import io.github.kn65op.domag.R
-import io.github.kn65op.domag.dbtests.common.assertNoItemInDb
 import io.github.kn65op.domag.dbtests.data.*
 import io.github.kn65op.domag.uitests.common.*
 import org.junit.After

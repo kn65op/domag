@@ -8,7 +8,6 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import io.github.kn65op.domag.R
@@ -22,13 +21,13 @@ class DepotAdapter(
     private val lifecycleOwner: LifecycleOwner
 ) :
     RecyclerView.Adapter<DepotAdapter.ViewHolder>() {
-    open class ViewHolder(private val view: View) : RecyclerView.ViewHolder(view)
+    open class ViewHolder(view: View) : RecyclerView.ViewHolder(view)
 
-    class DepotViewHolder(private val view: View) : ViewHolder(view) {
+    class DepotViewHolder(view: View) : ViewHolder(view) {
         val nameViewHolder: TextView = view.findViewById(R.id.depot_row_name)
     }
 
-    class ItemViewHolder(private val view: View) : ViewHolder(view) {
+    class ItemViewHolder(view: View) : ViewHolder(view) {
         val amountViewHolder: TextView = view.findViewById(R.id.item_row_amount)
         val unitViewHolder: TextView = view.findViewById(R.id.item_row_unit)
         val nameViewHolder: TextView = view.findViewById(R.id.item_row_name)
@@ -102,7 +101,7 @@ class DepotAdapter(
             )
             val itemViewHolder = holder as ItemViewHolder
             Log.i(LOG_TAG, "Show item: $itemPosition")
-            category.observe(lifecycleOwner, Observer {
+            category.observe(lifecycleOwner, {
                 Log.i(LOG_TAG, "Category for $itemPosition: ${it?.name}")
                 it?.let { category ->
                     itemViewHolder.amountViewHolder.text =
