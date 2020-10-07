@@ -31,10 +31,12 @@ class ConsumeItemDialog(
         val text = getTitleText()
         Log.i(LOG_TAG, text)
         Log.i(LOG_TAG, "TUTEJ ${getTitleText()}")
-        Log.i(LOG_TAG,
-        requireActivity().getString(R.string.consume_dialog_title, item)
+        Log.i(
+            LOG_TAG,
+            requireActivity().getString(R.string.consume_dialog_title, item)
         )
-        Log.i(LOG_TAG,
+        Log.i(
+            LOG_TAG,
             requireActivity().getString(R.string.consume_dialog_title_with_unit, item, unit)
         )
         title.text = text
@@ -42,12 +44,18 @@ class ConsumeItemDialog(
         builder.setView(root)
             .setPositiveButton("Eloszka") { _, _ ->
                 Log.i(LOG_TAG, " Positive")
-                listener.onConsume(FixedPointNumber(amountField.text.toString().toDouble()))
+                val value = convertValue()
+                listener.onConsume(FixedPointNumber())
             }.setNegativeButton("Not eloszka") { dialog, _ ->
                 dialog.cancel()
                 Log.i(LOG_TAG, " Neg")
             }
         return builder.create()
+    }
+
+    private fun convertValue() = when (amountField.text.toString()) {
+        "" -> 0
+        else -> amountField.text.toString().toDouble()
     }
 
     private fun getTitleText() =

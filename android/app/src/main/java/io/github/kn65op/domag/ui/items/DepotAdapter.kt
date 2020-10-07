@@ -18,8 +18,8 @@ import io.github.kn65op.domag.database.relations.DepotWithContents
 import io.github.kn65op.domag.ui.common.constructItemFullName
 
 class DepotAdapter(
-    var depot: LiveData<DepotWithContents>,
-    val activity: FragmentActivity,
+    private var depot: LiveData<DepotWithContents>,
+    private val activity: FragmentActivity,
     private val lifecycleOwner: LifecycleOwner
 ) :
     RecyclerView.Adapter<DepotAdapter.ViewHolder>() {

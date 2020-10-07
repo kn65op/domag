@@ -55,7 +55,7 @@ class CategoriesFragment : FragmentWithActionBar() {
         val currentContext = context
         if (currentContext != null) {
             recyclerView = root.findViewById(R.id.categories_recycler_view)
-            viewAdapter = CategoryAdapter(currentCategory, currentContext, viewLifecycleOwner)
+            viewAdapter = CategoryAdapter(currentCategory, requireActivity(), viewLifecycleOwner)
 
             viewManager = LinearLayoutManager(currentContext)
             recyclerView.apply {
