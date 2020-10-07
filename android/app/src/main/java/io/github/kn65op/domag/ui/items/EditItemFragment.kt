@@ -1,4 +1,4 @@
-package io.github.kn65op.domag
+package io.github.kn65op.domag.ui.items
 
 import android.os.Bundle
 import android.util.Log
@@ -15,6 +15,7 @@ import com.google.android.material.textfield.TextInputLayout
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner
 import io.github.kn65op.android.lib.gui.dialogs.LocalDatePickerDialog
 import io.github.kn65op.android.lib.type.FixedPointNumber
+import io.github.kn65op.domag.R
 import io.github.kn65op.domag.database.database.AppDatabase
 import io.github.kn65op.domag.database.database.DatabaseFactoryImpl
 import io.github.kn65op.domag.database.entities.Category
@@ -36,7 +37,7 @@ private const val DEPOT_ID_PARAMETER = "depotId"
 private const val CATEGORY_ID_PARAMETER = "categoryId"
 
 class EditItemFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedListener,
-    LocalDatePickerDialog.DatePickerListener {
+    LocalDatePickerDialog.DatePickerListener, ConsumeItemDialog.ConsumeItemDialogListener {
     private val dbFactory = DatabaseFactoryImpl()
     private var initialDepoId: Int? = null
     private var initialCategoryId: Int? = null
@@ -101,10 +102,7 @@ class EditItemFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedList
         descriptionField.doOnTextChanged { _, _, _, _ ->
             val categoryPosition = categorySpinner.selectedItemPosition
             if (categoryPosition != -1) {
-                actionBar()?.title = constructItemFullName(
-                    allCategories[categorySpinner.selectedItemPosition].name,
-                    descriptionField.text.toString()
-                )
+                actionBar()?.title = constructItemFullName()
             }
         }
 
@@ -122,6 +120,12 @@ class EditItemFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedList
 
         return root
     }
+
+    private fun constructItemFullName() =
+        constructItemFullName(
+            allCategories[categorySpinner.selectedItemPosition].name,
+            descriptionField.text.toString()
+        )
 
     private fun startDatePicker() {
         val dialog = LocalDatePickerDialog(this)
@@ -224,6 +228,18 @@ class EditItemFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedList
             true
 
         }
+        R.id.edit_item_menu_consume_item -> {
+            Log.d(LOG_TAG, "Consume")
+            ConsumeItemDialog(
+                constructItemFullName(),
+                allCategories[categorySpinner.selectedItemPosition].unit,
+                this
+            ).show(
+                requireActivity().supportFragmentManager,
+                "ConsumeItemDialog"
+            )
+            true
+        }
         else -> super.onOptionsItemSelected(item)
     }
 
@@ -261,6 +277,10 @@ class EditItemFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedList
             Log.e(LOG_TAG, "Amount can't be converted: $ex")
             createDialog(requireActivity(), R.string.edit_item_no_amount_dialog_message)
         }
+    }
+
+    override fun onAmountSet(amount: FixedPointNumber) {
+        Log.i(LOG_TAG, "Amount: $amount")
     }
 
     override fun onDateSet(dialog: DialogFragment, localDate: LocalDate) {

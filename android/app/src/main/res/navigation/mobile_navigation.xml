@@ -151,7 +151,7 @@
     </fragment>
     <fragment
         android:id="@+id/fragmentEditItem"
-        android:name="io.github.kn65op.domag.EditItemFragment"
+        android:name="io.github.kn65op.domag.ui.items.EditItemFragment"
         android:label="fragment_edit_item"
         tools:layout="@layout/fragment_edit_item">
         <action
