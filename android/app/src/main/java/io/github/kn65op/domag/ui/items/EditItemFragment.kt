@@ -200,6 +200,11 @@ class EditItemFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedList
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.edit_item_menu, menu)
+        if (itemId == null) {
+            val item = menu.getItem(0)
+            item.isEnabled = false
+            item.isVisible = false
+        }
         super.onCreateOptionsMenu(menu, inflater)
     }
 
