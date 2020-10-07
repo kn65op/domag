@@ -16,7 +16,7 @@ class ConsumeItemDialog(
     private val listener: ConsumeItemDialogListener
 ) : DialogFragment() {
     interface ConsumeItemDialogListener {
-        fun onAmountSet(amount: FixedPointNumber)
+        fun onConsume(amount: FixedPointNumber)
     }
 
     lateinit var amountField: EditText
@@ -42,7 +42,7 @@ class ConsumeItemDialog(
         builder.setView(root)
             .setPositiveButton("Eloszka") { _, _ ->
                 Log.i(LOG_TAG, " Positive")
-                listener.onAmountSet(FixedPointNumber(amountField.text.toString().toDouble()))
+                listener.onConsume(FixedPointNumber(amountField.text.toString().toDouble()))
             }.setNegativeButton("Not eloszka") { dialog, _ ->
                 dialog.cancel()
                 Log.i(LOG_TAG, " Neg")

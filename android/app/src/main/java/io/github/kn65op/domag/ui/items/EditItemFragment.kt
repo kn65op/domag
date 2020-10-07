@@ -284,7 +284,7 @@ class EditItemFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedList
         }
     }
 
-    override fun onAmountSet(amount: FixedPointNumber) {
+    override fun onConsume(amount: FixedPointNumber) {
         Log.i(LOG_TAG, "Amount: $amount")
     }
 
