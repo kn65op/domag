@@ -37,7 +37,7 @@ class ConsumeItemDialog(
                 Log.i(LOG_TAG, " Positive")
                 listener.onConsume(FixedPointNumber())
             }.setNegativeButton("Not eloszka") { dialog, _ ->
-                dialog.cancel()
+                //dialog.cancel()
                 Log.i(LOG_TAG, " Neg")
             }
         return builder.create()

@@ -71,4 +71,19 @@ class ConsumeItemOperationTest : DatabaseTest() {
 
         assertConsumeInDb(previousSize + 1, item1, itemAmount1)
     }
+
+    @Test
+    fun givenMoreThenAvailableShouldThrow() = runBlocking {
+        val previousSize = getFromLiveData(db.consumeDao().getAll()).size
+
+        db.consumeItem(itemId, normalConsumeAmount)
+
+        val item = getFromLiveData(itemDao.findById(itemId))
+
+        val consumes = getFromLiveData(db.consumeDao().getAll())
+        val newSize = previousSize + 1
+        assertThat(consumes.size, equalTo(newSize))
+
+        assertConsumeInDb(newSize, item, normalConsumeAmount)
+    }
 }
