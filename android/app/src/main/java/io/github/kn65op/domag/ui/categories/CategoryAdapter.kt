@@ -16,7 +16,7 @@ import io.github.kn65op.domag.R
 import io.github.kn65op.domag.database.database.DatabaseFactoryImpl
 import io.github.kn65op.domag.database.relations.CategoryWithContents
 import io.github.kn65op.domag.ui.common.constructItemFullName
-import io.github.kn65op.domag.ui.items.ConsumeItemDialog
+import io.github.kn65op.domag.ui.dialogs.ConsumeItemDialog
 
 class CategoryAdapter(
     private var category: LiveData<CategoryWithContents>,
@@ -117,6 +117,7 @@ class CategoryAdapter(
                         val dialog = ConsumeItemDialog(
                             fullName,
                             categoryContent.category.unit,
+                            item.amount,
                             object : ConsumeItemDialog.ConsumeItemDialogListener {
                                 override fun onConsume(amount: FixedPointNumber) {
                                     Log.i(LOG_TAG, "Consumed $fullName: $amount")

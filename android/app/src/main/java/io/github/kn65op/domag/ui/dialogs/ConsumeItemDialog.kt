@@ -1,4 +1,4 @@
-package io.github.kn65op.domag.ui.items
+package io.github.kn65op.domag.ui.dialogs
 
 import android.app.AlertDialog
 import android.app.Dialog
@@ -13,6 +13,7 @@ import io.github.kn65op.domag.R
 class ConsumeItemDialog(
     private val item: String,
     private val unit: String,
+    private val currentAmount: FixedPointNumber,
     private val listener: ConsumeItemDialogListener
 ) : DialogFragment() {
     interface ConsumeItemDialogListener {
@@ -29,22 +30,11 @@ class ConsumeItemDialog(
         amountField = root.findViewById(R.id.consume_dialog_amount_field)
         val title: TextView = root.findViewById(R.id.consume_dialog_description)
         val text = getTitleText()
-        Log.i(LOG_TAG, text)
-        Log.i(LOG_TAG, "TUTEJ ${getTitleText()}")
-        Log.i(
-            LOG_TAG,
-            requireActivity().getString(R.string.consume_dialog_title, item)
-        )
-        Log.i(
-            LOG_TAG,
-            requireActivity().getString(R.string.consume_dialog_title_with_unit, item, unit)
-        )
         title.text = text
 
         builder.setView(root)
             .setPositiveButton("Eloszka") { _, _ ->
                 Log.i(LOG_TAG, " Positive")
-                val value = convertValue()
                 listener.onConsume(FixedPointNumber())
             }.setNegativeButton("Not eloszka") { dialog, _ ->
                 dialog.cancel()
@@ -61,9 +51,14 @@ class ConsumeItemDialog(
     private fun getTitleText() =
         when (unit) {
             "" ->
-                requireActivity().getString(R.string.consume_dialog_title, item)
+                requireActivity().getString(R.string.consume_dialog_title, item, currentAmount)
             else ->
-                requireActivity().getString(R.string.consume_dialog_title_with_unit, item, unit)
+                requireActivity().getString(
+                    R.string.consume_dialog_title_with_unit,
+                    item,
+                    currentAmount,
+                    unit
+                )
         }
 
     companion object {

@@ -24,6 +24,7 @@ import io.github.kn65op.domag.database.entities.Item
 import io.github.kn65op.domag.ui.common.FragmentWithActionBar
 import io.github.kn65op.domag.ui.common.constructItemFullName
 import io.github.kn65op.domag.ui.common.createDialog
+import io.github.kn65op.domag.ui.dialogs.ConsumeItemDialog
 import io.github.kn65op.domag.ui.utils.replaceText
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -234,15 +235,7 @@ class EditItemFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedList
 
         }
         R.id.edit_item_menu_consume_item -> {
-            Log.d(LOG_TAG, "Consume")
-            ConsumeItemDialog(
-                constructItemFullName(),
-                allCategories[categorySpinner.selectedItemPosition].unit,
-                this
-            ).show(
-                requireActivity().supportFragmentManager,
-                "ConsumeItemDialog"
-            )
+            Log.w(LOG_TAG, "No Consume - remove it")
             true
         }
         else -> super.onOptionsItemSelected(item)

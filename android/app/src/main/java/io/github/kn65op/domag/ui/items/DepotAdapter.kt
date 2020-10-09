@@ -11,11 +11,11 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
-import io.github.kn65op.android.lib.type.FixedPointNumber
 import io.github.kn65op.domag.R
 import io.github.kn65op.domag.database.database.DatabaseFactoryImpl
 import io.github.kn65op.domag.database.relations.DepotWithContents
 import io.github.kn65op.domag.ui.common.constructItemFullName
+import io.github.kn65op.domag.ui.dialogs.ConsumeDialogController
 
 class DepotAdapter(
     private var depot: LiveData<DepotWithContents>,
@@ -39,6 +39,7 @@ class DepotAdapter(
     private val depotOnPosition = 1
     private val itemOnPosition = 2
     private val dbFactory = DatabaseFactoryImpl()
+    private val consumeDialogController = ConsumeDialogController(activity)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder =
         when (viewType) {
@@ -107,22 +108,14 @@ class DepotAdapter(
             category.observe(lifecycleOwner, {
                 Log.i(LOG_TAG, "Category for $itemPosition: ${it?.name}")
                 it?.let { category ->
-                    val item = depotContent.items[itemPosition]
-                    val fullName = constructItemFullName(category.name, item.description)
+                    val bindedItem = depotContent.items[itemPosition]
+                    val fullName = constructItemFullName(category.name, bindedItem.description)
                     itemViewHolder.amountViewHolder.text =
-                        item.amount.toString()
+                        bindedItem.amount.toString()
                     itemViewHolder.unitViewHolder.text = category.unit
                     itemViewHolder.nameViewHolder.text = fullName
                     itemViewHolder.consumeButton.setOnClickListener {
-                        val dialog = ConsumeItemDialog(
-                            fullName,
-                            category.unit,
-                            object : ConsumeItemDialog.ConsumeItemDialogListener {
-                                override fun onConsume(amount: FixedPointNumber) {
-                                    Log.i(LOG_TAG, "Consumed $fullName: $amount")
-                                }
-                            })
-                        dialog.show(activity.supportFragmentManager, "ConsumeDialog")
+                        consumeDialogController.startConsumeDialog(fullName, category, bindedItem.amount)
                     }
                 }
                 item.uid?.let { uid ->
