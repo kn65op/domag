@@ -108,14 +108,14 @@ class DepotAdapter(
             category.observe(lifecycleOwner, {
                 Log.i(LOG_TAG, "Category for $itemPosition: ${it?.name}")
                 it?.let { category ->
-                    val bindedItem = depotContent.items[itemPosition]
-                    val fullName = constructItemFullName(category.name, bindedItem.description)
+                    val bindItem = depotContent.items[itemPosition]
+                    val fullName = constructItemFullName(category.name, bindItem.description)
                     itemViewHolder.amountViewHolder.text =
-                        bindedItem.amount.toString()
+                        bindItem.amount.toString()
                     itemViewHolder.unitViewHolder.text = category.unit
                     itemViewHolder.nameViewHolder.text = fullName
                     itemViewHolder.consumeButton.setOnClickListener {
-                        consumeDialogController.startConsumeDialog(fullName, category, bindedItem.amount)
+                        consumeDialogController.startConsumeDialog(fullName, category, bindItem.amount)
                     }
                 }
                 item.uid?.let { uid ->
