@@ -5,9 +5,14 @@ import com.natpryce.hamkrest.equalTo
 import io.github.kn65op.android.lib.type.FixedPointNumber
 import io.github.kn65op.domag.database.daos.ItemDao
 import io.github.kn65op.domag.database.entities.Consume
+import io.github.kn65op.domag.database.entities.Item
 import io.github.kn65op.domag.database.operations.consumeItem
 import io.github.kn65op.domag.dbtests.common.DatabaseTest
+import io.github.kn65op.domag.dbtests.common.assertNoItemInDb
+import io.github.kn65op.domag.dbtests.common.expectNoDataInLiveData
 import io.github.kn65op.domag.dbtests.common.getFromLiveData
+import io.github.kn65op.domag.dbtests.data.item1
+import io.github.kn65op.domag.dbtests.data.itemAmount1
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.CoreMatchers
 import org.hamcrest.MatcherAssert.assertThat
@@ -22,6 +27,16 @@ class ConsumeItemOperationTest : DatabaseTest() {
     @Before
     fun createDao() {
         itemDao = db.itemDao()
+    }
+
+    private fun assertConsumeInDb(
+        id: Int,
+        item: Item,
+        amount: FixedPointNumber,
+    ) {
+        val currentConsume = getFromLiveData(db.consumeDao().findById(id))
+        assertThat(currentConsume.categoryId, equalTo(item.categoryId))
+        assertThat(currentConsume.amount, equalTo(amount))
     }
 
     @Test
@@ -45,8 +60,15 @@ class ConsumeItemOperationTest : DatabaseTest() {
         val newSize = previousSize + 1
         assertThat(consumes.size, equalTo(newSize))
 
-        val currentConsume = getFromLiveData(db.consumeDao().findById(newSize))
-        assertThat(currentConsume.categoryId, equalTo(item.categoryId))
-        assertThat(currentConsume.amount, equalTo(normalConsumeAmount))
+        assertConsumeInDb(newSize, item, normalConsumeAmount)
+    }
+
+    @Test
+    fun givenAllItemAmountShouldRemoveItem() = runBlocking {
+        val previousSize = getFromLiveData(db.consumeDao().getAll()).size
+
+        db.consumeItem(itemId, itemAmount1)
+
+        assertConsumeInDb(previousSize + 1, item1, itemAmount1)
     }
 }
