@@ -10,6 +10,7 @@ import io.github.kn65op.domag.database.relations.CategoryWithContents
 import io.github.kn65op.domag.database.relations.DepotWithContents
 import io.github.kn65op.domag.uitests.common.descriptionCategoryDelimiter
 import io.github.kn65op.android.lib.type.FixedPointNumber
+import io.github.kn65op.domag.database.entities.Consume
 import kotlinx.coroutines.runBlocking
 import java.time.ZonedDateTime
 
@@ -86,6 +87,9 @@ val item7 = Item(uid = 7, depotId = 4, categoryId = 4, amount = itemAmount7, bes
 val itemsFrom2 = listOf(item2, item3, item4, item5, item6, item7)
 val allItemsCount = itemsFrom2.size + 1
 
+val consume1Amount = FixedPointNumber(1.01)
+val consume1 = Consume(uid = 1, amount = consume1Amount, date = ZonedDateTime.now(), categoryId = 1)
+
 fun fillData(db: AppDatabase) = runBlocking {
     val depotDao = db.depotDao()
 
@@ -107,6 +111,9 @@ fun fillData(db: AppDatabase) = runBlocking {
     val itemDao = db.itemDao()
     itemDao.insert(item1)
     itemDao.insert(itemsFrom2)
+
+    val consumeDao = db.consumeDao()
+    consumeDao.insert(consume1)
 }
 
 fun createDb(context: Context) = Room.inMemoryDatabaseBuilder(
