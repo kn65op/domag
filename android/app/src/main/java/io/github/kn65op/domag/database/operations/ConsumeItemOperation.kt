@@ -7,13 +7,20 @@ import io.github.kn65op.domag.database.entities.Item
 import java.time.ZonedDateTime
 
 suspend fun AppDatabase.consumeItem(itemId: Int, consumedAmount: FixedPointNumber) {
+    if (consumedAmount == FixedPointNumber(0))
+    {
+        return
+    }
     val item = itemDao().findByIdImmediately(itemId)
     val consumedItem = item.consumeItem(consumedAmount)
-    if (consumedItem == null) {
-        itemDao().delete(item)
-    } else {
-        itemDao().update(consumedItem)
-    }
+    updateItem(consumedItem, item)
+    insertConsume(consumedAmount, item)
+}
+
+private suspend fun AppDatabase.insertConsume(
+    consumedAmount: FixedPointNumber,
+    item: Item
+) {
     val consume =
         Consume(
             amount = consumedAmount,
@@ -23,7 +30,26 @@ suspend fun AppDatabase.consumeItem(itemId: Int, consumedAmount: FixedPointNumbe
     consumeDao().insert(consume)
 }
 
-private fun Item.consumeItem(consumedAmount: FixedPointNumber) = when (consumedAmount) {
-    amount -> null
+private suspend fun AppDatabase.updateItem(
+    consumedItem: Item?,
+    item: Item
+) {
+    if (consumedItem == null) {
+        itemDao().delete(item)
+    } else {
+        itemDao().update(consumedItem)
+    }
+}
+
+private fun Item.consumeItem(consumedAmount: FixedPointNumber) = when {
+    consumedAmount == amount -> null
+    consumedAmount > amount-> throw NotEnoughAmountToConsume(consumedAmount, amount)
     else -> Item(uid, amount - consumedAmount, depotId, categoryId, description, bestBefore)
+}
+
+data class NotEnoughAmountToConsume(
+    val requestedAmount: FixedPointNumber,
+    val amount: FixedPointNumber
+) : Throwable() {
+
 }

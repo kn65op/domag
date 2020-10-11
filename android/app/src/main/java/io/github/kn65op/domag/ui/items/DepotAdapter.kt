@@ -115,7 +115,12 @@ class DepotAdapter(
                     itemViewHolder.unitViewHolder.text = category.unit
                     itemViewHolder.nameViewHolder.text = fullName
                     itemViewHolder.consumeButton.setOnClickListener {
-                        consumeDialogController.startConsumeDialog(fullName, category, bindItem.amount)
+                        consumeDialogController.startConsumeDialog(
+                            item.uid!!,
+                            fullName,
+                            category,
+                            bindItem.amount
+                        )
                     }
                 }
                 item.uid?.let { uid ->

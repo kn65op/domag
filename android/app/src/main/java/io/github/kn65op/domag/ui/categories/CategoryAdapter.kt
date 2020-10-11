@@ -16,6 +16,7 @@ import io.github.kn65op.domag.R
 import io.github.kn65op.domag.database.database.DatabaseFactoryImpl
 import io.github.kn65op.domag.database.relations.CategoryWithContents
 import io.github.kn65op.domag.ui.common.constructItemFullName
+import io.github.kn65op.domag.ui.dialogs.ConsumeDialogController
 import io.github.kn65op.domag.ui.dialogs.ConsumeItemDialog
 
 class CategoryAdapter(
@@ -40,6 +41,7 @@ class CategoryAdapter(
     private val categoryOnPosition = 1
     private val itemOnPosition = 2
     private val dbFactory = DatabaseFactoryImpl()
+    private val consumeDialogController = ConsumeDialogController(activity)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder =
         when (viewType) {
@@ -109,21 +111,18 @@ class CategoryAdapter(
                 it?.let { depot ->
                     val item = categoryContent.items[itemPosition]
                     val fullName = constructItemFullName(depot.name, item.description)
+
                     itemViewHolder.amountViewHolder.text =
                         categoryContent.items[itemPosition].amount.toString()
                     itemViewHolder.nameViewHolder.text = fullName
                     itemViewHolder.unitViewHolder.text = categoryContent.category.unit
                     itemViewHolder.consumeButton.setOnClickListener {
-                        val dialog = ConsumeItemDialog(
-                            fullName,
-                            categoryContent.category.unit,
-                            item.amount,
-                            object : ConsumeItemDialog.ConsumeItemDialogListener {
-                                override fun onConsume(amount: FixedPointNumber) {
-                                    Log.i(LOG_TAG, "Consumed $fullName: $amount")
-                                }
-                            })
-                        dialog.show(activity.supportFragmentManager, "ConsumeDialog")
+                        consumeDialogController.startConsumeDialog(
+                            itemId = item.uid!!,
+                            fullName = fullName,
+                            category = categoryContent.category,
+                            currentAmount = item.amount
+                        )
                     }
                 }
             })

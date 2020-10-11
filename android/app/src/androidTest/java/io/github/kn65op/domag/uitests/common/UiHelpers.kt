@@ -26,3 +26,7 @@ fun viewDoNotHasText(text: String) {
 fun dialogWithText(text : String) {
     onView(withText(text)).inRoot(RootMatchers.isDialog()).check(matches(isDisplayed()))
 }
+
+fun viewIdVisible(id: Int) {
+    onView(withId(id)).check(matches(isDisplayed()))
+}

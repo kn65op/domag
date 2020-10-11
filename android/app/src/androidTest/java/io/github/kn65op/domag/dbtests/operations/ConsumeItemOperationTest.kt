@@ -2,15 +2,15 @@ package io.github.kn65op.domag.dbtests.operations
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
+import com.natpryce.hamkrest.isA
+import com.natpryce.hamkrest.throws
 import io.github.kn65op.android.lib.type.FixedPointNumber
 import io.github.kn65op.domag.database.daos.ItemDao
 import io.github.kn65op.domag.database.entities.Consume
 import io.github.kn65op.domag.database.entities.Item
+import io.github.kn65op.domag.database.operations.NotEnoughAmountToConsume
 import io.github.kn65op.domag.database.operations.consumeItem
-import io.github.kn65op.domag.dbtests.common.DatabaseTest
-import io.github.kn65op.domag.dbtests.common.assertNoItemInDb
-import io.github.kn65op.domag.dbtests.common.expectNoDataInLiveData
-import io.github.kn65op.domag.dbtests.common.getFromLiveData
+import io.github.kn65op.domag.dbtests.common.*
 import io.github.kn65op.domag.dbtests.data.item1
 import io.github.kn65op.domag.dbtests.data.itemAmount1
 import kotlinx.coroutines.runBlocking
@@ -74,16 +74,21 @@ class ConsumeItemOperationTest : DatabaseTest() {
 
     @Test
     fun givenMoreThenAvailableShouldThrow() = runBlocking {
+        assertThat(
+            { runBlocking { db.consumeItem(itemId, itemAmount1 + FixedPointNumber(0.01)) } },
+            throws<NotEnoughAmountToConsume>()
+        )
+    }
+
+    @Test
+    fun given0ShouldDoNothing() = runBlocking {
         val previousSize = getFromLiveData(db.consumeDao().getAll()).size
 
-        db.consumeItem(itemId, normalConsumeAmount)
-
-        val item = getFromLiveData(itemDao.findById(itemId))
+        db.consumeItem(itemId, FixedPointNumber(0))
 
         val consumes = getFromLiveData(db.consumeDao().getAll())
-        val newSize = previousSize + 1
-        assertThat(consumes.size, equalTo(newSize))
+        assertThat(consumes.size, equalTo(previousSize))
 
-        assertConsumeInDb(newSize, item, normalConsumeAmount)
+        assertItemInDb(item1, db)
     }
 }

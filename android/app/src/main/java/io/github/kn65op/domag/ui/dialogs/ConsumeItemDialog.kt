@@ -9,6 +9,9 @@ import android.widget.TextView
 import androidx.fragment.app.DialogFragment
 import io.github.kn65op.android.lib.type.FixedPointNumber
 import io.github.kn65op.domag.R
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 class ConsumeItemDialog(
     private val item: String,
@@ -17,7 +20,7 @@ class ConsumeItemDialog(
     private val listener: ConsumeItemDialogListener
 ) : DialogFragment() {
     interface ConsumeItemDialogListener {
-        fun onConsume(amount: FixedPointNumber)
+        suspend fun onConsume(amount: FixedPointNumber)
     }
 
     lateinit var amountField: EditText
@@ -35,13 +38,22 @@ class ConsumeItemDialog(
         builder.setView(root)
             .setPositiveButton("Eloszka") { _, _ ->
                 Log.i(LOG_TAG, " Positive")
-                listener.onConsume(FixedPointNumber())
+                runBlocking { GlobalScope.launch { listener.onConsume(getAmount()) } }
             }.setNegativeButton("Not eloszka") { dialog, _ ->
-                //dialog.cancel()
                 Log.i(LOG_TAG, " Neg")
             }
         return builder.create()
     }
+
+    private fun getAmount() =
+        translateToFixedPoint(amountField.text.toString())
+
+    private fun translateToFixedPoint(amountText: String) = FixedPointNumber(
+        when {
+            amountText.isEmpty() -> 0.0
+            else -> amountField.text.toString().toDouble()
+        }
+    )
 
     private fun convertValue() = when (amountField.text.toString()) {
         "" -> 0

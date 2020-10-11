@@ -24,7 +24,6 @@ import io.github.kn65op.domag.database.entities.Item
 import io.github.kn65op.domag.ui.common.FragmentWithActionBar
 import io.github.kn65op.domag.ui.common.constructItemFullName
 import io.github.kn65op.domag.ui.common.createDialog
-import io.github.kn65op.domag.ui.dialogs.ConsumeItemDialog
 import io.github.kn65op.domag.ui.utils.replaceText
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -38,7 +37,7 @@ private const val DEPOT_ID_PARAMETER = "depotId"
 private const val CATEGORY_ID_PARAMETER = "categoryId"
 
 class EditItemFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedListener,
-    LocalDatePickerDialog.DatePickerListener, ConsumeItemDialog.ConsumeItemDialogListener {
+    LocalDatePickerDialog.DatePickerListener {
     private val dbFactory = DatabaseFactoryImpl()
     private var initialDepoId: Int? = null
     private var initialCategoryId: Int? = null
@@ -275,10 +274,6 @@ class EditItemFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedList
             Log.e(LOG_TAG, "Amount can't be converted: $ex")
             createDialog(requireActivity(), R.string.edit_item_no_amount_dialog_message)
         }
-    }
-
-    override fun onConsume(amount: FixedPointNumber) {
-        Log.i(LOG_TAG, "Amount: $amount")
     }
 
     override fun onDateSet(dialog: DialogFragment, localDate: LocalDate) {

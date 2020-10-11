@@ -10,6 +10,7 @@ import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
 import io.github.kn65op.android.lib.type.FixedPointNumber
 import io.github.kn65op.domag.R
+import org.hamcrest.CoreMatchers
 import org.hamcrest.Matchers.anyOf
 import java.lang.Thread.sleep
 
@@ -162,4 +163,13 @@ fun addItemWithDepotOnly(depotName: String, amount: FixedPointNumber) {
     writeItemAmount(amount)
 
     applyItem()
+}
+
+fun findViewByIdInRow(description: String): ViewInteraction =
+    onView(CoreMatchers.allOf(withId(R.id.item_row_consume_button), hasSibling(withText(description))))
+
+fun consumeItem(itemDescription: String, amount :String) {
+    clickOn(findViewByIdInRow(itemDescription))
+    typeNewTextOnId(R.id.consume_dialog_amount_field, amount)
+    clickOnText("ELOSZKA")
 }
