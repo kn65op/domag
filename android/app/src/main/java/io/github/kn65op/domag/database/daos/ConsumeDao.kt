@@ -15,11 +15,14 @@ interface ConsumeDao {
     @Query("SELECT * FROM consume WHERE uid = :consumeIds")
     fun findById(consumeIds: Int): LiveData<Consume>
 
-    @Query("SELECT * FROM consume WHERE rowid IN (:consumeIds)")
+    @Query("SELECT * FROM consume WHERE uid IN (:consumeIds)")
     fun findByIds(consumeIds: IntArray): LiveData<List<Consume>>
 
-    @Query("SELECT * FROM consume WHERE rowid IN (:consumeIds)")
+    @Query("SELECT * FROM consume WHERE uid IN (:consumeIds)")
     fun findByIdsImmediately(consumeIds: IntArray): List<Consume>
+
+    @Query("SELECT * FROM consume WHERE categoryId = :categoryId")
+    suspend fun findByCategoryImmediately(categoryId: Int): List<Consume>
 
     @Insert
     suspend fun insert(consumes: List<Consume>)

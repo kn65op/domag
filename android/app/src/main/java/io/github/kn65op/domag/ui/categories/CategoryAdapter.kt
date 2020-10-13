@@ -1,23 +1,27 @@
 package io.github.kn65op.domag.ui.categories
 
-import android.content.Context
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.TextView
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
+import io.github.kn65op.android.lib.type.FixedPointNumber
 import io.github.kn65op.domag.R
 import io.github.kn65op.domag.database.database.DatabaseFactoryImpl
 import io.github.kn65op.domag.database.relations.CategoryWithContents
 import io.github.kn65op.domag.ui.common.constructItemFullName
+import io.github.kn65op.domag.ui.dialogs.ConsumeDialogController
+import io.github.kn65op.domag.ui.dialogs.ConsumeItemDialog
 
 class CategoryAdapter(
-    var category: LiveData<CategoryWithContents>,
-    val context: Context,
+    private var category: LiveData<CategoryWithContents>,
+    private val activity: FragmentActivity,
     private val lifecycleOwner: LifecycleOwner
 ) :
     RecyclerView.Adapter<CategoryAdapter.ViewHolder>() {
@@ -31,11 +35,13 @@ class CategoryAdapter(
         val amountViewHolder: TextView = view.findViewById(R.id.item_row_amount)
         val unitViewHolder: TextView = view.findViewById(R.id.item_row_unit)
         val nameViewHolder: TextView = view.findViewById(R.id.item_row_name)
+        val consumeButton: ImageButton = view.findViewById(R.id.item_row_consume_button)
     }
 
     private val categoryOnPosition = 1
     private val itemOnPosition = 2
     private val dbFactory = DatabaseFactoryImpl()
+    private val consumeDialogController = ConsumeDialogController(activity)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder =
         when (viewType) {
@@ -91,7 +97,7 @@ class CategoryAdapter(
         val categoryContent = category.value
         if (categoryContent != null) {
             val itemPosition = position - categoryContent.categories.size
-            val db = dbFactory.factory.createDatabase(context)
+            val db = dbFactory.factory.createDatabase(activity.applicationContext)
             val depot =
                 db.depotDao().findById(categoryContent.items[itemPosition].depotId)
             Log.i(
@@ -103,13 +109,21 @@ class CategoryAdapter(
             depot.observe(lifecycleOwner, {
                 Log.i(LOG_TAG, "Category for $itemPosition: ${it?.name}")
                 it?.let { depot ->
+                    val item = categoryContent.items[itemPosition]
+                    val fullName = constructItemFullName(depot.name, item.description)
+
                     itemViewHolder.amountViewHolder.text =
                         categoryContent.items[itemPosition].amount.toString()
-                    itemViewHolder.nameViewHolder.text = constructItemFullName(
-                        depot.name,
-                        categoryContent.items[itemPosition].description
-                    )
+                    itemViewHolder.nameViewHolder.text = fullName
                     itemViewHolder.unitViewHolder.text = categoryContent.category.unit
+                    itemViewHolder.consumeButton.setOnClickListener {
+                        consumeDialogController.startConsumeDialog(
+                            itemId = item.uid!!,
+                            fullName = fullName,
+                            category = categoryContent.category,
+                            currentAmount = item.amount
+                        )
+                    }
                 }
             })
         }

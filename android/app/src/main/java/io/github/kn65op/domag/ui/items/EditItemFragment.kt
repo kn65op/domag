@@ -1,4 +1,4 @@
-package io.github.kn65op.domag
+package io.github.kn65op.domag.ui.items
 
 import android.os.Bundle
 import android.util.Log
@@ -15,6 +15,7 @@ import com.google.android.material.textfield.TextInputLayout
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner
 import io.github.kn65op.android.lib.gui.dialogs.LocalDatePickerDialog
 import io.github.kn65op.android.lib.type.FixedPointNumber
+import io.github.kn65op.domag.R
 import io.github.kn65op.domag.database.database.AppDatabase
 import io.github.kn65op.domag.database.database.DatabaseFactoryImpl
 import io.github.kn65op.domag.database.entities.Category
@@ -101,10 +102,7 @@ class EditItemFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedList
         descriptionField.doOnTextChanged { _, _, _, _ ->
             val categoryPosition = categorySpinner.selectedItemPosition
             if (categoryPosition != -1) {
-                actionBar()?.title = constructItemFullName(
-                    allCategories[categorySpinner.selectedItemPosition].name,
-                    descriptionField.text.toString()
-                )
+                actionBar()?.title = constructItemFullName()
             }
         }
 
@@ -122,6 +120,12 @@ class EditItemFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedList
 
         return root
     }
+
+    private fun constructItemFullName() =
+        constructItemFullName(
+            allCategories[categorySpinner.selectedItemPosition].name,
+            descriptionField.text.toString()
+        )
 
     private fun startDatePicker() {
         val dialog = LocalDatePickerDialog(this)
@@ -196,6 +200,11 @@ class EditItemFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedList
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.edit_item_menu, menu)
+        if (itemId == null) {
+            val item = menu.getItem(0)
+            item.isEnabled = false
+            item.isVisible = false
+        }
         super.onCreateOptionsMenu(menu, inflater)
     }
 
@@ -223,6 +232,10 @@ class EditItemFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedList
             activity?.onBackPressed()
             true
 
+        }
+        R.id.edit_item_menu_consume_item -> {
+            Log.w(LOG_TAG, "No Consume - remove it")
+            true
         }
         else -> super.onOptionsItemSelected(item)
     }

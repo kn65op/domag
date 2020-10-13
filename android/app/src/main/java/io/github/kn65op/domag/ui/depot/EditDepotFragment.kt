@@ -135,7 +135,7 @@ class EditDepotFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedLis
         spinner.setPositiveButton(context?.getString(R.string.spinner_select_text))
 
         viewManager = LinearLayoutManager(context)
-        viewAdapter = DepotAdapter(currentDepot, requireContext(), this)
+        viewAdapter = DepotAdapter(currentDepot, requireActivity(), this)
 
         recyclerView.apply {
             setHasFixedSize(true)

@@ -10,5 +10,6 @@ data class Consume(
     @PrimaryKey
     val uid: Int? = null,
     val amount: FixedPointNumber,
-    val date: ZonedDateTime
+    val date: ZonedDateTime,
+    val categoryId: Int,
 )

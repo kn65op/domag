@@ -2,6 +2,7 @@ package io.github.kn65op.domag.database.daos
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
+import io.github.kn65op.android.lib.type.FixedPointNumber
 import io.github.kn65op.domag.database.entities.Item
 import java.time.ZonedDateTime
 

@@ -141,7 +141,7 @@ class EditCategoryFragment : FragmentWithActionBar(), AdapterView.OnItemSelected
         spinner.setPositiveButton(context?.getString(R.string.spinner_select_text))
 
         viewManager = LinearLayoutManager(context)
-        viewAdapter = CategoryAdapter(currentCategory, requireContext(), this)
+        viewAdapter = CategoryAdapter(currentCategory, requireActivity(), this)
 
         recyclerView.apply {
             setHasFixedSize(true)

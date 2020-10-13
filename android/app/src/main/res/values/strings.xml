@@ -46,4 +46,6 @@
     <string name="search">Search</string>
     <string name="inside">in</string>
     <string name="items_add_category">Add category</string>
+    <string name="consume_dialog_title">Consume %s (currently %s)</string>
+    <string name="consume_dialog_title_with_unit">Consume %s (current %s %s)</string>
 </resources>

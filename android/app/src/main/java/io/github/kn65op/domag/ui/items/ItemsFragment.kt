@@ -55,7 +55,7 @@ class ItemsFragment : FragmentWithActionBar() {
         val currentContext = context
         if (currentContext != null) {
             recyclerView = root.findViewById(R.id.items_recycler_view)
-            viewAdapter = DepotAdapter(currentDepot, currentContext, viewLifecycleOwner)
+            viewAdapter = DepotAdapter(currentDepot, requireActivity(), viewLifecycleOwner)
 
             viewManager = LinearLayoutManager(currentContext)
             recyclerView.apply {

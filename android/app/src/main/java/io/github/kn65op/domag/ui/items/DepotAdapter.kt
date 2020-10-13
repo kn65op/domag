@@ -1,11 +1,12 @@
 package io.github.kn65op.domag.ui.items
 
-import android.content.Context
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.TextView
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.navigation.findNavController
@@ -14,10 +15,11 @@ import io.github.kn65op.domag.R
 import io.github.kn65op.domag.database.database.DatabaseFactoryImpl
 import io.github.kn65op.domag.database.relations.DepotWithContents
 import io.github.kn65op.domag.ui.common.constructItemFullName
+import io.github.kn65op.domag.ui.dialogs.ConsumeDialogController
 
 class DepotAdapter(
-    var depot: LiveData<DepotWithContents>,
-    val context: Context,
+    private var depot: LiveData<DepotWithContents>,
+    private val activity: FragmentActivity,
     private val lifecycleOwner: LifecycleOwner
 ) :
     RecyclerView.Adapter<DepotAdapter.ViewHolder>() {
@@ -31,11 +33,13 @@ class DepotAdapter(
         val amountViewHolder: TextView = view.findViewById(R.id.item_row_amount)
         val unitViewHolder: TextView = view.findViewById(R.id.item_row_unit)
         val nameViewHolder: TextView = view.findViewById(R.id.item_row_name)
+        val consumeButton: ImageButton = view.findViewById(R.id.item_row_consume_button)
     }
 
     private val depotOnPosition = 1
     private val itemOnPosition = 2
     private val dbFactory = DatabaseFactoryImpl()
+    private val consumeDialogController = ConsumeDialogController(activity)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder =
         when (viewType) {
@@ -92,7 +96,7 @@ class DepotAdapter(
         if (depotContent != null) {
             val itemPosition = position - depotContent.depots.size
             val item = depotContent.items[itemPosition]
-            val db = dbFactory.factory.createDatabase(context)
+            val db = dbFactory.factory.createDatabase(activity.applicationContext)
             val category =
                 db.categoryDao().findById(item.categoryId)
             Log.i(
@@ -104,13 +108,20 @@ class DepotAdapter(
             category.observe(lifecycleOwner, {
                 Log.i(LOG_TAG, "Category for $itemPosition: ${it?.name}")
                 it?.let { category ->
+                    val bindItem = depotContent.items[itemPosition]
+                    val fullName = constructItemFullName(category.name, bindItem.description)
                     itemViewHolder.amountViewHolder.text =
-                        depotContent.items[itemPosition].amount.toString()
+                        bindItem.amount.toString()
                     itemViewHolder.unitViewHolder.text = category.unit
-                    itemViewHolder.nameViewHolder.text = constructItemFullName(
-                        category.name,
-                        depotContent.items[itemPosition].description
-                    )
+                    itemViewHolder.nameViewHolder.text = fullName
+                    itemViewHolder.consumeButton.setOnClickListener {
+                        consumeDialogController.startConsumeDialog(
+                            item.uid!!,
+                            fullName,
+                            category,
+                            bindItem.amount
+                        )
+                    }
                 }
                 item.uid?.let { uid ->
                     holder.itemView.setOnClickListener {
