@@ -24,32 +24,55 @@ class ConsumeDialogController(private val activity: FragmentActivity) {
             currentAmount,
             object : ConsumeItemDialog.ConsumeItemDialogListener {
                 override suspend fun onConsume(amount: FixedPointNumber) {
-                    Log.i(LOG_TAG, "Will consume")
-                    try {
-                        val operation =
-                            dbFactory.factory.createDatabase(activity.applicationContext)
-                                .consumeItem(itemId, amount)
-                        Log.i(LOG_TAG, "Consumed $fullName: $amount")
-                    } catch (notEnough: NotEnoughAmountToConsume) {
-                        Log.w(
-                            LOG_TAG,
-                            "Too much requested for consume: ${notEnough.requestedAmount}, while only ${notEnough.amount} available, trying again"
-                        )
-                        val context = activity.applicationContext
-                        activity.runOnUiThread {
-                            val toast = Toast.makeText(
-                                context,
-                                "Too much requested to consume: $",
-                                Toast.LENGTH_SHORT
-                            )
-                            toast.show()
-                        }
-                        startConsumeDialog(itemId, fullName, category, currentAmount)
-                    }
-                    Log.i(LOG_TAG, "COTO?")
+                    consume(itemId, amount, fullName, category, currentAmount)
                 }
             })
         dialog.show(activity.supportFragmentManager, "ConsumeDialog")
+    }
+
+    private suspend fun consume(
+        itemId: Int,
+        amount: FixedPointNumber,
+        fullName: String,
+        category: Category,
+        currentAmount: FixedPointNumber
+    ) {
+        Log.i(LOG_TAG, "Will consume")
+        try {
+            val operation =
+                dbFactory.factory.createDatabase(activity.applicationContext)
+                    .consumeItem(itemId, amount)
+            Log.i(LOG_TAG, "Consumed $fullName: $amount")
+        } catch (notEnough: NotEnoughAmountToConsume) {
+            retry(notEnough, itemId, fullName, category, currentAmount)
+        }
+    }
+
+    private fun retry(
+        notEnough: NotEnoughAmountToConsume,
+        itemId: Int,
+        fullName: String,
+        category: Category,
+        currentAmount: FixedPointNumber
+    ) {
+        Log.w(
+            LOG_TAG,
+            "Too much requested for consume: ${notEnough.requestedAmount}, while only ${notEnough.amount} available, trying again"
+        )
+        notifyToUser()
+        startConsumeDialog(itemId, fullName, category, currentAmount)
+    }
+
+    private fun notifyToUser() {
+        val context = activity.applicationContext
+        activity.runOnUiThread {
+            val toast = Toast.makeText(
+                context,
+                "Too much requested to consume: $",
+                Toast.LENGTH_SHORT
+            )
+            toast.show()
+        }
     }
 
     companion object {

@@ -3,7 +3,6 @@ package io.github.kn65op.domag.database.database
 import android.content.Context
 import android.util.Log
 import androidx.room.Room
-import io.github.kn65op.domag.database.database.migrations.MIGRATION_2_3
 
 class MemoryDatabaseFactory :
     DatabaseFactory {

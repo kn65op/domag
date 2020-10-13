@@ -7,6 +7,7 @@ suspend fun AppDatabase.deleteCategory(category: CategoryWithContents) {
     val categoryDao = categoryDao()
     val itemDao = itemDao()
     val consumeDao = consumeDao()
+
     category.categories.forEach {
         it.uid?.let { childId ->
             deleteCategory(categoryDao.findWithContentsByIdImmediately(childId))
@@ -18,8 +19,8 @@ suspend fun AppDatabase.deleteCategory(category: CategoryWithContents) {
     categoryDao.delete(category.category)
 
     category.category.uid?.let { uid ->
-        consumeDao().findByCategoryImediately(categoryId = uid).forEach { consume ->
-            consumeDao().delete(consume = consume)
+        consumeDao.findByCategoryImmediately(categoryId = uid).forEach { consume ->
+            consumeDao.delete(consume = consume)
         }
     }
 }

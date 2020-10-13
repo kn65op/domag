@@ -7,8 +7,7 @@ import io.github.kn65op.domag.database.entities.Item
 import java.time.ZonedDateTime
 
 suspend fun AppDatabase.consumeItem(itemId: Int, consumedAmount: FixedPointNumber) {
-    if (consumedAmount == FixedPointNumber(0))
-    {
+    if (consumedAmount == FixedPointNumber(0)) {
         return
     }
     val item = itemDao().findByIdImmediately(itemId)
@@ -43,13 +42,11 @@ private suspend fun AppDatabase.updateItem(
 
 private fun Item.consumeItem(consumedAmount: FixedPointNumber) = when {
     consumedAmount == amount -> null
-    consumedAmount > amount-> throw NotEnoughAmountToConsume(consumedAmount, amount)
+    consumedAmount > amount -> throw NotEnoughAmountToConsume(consumedAmount, amount)
     else -> Item(uid, amount - consumedAmount, depotId, categoryId, description, bestBefore)
 }
 
 data class NotEnoughAmountToConsume(
     val requestedAmount: FixedPointNumber,
     val amount: FixedPointNumber
-) : Throwable() {
-
-}
+) : Throwable()

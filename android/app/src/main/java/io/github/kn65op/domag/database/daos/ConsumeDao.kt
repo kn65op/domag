@@ -22,7 +22,7 @@ interface ConsumeDao {
     fun findByIdsImmediately(consumeIds: IntArray): List<Consume>
 
     @Query("SELECT * FROM consume WHERE categoryId = :categoryId")
-    fun findByCategoryImediately(categoryId: Int): List<Consume>
+    suspend fun findByCategoryImmediately(categoryId: Int): List<Consume>
 
     @Insert
     suspend fun insert(consumes: List<Consume>)
