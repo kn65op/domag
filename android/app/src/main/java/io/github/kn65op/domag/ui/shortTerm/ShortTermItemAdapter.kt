@@ -5,7 +5,9 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.TextView
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.observe
@@ -14,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView
 import io.github.kn65op.domag.R
 import io.github.kn65op.domag.database.database.AppDatabase
 import io.github.kn65op.domag.database.entities.Item
+import io.github.kn65op.domag.ui.dialogs.ConsumeDialogController
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import java.time.format.DateTimeFormatter
@@ -23,7 +26,7 @@ class ShortTermItemAdapter(
     lifecycleOwner: LifecycleOwner,
     val items: LiveData<List<Item>>?,
     val db: AppDatabase?,
-    val activity: Activity?
+    val activity: FragmentActivity
 ) :
     RecyclerView.Adapter<ShortTermItemAdapter.ItemViewHolder>() {
     class ItemViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -31,7 +34,10 @@ class ShortTermItemAdapter(
         val amount: TextView = view.findViewById(R.id.short_term_item_row_amount)
         val unit: TextView = view.findViewById(R.id.short_term_item_row_unit)
         val date: TextView = view.findViewById(R.id.short_term_item_row_date)
+        val consumeButton: ImageButton = view.findViewById(R.id.short_term_consume_button)
     }
+
+    private val consumeDialogController = ConsumeDialogController(activity)
 
     init {
         items?.observe(lifecycleOwner) {
@@ -61,21 +67,42 @@ class ShortTermItemAdapter(
             GlobalScope.launch {
                 Log.i(LOG_TAG, "Start routine")
                 val categoryDao = db?.categoryDao()
-                val depotDao = db?.depotDao()
-                val name = if (item.description.isNullOrEmpty())
-                    "${categoryDao?.getCategoryName(item.categoryId)} in ${depotDao?.getDepotName(
-                        item.depotId
-                    )}"
-                else
-                    "${item.description} (${categoryDao?.getCategoryName(item.categoryId)}) ${activity?.applicationContext?.getString(R.string.inside)} ${depotDao?.getDepotName(
-                        item.depotId
-                    )}"
-                val unit = categoryDao?.getCategoryUnit(item.categoryId)
-                activity?.runOnUiThread {
-                    holder.amount.text = item.amount.toString()
-                    holder.name.text = name
-                    holder.unit.text = unit
-                    holder.date.text = item.bestBefore?.format(timeFormatter)
+                val category = categoryDao?.findWithContentsByIdImmediately(item.categoryId)
+                category?.let {
+                    val depotDao = db?.depotDao()
+                    val name = if (item.description.isNullOrEmpty())
+                        "${category.category.name} in ${
+                            depotDao?.getDepotName(
+                                item.depotId
+                            )
+                        }"
+                    else
+                        "${item.description} (${category.category.name}) ${
+                            activity?.applicationContext?.getString(
+                                R.string.inside
+                            )
+                        } ${
+                            depotDao?.getDepotName(
+                                item.depotId
+                            )
+                        }"
+                    val unit = categoryDao?.getCategoryUnit(item.categoryId)
+                    activity?.runOnUiThread {
+                        holder.amount.text = item.amount.toString()
+                        holder.name.text = name
+                        holder.unit.text = unit
+                        holder.date.text = item.bestBefore?.format(timeFormatter)
+                        item.uid?.let {
+                            holder.consumeButton.setOnClickListener {
+                                consumeDialogController.startConsumeDialog(
+                                    itemId = item.uid,
+                                    fullName = name,
+                                    category = category.category,
+                                    currentAmount = item.amount
+                                )
+                            }
+                        }
+                    }
                 }
             }
             holder.itemView.setOnClickListener {

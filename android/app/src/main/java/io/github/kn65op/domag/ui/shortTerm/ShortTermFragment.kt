@@ -25,7 +25,7 @@ class ShortTermFragment : Fragment() {
         val root = inflater.inflate(R.layout.fragment_short_term, container, false)
         val db = context?.let { dbFactory.factory.createDatabase(it) }
         val data = db?.itemDao()?.getWithBestBeforeBefore(ZonedDateTime.now().plusDays(7))
-        viewAdapter = ShortTermItemAdapter(viewLifecycleOwner, data, db, activity)
+        viewAdapter = ShortTermItemAdapter(viewLifecycleOwner, data, db, requireActivity())
         viewManager = LinearLayoutManager(context)
         recyclerView = root.findViewById(R.id.short_term_items_recycler_view)
 
