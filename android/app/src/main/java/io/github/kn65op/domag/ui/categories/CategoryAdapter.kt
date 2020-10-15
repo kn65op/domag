@@ -122,6 +122,17 @@ class CategoryAdapter(
                             currentAmount = item.amount
                         )
                     }
+                    item.uid?.let { uid ->
+                        holder.itemView.setOnClickListener {
+                            Log.i(LOG_TAG, "Go to item $uid")
+                            val action =
+                                CategoriesFragmentDirections.actionNavCategoriesToFragmentEditItem(
+                                    itemId = uid
+                                )
+                            holder.itemView.findNavController().navigate(action)
+                        }
+
+                    }
                 }
             })
         }

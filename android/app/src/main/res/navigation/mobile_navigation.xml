@@ -112,6 +112,10 @@
                 android:name="categoryId"
                 android:defaultValue="0"
                 app:argType="integer" />
+            <argument
+                android:name="itemId"
+                android:defaultValue="0"
+                app:argType="integer" />
         </action>
     </fragment>
 
