@@ -11,13 +11,11 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
-import io.github.kn65op.android.lib.type.FixedPointNumber
 import io.github.kn65op.domag.R
 import io.github.kn65op.domag.database.database.DatabaseFactoryImpl
 import io.github.kn65op.domag.database.relations.CategoryWithContents
 import io.github.kn65op.domag.ui.common.constructItemFullName
 import io.github.kn65op.domag.ui.dialogs.ConsumeDialogController
-import io.github.kn65op.domag.ui.dialogs.ConsumeItemDialog
 
 class CategoryAdapter(
     private var category: LiveData<CategoryWithContents>,
