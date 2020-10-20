@@ -44,7 +44,7 @@ class EditItemFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedList
     private var itemId: Int? = null
     private var currentItem: Item? = null
     private val timeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("ccc dd-MMMM-yyyy")
-    private var bestBefore: ZonedDateTime? = ZonedDateTime.now()
+    private var bestBefore: ZonedDateTime? = null
 
     private lateinit var depotSpinner: SearchableSpinner
     private lateinit var categorySpinner: SearchableSpinner
@@ -113,6 +113,9 @@ class EditItemFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedList
         bestBeforeField.setOnClickListener { startDatePicker() }
         bestBeforeField.setOnFocusChangeListener { _, gained -> if (gained) startDatePicker() }
         bestBeforeRemoveButton.setOnClickListener { clearDate() }
+        if (itemId == null) {
+            amountField.replaceText(1.toString())
+        }
 
         val db = dbFactory.factory.createDatabase(requireContext())
         collectAllCategories(db)
