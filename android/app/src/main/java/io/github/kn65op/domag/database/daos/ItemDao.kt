@@ -2,7 +2,6 @@ package io.github.kn65op.domag.database.daos
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
-import io.github.kn65op.android.lib.type.FixedPointNumber
 import io.github.kn65op.domag.database.entities.Item
 import java.time.ZonedDateTime
 
@@ -23,7 +22,7 @@ interface ItemDao {
     @Query("SELECT * FROM item WHERE rowid IN (:itemIds)")
     fun findByIdsImmediately(itemIds: IntArray): List<Item>
 
-    @Query("SELECT * FROM item WHERE bestBefore < :date")
+    @Query("SELECT * FROM item WHERE bestBefore < :date ORDER BY bestBefore")
     fun getWithBestBeforeBefore(date: ZonedDateTime?): LiveData<List<Item>>
 
     @Insert
