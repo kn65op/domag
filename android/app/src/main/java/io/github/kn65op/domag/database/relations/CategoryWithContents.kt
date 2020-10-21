@@ -3,6 +3,7 @@ package io.github.kn65op.domag.database.relations
 import androidx.room.Embedded
 import androidx.room.Relation
 import io.github.kn65op.domag.database.entities.Category
+import io.github.kn65op.domag.database.entities.CategoryLimit
 import io.github.kn65op.domag.database.entities.Item
 
 data class CategoryWithContents(
@@ -13,5 +14,8 @@ data class CategoryWithContents(
     val categories: List<Category> = emptyList(),
 
     @Relation(parentColumn = "rowid", entityColumn = "categoryId")
-    val items: List<Item> = emptyList()
+    val items: List<Item> = emptyList(),
+
+    @Relation(parentColumn = "rowid", entityColumn = "categoryId")
+    val limits: CategoryLimit? = null,
 )

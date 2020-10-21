@@ -78,7 +78,7 @@ class ShortTermItemAdapter(
                         }"
                     else
                         "${item.description} (${category.category.name}) ${
-                            activity?.applicationContext?.getString(
+                            activity.applicationContext.getString(
                                 R.string.inside
                             )
                         } ${
@@ -86,8 +86,8 @@ class ShortTermItemAdapter(
                                 item.depotId
                             )
                         }"
-                    val unit = categoryDao?.getCategoryUnit(item.categoryId)
-                    activity?.runOnUiThread {
+                    val unit = categoryDao.getCategoryUnit(item.categoryId)
+                    activity.runOnUiThread {
                         holder.amount.text = item.amount.toString()
                         holder.name.text = name
                         holder.unit.text = unit

@@ -30,7 +30,7 @@ class DeleteCategoryOperationTest : DatabaseTest() {
     private fun findCategoryToRemove(): CategoryWithContents {
         val toRemove = getFromLiveData(categoryDao.findWithContentsByName(mainCategory1Name))
         MatcherAssert.assertThat(toRemove.size, CoreMatchers.equalTo(1))
-        return toRemove[0];
+        return toRemove[0]
     }
 
     @Test
