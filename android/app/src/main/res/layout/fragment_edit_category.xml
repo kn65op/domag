@@ -40,9 +40,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <Space
+    <TextView
+        android:id="@+id/textView4"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:text="@string/edit_catgegory_category_content"
+        android:textSize="24sp"
+        android:textStyle="bold" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/edit_category_content_view"
