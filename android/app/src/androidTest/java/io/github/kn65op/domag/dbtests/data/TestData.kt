@@ -3,14 +3,11 @@ package io.github.kn65op.domag.dbtests.data
 import android.content.Context
 import androidx.room.Room
 import io.github.kn65op.domag.database.database.AppDatabase
-import io.github.kn65op.domag.database.entities.Category
-import io.github.kn65op.domag.database.entities.Item
-import io.github.kn65op.domag.database.entities.Depot
 import io.github.kn65op.domag.database.relations.CategoryWithContents
 import io.github.kn65op.domag.database.relations.DepotWithContents
 import io.github.kn65op.domag.uitests.common.descriptionCategoryDelimiter
 import io.github.kn65op.android.lib.type.FixedPointNumber
-import io.github.kn65op.domag.database.entities.Consume
+import io.github.kn65op.domag.database.entities.*
 import kotlinx.coroutines.runBlocking
 import java.time.ZonedDateTime
 
@@ -35,8 +32,24 @@ const val mainCategory2Unit = "zzz"
 const val category1InMainCategory1Unit = "szt"
 const val category2InMainCategory1Unit = "kg"
 
+val mainCategory1LimitAmount = FixedPointNumber(10)
+val category2InMainCategory1LimitAmount = FixedPointNumber(100)
+
+val categoryLimitOne =
+    CategoryLimit(uid = 1, categoryId = 1, minimumDesiredAmount = mainCategory1LimitAmount)
+val mainCategory1Limit = categoryLimitOne
+val categoryLimitTwo = CategoryLimit(
+    uid = 2,
+    categoryId = 3,
+    minimumDesiredAmount = category2InMainCategory1LimitAmount
+)
+val category2inMainCategory1Limit = categoryLimitTwo
+
 val mainCategory1 =
-    CategoryWithContents(category = Category(name = mainCategory1Name, unit = mainCategory1Unit))
+    CategoryWithContents(
+        category = Category(name = mainCategory1Name, unit = mainCategory1Unit),
+        limits = mainCategory1Limit
+    )
 val mainCategory2 =
     CategoryWithContents(category = Category(name = mainCategory2Name, unit = mainCategory2Unit))
 val category1InMainCategory1 = CategoryWithContents(
@@ -52,7 +65,8 @@ val category2InMainCategory1 =
             name = category2InMainCategory1Name,
             parentId = 1,
             unit = category2InMainCategory1Unit
-        )
+        ),
+        limits = category2inMainCategory1Limit
     )
 
 val itemAmount1 = FixedPointNumber(1.0)
@@ -64,10 +78,12 @@ val itemAmount6 = FixedPointNumber(0.8)
 val itemAmount7 = FixedPointNumber(1.8)
 
 const val item1Description = "Good"
-const val item1WholeNameWithCategory = "$item1Description$descriptionCategoryDelimiter$mainCategory1Name"
+const val item1WholeNameWithCategory =
+    "$item1Description$descriptionCategoryDelimiter$mainCategory1Name"
 const val item2Description = "BAD"
 const val item3Description = "Natoher descirption"
-const val item3WholeNameWithCategory = "$item3Description$descriptionCategoryDelimiter$mainCategory2Name"
+const val item3WholeNameWithCategory =
+    "$item3Description$descriptionCategoryDelimiter$mainCategory2Name"
 
 val bestBeforeItem1 = ZonedDateTime.now().plusDays(7)!!
 val bestBeforeItem2 = ZonedDateTime.now().minusDays(7)!!
@@ -76,13 +92,37 @@ val bestBeforeItem5 = ZonedDateTime.now().plusDays(1)!!
 val bestBeforeItem6 = ZonedDateTime.now().plusYears(7)!!
 val bestBeforeItem7 = ZonedDateTime.now().plusDays(6)!!
 
-val item1 = Item(uid = 1, depotId = 1, categoryId = 1, amount = itemAmount1, description = item1Description, bestBefore = bestBeforeItem1)
-val item2 = Item(uid = 2, depotId = 3, categoryId = 3, amount = itemAmount2, description = item2Description, bestBefore = bestBeforeItem2)
-val item3 = Item(uid = 3, depotId = 2, categoryId = 2, amount = itemAmount3, description = item3Description, bestBefore = bestBeforeItem3)
+val item1 = Item(
+    uid = 1,
+    depotId = 1,
+    categoryId = 1,
+    amount = itemAmount1,
+    description = item1Description,
+    bestBefore = bestBeforeItem1
+)
+val item2 = Item(
+    uid = 2,
+    depotId = 3,
+    categoryId = 3,
+    amount = itemAmount2,
+    description = item2Description,
+    bestBefore = bestBeforeItem2
+)
+val item3 = Item(
+    uid = 3,
+    depotId = 2,
+    categoryId = 2,
+    amount = itemAmount3,
+    description = item3Description,
+    bestBefore = bestBeforeItem3
+)
 val item4 = Item(uid = 4, depotId = 1, categoryId = 3, amount = itemAmount4)
-val item5 = Item(uid = 5, depotId = 3, categoryId = 3, amount = itemAmount5, bestBefore = bestBeforeItem5)
-val item6 = Item(uid = 6, depotId = 2, categoryId = 4, amount = itemAmount6, bestBefore = bestBeforeItem6)
-val item7 = Item(uid = 7, depotId = 4, categoryId = 4, amount = itemAmount7, bestBefore = bestBeforeItem7)
+val item5 =
+    Item(uid = 5, depotId = 3, categoryId = 3, amount = itemAmount5, bestBefore = bestBeforeItem5)
+val item6 =
+    Item(uid = 6, depotId = 2, categoryId = 4, amount = itemAmount6, bestBefore = bestBeforeItem6)
+val item7 =
+    Item(uid = 7, depotId = 4, categoryId = 4, amount = itemAmount7, bestBefore = bestBeforeItem7)
 
 val itemsFrom2 = listOf(item2, item3, item4, item5, item6, item7)
 val allItemsCount = itemsFrom2.size + 1
@@ -107,6 +147,10 @@ fun fillData(db: AppDatabase) = runBlocking {
         )
     )
     categoryDao.insert(category2InMainCategory1.category)
+
+    val categoryLimitDao = db.categoryLimitDao()
+    categoryLimitDao.insert(categoryLimitOne)
+    categoryLimitDao.insert(categoryLimitTwo)
 
     val itemDao = db.itemDao()
     itemDao.insert(item1)
