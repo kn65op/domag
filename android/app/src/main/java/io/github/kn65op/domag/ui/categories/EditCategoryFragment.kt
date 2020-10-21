@@ -58,13 +58,12 @@ class EditCategoryFragment : FragmentWithActionBar(), AdapterView.OnItemSelected
                 categoryId = it
             }
         }
-        Log.i(LOG_TAG, "Using depotId: $categoryId")
         Log.i(LOG_TAG, "Editing category: $categoryId: $currentName with parent: $currentParent")
         actionBar()?.title =
             if (currentName.isNullOrEmpty()) context?.getString(R.string.edit_category_new_category) else currentName
     }
 
-    private fun readDepot() {
+    private fun readCategory() {
         categoryId?.let { searchCategoryId ->
             if (searchCategoryId != 0) {
                 context?.let { context ->
@@ -132,7 +131,7 @@ class EditCategoryFragment : FragmentWithActionBar(), AdapterView.OnItemSelected
     ): View? {
         val root = inflater.inflate(R.layout.fragment_edit_category, container, false)
 
-        readDepot()
+        readCategory()
 
         spinner = root.findViewById(R.id.edit_category_fragment_parent_spinner)
         recyclerView = root.findViewById(R.id.edit_category_content_view)
@@ -148,15 +147,16 @@ class EditCategoryFragment : FragmentWithActionBar(), AdapterView.OnItemSelected
             layoutManager = viewManager
             adapter = viewAdapter
         }
-        currentCategory.observe(viewLifecycleOwner, {
+        currentCategory.observe(viewLifecycleOwner, { category ->
             activity?.runOnUiThread {
                 if (!recyclerView.isComputingLayout) {
                     recyclerView.adapter?.notifyDataSetChanged()
                 }
-                currentName = it.category.name
+                currentName = category.category.name
                 currentName?.let { edit_category_category_name.replaceText(it) }
-                currentUnit = it.category.unit
+                currentUnit = category.category.unit
                 currentUnit?.let { edit_category_unit_field.replaceText(it) }
+                category.limits?.let { edit_category_minimum_amount_field.replaceText(it.minimumDesiredAmount.toString()) }
             }
         })
 
