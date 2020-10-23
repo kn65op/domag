@@ -54,7 +54,7 @@ interface CategoryDao {
     suspend fun insert(categorys: List<Category>)
 
     @Insert
-    suspend fun insert(category: Category)
+    suspend fun insert(category: Category) : Long
 
     @Update
     suspend fun update(category: Category)

@@ -35,6 +35,13 @@ open class CategoryLimitDatabaseTest  : DatabaseTest() {
     }
 
     @Test
+    fun findByCategoryId() {
+        val found = getFromLiveData(categoryLimitDao.getByCategoryId(3))
+
+        assertThat(found, equalTo(categoryLimitTwo))
+    }
+
+    @Test
     fun delete() = runBlocking {
         categoryLimitDao.delete(categoryLimitOne)
 

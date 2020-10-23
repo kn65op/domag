@@ -7,7 +7,7 @@ import io.github.kn65op.android.lib.type.FixedPointNumber
 @Entity
 data class CategoryLimit(
     @PrimaryKey
-    val uid: Int? = null,
+    val uid: Long? = null,
 
     val categoryId: Int,
 

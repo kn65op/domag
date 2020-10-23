@@ -17,4 +17,7 @@ interface CategoryLimitDao {
 
     @Delete
     suspend fun delete(category: CategoryLimit)
+
+    @Query("SELECT * FROM categorylimit WHERE categoryId = :categoryId")
+    fun getByCategoryId(categoryId: Int): LiveData<CategoryLimit>
 }

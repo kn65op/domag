@@ -176,38 +176,8 @@ class EditCategoryFragment : FragmentWithActionBar(), AdapterView.OnItemSelected
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
         R.id.edit_depot_menu_confirm -> {
-            val name = edit_category_category_name.text.toString()
-            if (name.isNotEmpty()) {
-                val db = context?.let { it1 -> dbFactory.factory.createDatabase(it1) }
-                val dao = db?.categoryDao()
-                if (currentCategory.value == null) {
-                    lifecycleScope.launch {
-                        Log.i(LOG_TAG, "Insert $name with parent: $currentParent")
-                        dao?.insert(
-                            Category(
-                                name = name,
-                                unit = edit_category_unit_field.text.toString(),
-                                parentId = currentParent
-                            )
-                        )
-                        Log.i(LOG_TAG, "Inserted $name")
-                    }
-                } else {
-                    lifecycleScope.launch {
-                        Log.i(LOG_TAG, "Edit $name")
-                        currentCategory.value?.category?.let {
-                            val depot = Category(
-                                uid = it.uid,
-                                unit = edit_category_unit_field.text.toString(),
-                                name = name,
-                                parentId = currentParent
-                            )
-                            dao?.update(depot)
-                        }
-                        Log.i(LOG_TAG, "Edited $name")
-                    }
-                }
-            }
+            val db = context?.let { it1 -> dbFactory.factory.createDatabase(it1) }
+            db?.let { saveCategory(it) }
             activity?.onBackPressed()
             true
         }
@@ -228,6 +198,56 @@ class EditCategoryFragment : FragmentWithActionBar(), AdapterView.OnItemSelected
             true
         }
         else -> super.onOptionsItemSelected(item)
+    }
+
+    private fun saveCategory(db: AppDatabase) {
+        val name = readName()
+        val categoryDao = db.categoryDao()
+        val category = currentCategory.value
+        if (category == null) {
+            lifecycleScope.launch {
+                Log.i(LOG_TAG, "Insert $name with parent: $currentParent")
+                val categoryId = categoryDao.insert(
+                    Category(
+                        name = name,
+                        unit = edit_category_unit_field.text.toString(),
+                        parentId = currentParent
+                    )
+                )
+                Log.i(LOG_TAG, "Inserted $name")
+                saveLimit(db, categoryId.toInt())
+            }
+        } else {
+            val categoryId = category.category.uid
+            categoryId?.let { id ->
+                lifecycleScope.launch {
+                    Log.i(LOG_TAG, "Update $name")
+                    category.category
+                    val depot = Category(
+                        uid = id,
+                        unit = edit_category_unit_field.text.toString(),
+                        name = name,
+                        parentId = currentParent
+                    )
+                    categoryDao.update(depot)
+                    Log.i(LOG_TAG, "Edited $name")
+                    saveLimit(db, id)
+                }
+            }
+        }
+    }
+
+    private fun saveLimit(db: AppDatabase, categoryId: Int) {
+        val categoryLimitDao = db.categoryLimitDao()
+
+    }
+
+    private fun readName(): String {
+        val originalName = edit_category_category_name.text.toString()
+        return if (originalName.isEmpty())
+            "<UNNAMED>"
+        else
+            originalName
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
