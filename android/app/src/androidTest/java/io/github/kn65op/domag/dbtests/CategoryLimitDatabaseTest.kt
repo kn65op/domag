@@ -13,7 +13,7 @@ import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Before
 import org.junit.Test
 
-open class CategoryLimitDatabaseTest  : DatabaseTest() {
+open class CategoryLimitDatabaseTest : DatabaseTest() {
     private lateinit var categoryLimitDao: CategoryLimitDao
 
     @Before
@@ -29,14 +29,14 @@ open class CategoryLimitDatabaseTest  : DatabaseTest() {
     }
 
     @Test
-    fun findByCategoryId() {
+    fun findByCategoryId() = runBlocking {
         val found = categoryLimitDao.getByCategoryIdImmediately(3)
 
         assertThat(found, equalTo(categoryLimitTwo))
     }
 
     @Test
-    fun findByNotExistingCategoryId() {
+    fun findByNotExistingCategoryId() = runBlocking {
         val found = categoryLimitDao.getByCategoryIdImmediately(2)
 
         assertThat(found, equalTo(null))
@@ -46,12 +46,13 @@ open class CategoryLimitDatabaseTest  : DatabaseTest() {
     fun delete() = runBlocking {
         categoryLimitDao.delete(categoryLimitOne)
 
-         assertNoData(categoryLimitDao.getById(1))
+        assertNoData(categoryLimitDao.getById(1))
     }
 
     @Test
     fun update() = runBlocking {
-        val updatedLimit = CategoryLimit(uid = 1, categoryId = 1, minimumDesiredAmount = FixedPointNumber(23.41))
+        val updatedLimit =
+            CategoryLimit(uid = 1, categoryId = 1, minimumDesiredAmount = FixedPointNumber(23.41))
 
         categoryLimitDao.update(updatedLimit)
 

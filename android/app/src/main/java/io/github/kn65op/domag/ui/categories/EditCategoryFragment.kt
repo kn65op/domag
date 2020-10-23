@@ -241,8 +241,13 @@ class EditCategoryFragment : FragmentWithActionBar(), AdapterView.OnItemSelected
     }
 
     private suspend fun saveLimit(db: AppDatabase, categoryId: Int) {
+        val minimumAmountText = edit_category_minimum_amount_field.text.toString()
+        if (minimumAmountText.isEmpty()) {
+            Log.i(LOG_TAG, "There is no minimum amount specified for $categoryId")
+            return
+        }
         val minimumAmount =
-            FixedPointNumber(edit_category_minimum_amount_field.text.toString().toDouble())
+            FixedPointNumber(minimumAmountText.toDouble())
         val categoryLimitDao = db.categoryLimitDao()
         val categoryLimit = categoryLimitDao.getByCategoryIdImmediately(categoryId)
         if (categoryLimit == null) {
