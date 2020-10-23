@@ -1,21 +1,15 @@
 package io.github.kn65op.domag.dbtests
 
 import io.github.kn65op.android.lib.type.FixedPointNumber
-import io.github.kn65op.domag.database.daos.CategoryDao
 import io.github.kn65op.domag.database.daos.CategoryLimitDao
-import io.github.kn65op.domag.database.entities.Category
 import io.github.kn65op.domag.database.entities.CategoryLimit
 import io.github.kn65op.domag.dbtests.common.DatabaseTest
 import io.github.kn65op.domag.dbtests.common.assertNoData
 import io.github.kn65op.domag.dbtests.common.getFromLiveData
 import io.github.kn65op.domag.dbtests.data.*
-import io.github.kn65op.domag.matchers.isEqualRegardlessId
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.CoreMatchers.*
-import org.hamcrest.Matcher
 import org.hamcrest.MatcherAssert.assertThat
-import org.hamcrest.Matchers.greaterThan
-import org.hamcrest.collection.IsArrayContainingInAnyOrder.arrayContainingInAnyOrder
 import org.junit.Before
 import org.junit.Test
 
@@ -36,9 +30,16 @@ open class CategoryLimitDatabaseTest  : DatabaseTest() {
 
     @Test
     fun findByCategoryId() {
-        val found = getFromLiveData(categoryLimitDao.getByCategoryId(3))
+        val found = categoryLimitDao.getByCategoryIdImediately(3)
 
         assertThat(found, equalTo(categoryLimitTwo))
+    }
+
+    @Test
+    fun findByNotExistingCategoryId() {
+        val found = categoryLimitDao.getByCategoryIdImediately(2)
+
+        assertThat(found, equalTo(null))
     }
 
     @Test
