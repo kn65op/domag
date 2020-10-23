@@ -11,10 +11,13 @@ import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner
+import io.github.kn65op.android.lib.type.FixedPointNumber
 import io.github.kn65op.domag.R
 import io.github.kn65op.domag.database.database.AppDatabase
 import io.github.kn65op.domag.database.database.DatabaseFactoryImpl
 import io.github.kn65op.domag.database.entities.Category
+import io.github.kn65op.domag.database.entities.CategoryLimit
+import io.github.kn65op.domag.database.entities.withLimit
 import io.github.kn65op.domag.database.operations.deleteCategory
 import io.github.kn65op.domag.database.relations.CategoryWithContents
 import io.github.kn65op.domag.ui.common.FragmentWithActionBar
@@ -178,7 +181,6 @@ class EditCategoryFragment : FragmentWithActionBar(), AdapterView.OnItemSelected
         R.id.edit_depot_menu_confirm -> {
             val db = context?.let { it1 -> dbFactory.factory.createDatabase(it1) }
             db?.let { saveCategory(it) }
-            activity?.onBackPressed()
             true
         }
         R.id.edit_depot_menu_remove_depot_item -> {
@@ -204,8 +206,8 @@ class EditCategoryFragment : FragmentWithActionBar(), AdapterView.OnItemSelected
         val name = readName()
         val categoryDao = db.categoryDao()
         val category = currentCategory.value
-        if (category == null) {
-            lifecycleScope.launch {
+        lifecycleScope.launch {
+            if (category == null) {
                 Log.i(LOG_TAG, "Insert $name with parent: $currentParent")
                 val categoryId = categoryDao.insert(
                     Category(
@@ -216,30 +218,45 @@ class EditCategoryFragment : FragmentWithActionBar(), AdapterView.OnItemSelected
                 )
                 Log.i(LOG_TAG, "Inserted $name")
                 saveLimit(db, categoryId.toInt())
-            }
-        } else {
-            val categoryId = category.category.uid
-            categoryId?.let { id ->
-                lifecycleScope.launch {
+            } else {
+                val categoryId = category.category.uid
+                categoryId?.let { id ->
                     Log.i(LOG_TAG, "Update $name")
-                    category.category
                     val depot = Category(
                         uid = id,
                         unit = edit_category_unit_field.text.toString(),
                         name = name,
                         parentId = currentParent
                     )
+                    Log.i(LOG_TAG, "Update $depot")
                     categoryDao.update(depot)
+                    Log.i(LOG_TAG, "Update $depot")
                     Log.i(LOG_TAG, "Edited $name")
                     saveLimit(db, id)
                 }
             }
+        }.invokeOnCompletion {
+            activity?.onBackPressed()
         }
     }
 
-    private fun saveLimit(db: AppDatabase, categoryId: Int) {
+    private suspend fun saveLimit(db: AppDatabase, categoryId: Int) {
+        val minimumAmount =
+            FixedPointNumber(edit_category_minimum_amount_field.text.toString().toDouble())
         val categoryLimitDao = db.categoryLimitDao()
-
+        val categoryLimit = categoryLimitDao.getByCategoryIdImmediately(categoryId)
+        if (categoryLimit == null) {
+            Log.i(LOG_TAG, "insert new limit for $categoryId: $minimumAmount")
+            categoryLimitDao.insert(
+                CategoryLimit(
+                    categoryId = categoryId, minimumDesiredAmount = minimumAmount
+                )
+            )
+        } else {
+            Log.i(LOG_TAG, "update limit for $categoryId: $minimumAmount")
+            val newLimit = categoryLimit.withLimit(minimumAmount)
+            categoryLimitDao.update(newLimit)
+        }
     }
 
     private fun readName(): String {

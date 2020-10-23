@@ -30,14 +30,14 @@ open class CategoryLimitDatabaseTest  : DatabaseTest() {
 
     @Test
     fun findByCategoryId() {
-        val found = categoryLimitDao.getByCategoryIdImediately(3)
+        val found = categoryLimitDao.getByCategoryIdImmediately(3)
 
         assertThat(found, equalTo(categoryLimitTwo))
     }
 
     @Test
     fun findByNotExistingCategoryId() {
-        val found = categoryLimitDao.getByCategoryIdImediately(2)
+        val found = categoryLimitDao.getByCategoryIdImmediately(2)
 
         assertThat(found, equalTo(null))
     }

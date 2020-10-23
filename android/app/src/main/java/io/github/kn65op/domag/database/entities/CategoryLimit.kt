@@ -13,3 +13,6 @@ data class CategoryLimit(
 
     val minimumDesiredAmount: FixedPointNumber,
 )
+
+fun CategoryLimit.withLimit(minimumAmount: FixedPointNumber) =
+    CategoryLimit(uid = uid, categoryId = categoryId, minimumDesiredAmount = minimumAmount)

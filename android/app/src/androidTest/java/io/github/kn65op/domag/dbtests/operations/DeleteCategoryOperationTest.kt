@@ -87,6 +87,6 @@ class DeleteCategoryOperationTest : DatabaseTest() {
         val toRemove = findCategoryToRemove()
         db.deleteCategory(toRemove)
 
-        MatcherAssert.assertThat(categoryLimitDao.getByCategoryIdImediately(1), CoreMatchers.equalTo(null))
+        MatcherAssert.assertThat(categoryLimitDao.getByCategoryIdImmediately(1), CoreMatchers.equalTo(null))
     }
 }
