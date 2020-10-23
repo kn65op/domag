@@ -107,6 +107,10 @@ open class CategoriesPartTestSuite {
         noViewVisible(R.id.fragment_categories_limit_info)
     }
 
+    private fun validateLimitTextVisible() {
+        viewIdVisible(R.id.fragment_categories_limit_info)
+    }
+
     @Test
     fun onStartShouldPrintCategories() {
         val title = "Categories"
@@ -295,6 +299,15 @@ open class CategoriesPartTestSuite {
 
     @Test
     fun whenChangeLimitItShouldBeChanged() {
+        val newLimit = FixedPointNumber(1.50)
+        changeLimit(mainCategory2Name, newLimit)
+
+        validateLimit(newLimit, mainCategory2Unit)
+        validateLimitTextVisible()
+    }
+
+    @Test
+    fun whenCreateLimitItShouldBeChanged() {
         val newLimit = FixedPointNumber(0.01)
         changeLimit(mainCategory1Name, newLimit)
 

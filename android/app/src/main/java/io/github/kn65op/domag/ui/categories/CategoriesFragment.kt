@@ -82,9 +82,9 @@ class CategoriesFragment : FragmentWithActionBar() {
                 R.string.categories_minimum_amount_text,
                 "${it.limits?.minimumDesiredAmount.toString()} ${it.category.unit}"
             )
+            fragment_categories_limit_info.visibility = View.VISIBLE
         } else {
             fragment_categories_limit_info.visibility = View.GONE
-
         }
 
         activity?.runOnUiThread {
