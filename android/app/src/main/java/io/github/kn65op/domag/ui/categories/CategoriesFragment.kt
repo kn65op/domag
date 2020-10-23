@@ -77,7 +77,15 @@ class CategoriesFragment : FragmentWithActionBar() {
     ) {
         setBackButton(it, root)
 
-        fragment_categories_limit_info.text = "Configured minimum amount: ${it.limits?.minimumDesiredAmount.toString()} ${it.category.unit}"
+        if (it.limits != null) {
+            fragment_categories_limit_info.text = requireActivity().getString(
+                R.string.categories_minimum_amount_text,
+                "${it.limits?.minimumDesiredAmount.toString()} ${it.category.unit}"
+            )
+        } else {
+            fragment_categories_limit_info.visibility = View.GONE
+
+        }
 
         activity?.runOnUiThread {
             Log.i(LOG_TAG, "Data has been changed")

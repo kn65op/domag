@@ -103,6 +103,10 @@ open class CategoriesPartTestSuite {
         viewHasText(R.id.fragment_categories_limit_info, "Configured minimum amount: ${limit.toString()} $unit")
     }
 
+    private fun validateNoLimitText() {
+        noViewVisible(R.id.fragment_categories_limit_info)
+    }
+
     @Test
     fun onStartShouldPrintCategories() {
         val title = "Categories"
@@ -295,5 +299,12 @@ open class CategoriesPartTestSuite {
         changeLimit(mainCategory1Name, newLimit)
 
         validateLimit(newLimit, mainCategory1Unit)
+    }
+
+    @Test
+    fun whenThereIsNoLimitShouldNotPrintLimit() {
+        clickOnText(mainCategory2Name)
+
+        validateNoLimitText()
     }
 }

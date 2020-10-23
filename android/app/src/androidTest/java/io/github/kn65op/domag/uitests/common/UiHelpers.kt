@@ -8,6 +8,7 @@ import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiSelector
 import org.hamcrest.CoreMatchers
+import org.hamcrest.CoreMatchers.not
 
 fun viewHasText(id: Int, text: String) {
     onView(withId(id)).check(matches(withText(text)))
@@ -35,6 +36,6 @@ fun viewIdVisible(id: Int) {
     onView(withId(id)).check(matches(isDisplayed()))
 }
 
-fun viewIdVisible(id: Int) {
-    onView(withId(id)).check(matches(isDisplayed()))
+fun noViewVisible(id: Int) {
+    onView(withId(id)).check(matches(not(isDisplayed())))
 }

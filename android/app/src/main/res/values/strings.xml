@@ -1,10 +1,12 @@
 <resources>
     <string name="app_name">Domag</string>
+
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nav_header_title">Android Studio</string>
     <string name="nav_header_subtitle">android.studio@android.com</string>
     <string name="nav_header_desc">Navigation header</string>
+
     <string name="action_settings">Settings</string>
 
     <string name="menu_items">Items</string>
@@ -14,28 +16,38 @@
     <string name="menu_categories">Categories</string>
     <string name="menu_settings">Settings</string>
 
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="spinner_select_text">Select</string>
+    <string name="ok">OK</string>
+    <string name="search">Search</string>
+    <string name="inside">in</string>
+
     <string name="edit_container_container_name">Name</string>
     <string name="edit_container_parent_container">In</string>
+
     <string name="items_add_item">Add item</string>
     <string name="items_add_depot">Add depot</string>
     <string name="items_menu_edit_depot_menu_item">Edit depot</string>
+    <string name="items_add_category">Add category</string>
+
     <string name="edit_depot_parent_text">Parent depot</string>
-    <string name="spinner_select_text">Select</string>
     <string name="edit_depot_parent_select_no_parent">(No parent)</string>
     <string name="edit_depot_menu_remove_depot_item_text">Remove</string>
     <string name="edit_depot_menu_confirm_text">Save</string>
+
+    <string name="categories_minimum_amount_text">Configured minimum amount: %s</string>
+
     <string name="categories_menu_edit_category_menu_item">Edit category</string>
+
     <string name="edit_category_category_name">Name</string>
     <string name="edit_category_parent_text">Parent category</string>
     <string name="edit_category_unit">Unit</string>
     <string name="edit_category_new_category">New category</string>
+
     <string name="edit_item_amount_text">Amount (required)</string>
     <string name="edit_item_depot_spinner_title">Depot</string>
     <string name="edit_item_category_spinner_title">Category</string>
     <string name="edit_item_description">Description</string>
     <string name="edit_item_no_amount_dialog_message">Amount can\'t be empty.</string>
-    <string name="ok">OK</string>
     <string name="edit_item_no_category_dialog_message">Category can\'t be empty.</string>
     <string name="edit_item_no_depot_dialog_message">Depot can\'t be empty.</string>
     <string name="edit_item_menu_consume_label">Consume</string>
@@ -43,11 +55,10 @@
     <string name="edit_item_remove_best_before">Remove best before</string>
     <string name="edit_item_category_text">Category</string>
     <string name="edit_item_depot_text">Depot</string>
-    <string name="search">Search</string>
-    <string name="inside">in</string>
-    <string name="items_add_category">Add category</string>
+
     <string name="consume_dialog_title">Consume %s (currently %s)</string>
     <string name="consume_dialog_title_with_unit">Consume %s (current %s %s)</string>
-    <string name="edit_catgegory_category_content">Category content</string>
+
+    <string name="edit_category_category_content">Category content</string>
     <string name="edit_category_desired_minimum_amount">Desired minimum amount</string>
 </resources>
