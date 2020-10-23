@@ -45,11 +45,11 @@ open class CategoriesPartTestSuite {
     }
 
     private fun assertCategoryInContents(name: String) {
-        viewOrChildHasText(R.id.fragment_categories_layout, name)
+        viewHasChildWithText(R.id.fragment_categories_layout, name)
     }
 
     private fun assertUnitInContents(name: String) {
-        viewOrChildHasText(R.id.fragment_categories_layout, name)
+        viewHasChildWithText(R.id.fragment_categories_layout, name)
     }
 
     private fun removeCategory() {
@@ -75,6 +75,13 @@ open class CategoriesPartTestSuite {
         applyCategory()
     }
 
+    private fun changeLimit(name: String, newLimit: FixedPointNumber) {
+        clickOnText(name)
+        clickEditCategory()
+        writeCategoryLimit(newLimit)
+        applyCategory()
+    }
+
     private fun changeParent(name: String, parentName: String) {
         clickOnText(name)
         clickEditCategory()
@@ -83,13 +90,17 @@ open class CategoriesPartTestSuite {
     }
 
     private fun assertTitleIs(title: String) {
-        viewOrChildHasText(R.id.toolbar, title)
+        viewHasChildWithText(R.id.toolbar, title)
     }
 
     private fun assertItemInContents(name: String, unit: String, amount: FixedPointNumber) {
-        viewOrChildHasText(R.id.fragment_categories_layout, name)
-        viewOrChildHasText(R.id.fragment_categories_layout, unit)
-        viewOrChildHasText(R.id.fragment_categories_layout, amount.toString())
+        viewHasChildWithText(R.id.fragment_categories_layout, name)
+        viewHasChildWithText(R.id.fragment_categories_layout, unit)
+        viewHasChildWithText(R.id.fragment_categories_layout, amount.toString())
+    }
+
+    private fun validateLimit(limit : FixedPointNumber, unit:String) {
+        viewHasText(R.id.fragment_categories_limit_info, "Configured minimum amount: ${limit.toString()} $unit")
     }
 
     @Test
@@ -276,5 +287,13 @@ open class CategoriesPartTestSuite {
         addItemWithDepotOnly(depotName = newDepotName, amount = amount)
 
         assertItemInContents(name = newDepotName, unit = mainCategory2Unit, amount = amount)
+    }
+
+    @Test
+    fun whenChangeLimitItShouldBeChanged() {
+        val newLimit = FixedPointNumber(0.01)
+        changeLimit(mainCategory1Name, newLimit)
+
+        validateLimit(newLimit, mainCategory1Unit)
     }
 }

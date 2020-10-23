@@ -37,7 +37,7 @@ class ShortTermItemsTestSuite {
     }
 
     private fun assertItemInContents(name: String) {
-        viewOrChildHasText(R.id.short_term_items_recycler_view, name)
+        viewHasChildWithText(R.id.short_term_items_recycler_view, name)
     }
 
     private fun assertNoItemInContents(name: String) {

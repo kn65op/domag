@@ -95,6 +95,10 @@ fun writeCategoryName(name: String) {
     typeNewTextOnId(R.id.edit_category_category_name, name)
 }
 
+fun writeCategoryLimit(limit: FixedPointNumber) {
+    typeNewTextOnId(R.id.edit_category_minimum_amount_field, limit.toString())
+}
+
 fun setParentCategory(name: String) {
     clickOnId(R.id.edit_category_fragment_parent_spinner)
     clickOnText(name)
@@ -166,9 +170,14 @@ fun addItemWithDepotOnly(depotName: String, amount: FixedPointNumber) {
 }
 
 fun findViewByIdInRow(description: String): ViewInteraction =
-    onView(CoreMatchers.allOf(withId(R.id.item_row_consume_button), hasSibling(withText(description))))
+    onView(
+        CoreMatchers.allOf(
+            withId(R.id.item_row_consume_button),
+            hasSibling(withText(description))
+        )
+    )
 
-fun consumeItem(itemDescription: String, amount :String) {
+fun consumeItem(itemDescription: String, amount: String) {
     clickOn(findViewByIdInRow(itemDescription))
     typeNewTextOnId(R.id.consume_dialog_amount_field, amount)
     clickOnText("ELOSZKA")

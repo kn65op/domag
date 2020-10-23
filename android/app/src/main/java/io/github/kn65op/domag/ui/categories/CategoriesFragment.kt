@@ -15,6 +15,7 @@ import io.github.kn65op.domag.database.entities.Category
 import io.github.kn65op.domag.database.relations.CategoryWithContents
 import io.github.kn65op.domag.ui.common.FragmentWithActionBar
 import io.github.kn65op.domag.ui.common.prepareFabs
+import kotlinx.android.synthetic.main.fragment_categories.*
 
 class CategoriesFragment : FragmentWithActionBar() {
     private val storedCategoryId = "categoryId"
@@ -52,41 +53,53 @@ class CategoriesFragment : FragmentWithActionBar() {
     ): View {
         val root = inflater.inflate(R.layout.fragment_categories, container, false)
 
-        val currentContext = context
-        if (currentContext != null) {
-            recyclerView = root.findViewById(R.id.categories_recycler_view)
-            viewAdapter = CategoryAdapter(currentCategory, requireActivity(), viewLifecycleOwner)
+        val currentContext = requireContext()
+        recyclerView = root.findViewById(R.id.categories_recycler_view)
+        viewAdapter = CategoryAdapter(currentCategory, requireActivity(), viewLifecycleOwner)
 
-            viewManager = LinearLayoutManager(currentContext)
-            recyclerView.apply {
-                setHasFixedSize(true)
-                layoutManager = viewManager
-                adapter = viewAdapter
-            }
-            currentCategory.observe(viewLifecycleOwner, {
-                val callback = requireActivity().onBackPressedDispatcher.addCallback(this) {
-                    val action =
-                        CategoriesFragmentDirections.actionNavCategoriesSelf(
-                            categoryId = it.category.parentId ?: 0
-                        )
-                    Log.i(LOG_TAG, "${currentCategory.value?.category?.uid}")
-                    root.findNavController().navigate(action)
-                }
-                callback.isEnabled = it.category.uid != null
-
-                activity?.runOnUiThread {
-                    Log.i(LOG_TAG, "Data has been changed")
-                    if (!recyclerView.isComputingLayout) {
-                        recyclerView.adapter?.notifyDataSetChanged()
-                    }
-                }
-            })
-        } else {
-            Log.e(LOG_TAG, "Unable to fill recycler view, no context")
+        viewManager = LinearLayoutManager(currentContext)
+        recyclerView.apply {
+            setHasFixedSize(true)
+            layoutManager = viewManager
+            adapter = viewAdapter
         }
+        currentCategory.observe(viewLifecycleOwner, {
+            startFillingCategory(it, root)
+        })
         prepareFabMenu(root)
         setHasOptionsMenu(true)
         return root
+    }
+
+    private fun startFillingCategory(
+        it: CategoryWithContents,
+        root: View
+    ) {
+        setBackButton(it, root)
+
+        fragment_categories_limit_info.text = "Configured minimum amount: ${it.limits?.minimumDesiredAmount.toString()} ${it.category.unit}"
+
+        activity?.runOnUiThread {
+            Log.i(LOG_TAG, "Data has been changed")
+            if (!recyclerView.isComputingLayout) {
+                recyclerView.adapter?.notifyDataSetChanged()
+            }
+        }
+    }
+
+    private fun setBackButton(
+        it: CategoryWithContents,
+        root: View
+    ) {
+        val callback = requireActivity().onBackPressedDispatcher.addCallback(this) {
+            val action =
+                CategoriesFragmentDirections.actionNavCategoriesSelf(
+                    categoryId = it.category.parentId ?: 0
+                )
+            Log.i(LOG_TAG, "${currentCategory.value?.category?.uid}")
+            root.findNavController().navigate(action)
+        }
+        callback.isEnabled = it.category.uid != null
     }
 
     private fun prepareFabMenu(root: View) {
