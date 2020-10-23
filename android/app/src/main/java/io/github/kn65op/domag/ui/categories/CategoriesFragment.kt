@@ -76,7 +76,17 @@ class CategoriesFragment : FragmentWithActionBar() {
         root: View
     ) {
         setBackButton(it, root)
+        prepareShowingLimit(it)
 
+        activity?.runOnUiThread {
+            Log.i(LOG_TAG, "Data has been changed")
+            if (!recyclerView.isComputingLayout) {
+                recyclerView.adapter?.notifyDataSetChanged()
+            }
+        }
+    }
+
+    private fun prepareShowingLimit(it: CategoryWithContents) {
         if (it.limits != null) {
             fragment_categories_limit_info.text = requireActivity().getString(
                 R.string.categories_minimum_amount_text,
@@ -85,13 +95,6 @@ class CategoriesFragment : FragmentWithActionBar() {
             fragment_categories_limit_info.visibility = View.VISIBLE
         } else {
             fragment_categories_limit_info.visibility = View.GONE
-        }
-
-        activity?.runOnUiThread {
-            Log.i(LOG_TAG, "Data has been changed")
-            if (!recyclerView.isComputingLayout) {
-                recyclerView.adapter?.notifyDataSetChanged()
-            }
         }
     }
 

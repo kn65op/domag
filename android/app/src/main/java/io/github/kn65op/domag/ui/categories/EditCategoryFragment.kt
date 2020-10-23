@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner
 import io.github.kn65op.android.lib.type.FixedPointNumber
 import io.github.kn65op.domag.R
+import io.github.kn65op.domag.database.daos.CategoryLimitDao
 import io.github.kn65op.domag.database.database.AppDatabase
 import io.github.kn65op.domag.database.database.DatabaseFactoryImpl
 import io.github.kn65op.domag.database.entities.Category
@@ -242,14 +243,35 @@ class EditCategoryFragment : FragmentWithActionBar(), AdapterView.OnItemSelected
 
     private suspend fun saveLimit(db: AppDatabase, categoryId: Int) {
         val minimumAmountText = edit_category_minimum_amount_field.text.toString()
-        if (minimumAmountText.isEmpty()) {
-            Log.i(LOG_TAG, "There is no minimum amount specified for $categoryId")
-            return
-        }
-        val minimumAmount =
-            FixedPointNumber(minimumAmountText.toDouble())
         val categoryLimitDao = db.categoryLimitDao()
         val categoryLimit = categoryLimitDao.getByCategoryIdImmediately(categoryId)
+        if (minimumAmountText.isEmpty()) {
+            removeLimit(categoryId, categoryLimit, categoryLimitDao)
+            return
+        }
+        saveLimit(minimumAmountText, categoryLimit, categoryId, categoryLimitDao)
+    }
+
+    private suspend fun removeLimit(
+        categoryId: Int,
+        categoryLimit: CategoryLimit?,
+        categoryLimitDao: CategoryLimitDao
+    ) {
+        Log.i(LOG_TAG, "There is no minimum amount specified for $categoryId")
+        if (categoryLimit != null) {
+            Log.i(LOG_TAG, "Remove category limit ${categoryLimit.uid}")
+            categoryLimitDao.delete(categoryLimit)
+        }
+    }
+
+    private suspend fun saveLimit(
+        minimumAmountText: String,
+        categoryLimit: CategoryLimit?,
+        categoryId: Int,
+        categoryLimitDao: CategoryLimitDao
+    ) {
+        val minimumAmount =
+            FixedPointNumber(minimumAmountText.toDouble())
         if (categoryLimit == null) {
             Log.i(LOG_TAG, "insert new limit for $categoryId: $minimumAmount")
             categoryLimitDao.insert(

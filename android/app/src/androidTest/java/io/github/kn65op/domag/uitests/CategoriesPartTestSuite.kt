@@ -82,6 +82,13 @@ open class CategoriesPartTestSuite {
         applyCategory()
     }
 
+    private fun removeLimit(name: String) {
+        clickOnText(name)
+        clickEditCategory()
+        writeNoCategoryLimit()
+        applyCategory()
+    }
+
     private fun changeParent(name: String, parentName: String) {
         clickOnText(name)
         clickEditCategory()
@@ -317,6 +324,13 @@ open class CategoriesPartTestSuite {
     @Test
     fun whenThereIsNoLimitShouldNotPrintLimit() {
         clickOnText(mainCategory2Name)
+
+        validateNoLimitText()
+    }
+
+    @Test
+    fun whenDeleteLimitShouldBeNotVisible() {
+        removeLimit(mainCategory1Name)
 
         validateNoLimitText()
     }

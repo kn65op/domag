@@ -99,6 +99,10 @@ fun writeCategoryLimit(limit: FixedPointNumber) {
     typeNewTextOnId(R.id.edit_category_minimum_amount_field, limit.toString())
 }
 
+fun writeNoCategoryLimit() {
+    typeNewTextOnId(R.id.edit_category_minimum_amount_field, "")
+}
+
 fun setParentCategory(name: String) {
     clickOnId(R.id.edit_category_fragment_parent_spinner)
     clickOnText(name)
