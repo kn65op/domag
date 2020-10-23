@@ -131,6 +131,10 @@ fun writeItemAmount(amount: FixedPointNumber) {
     typeNewTextOnId(R.id.edit_item_amount_value, amount.toString())
 }
 
+fun emptyItemAmount() {
+    typeNewTextOnId(R.id.edit_item_amount_value, "")
+}
+
 fun applyItem() {
     clickOnId(R.id.edit_item_menu_confirm)
 }

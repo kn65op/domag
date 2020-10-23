@@ -335,6 +335,7 @@ open class ItemsPartTestSuite : ItemsPartBase() {
         clickOnText(mainDepot1Name)
 
         openAddItem()
+        emptyItemAmount()
         applyItem()
 
         assertEmptyAmountDialog()
