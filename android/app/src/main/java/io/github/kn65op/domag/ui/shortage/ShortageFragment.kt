@@ -4,35 +4,21 @@ import android.os.Bundle
 import android.util.Log
 import android.view.*
 import android.widget.TextView
-import androidx.lifecycle.ViewModelProviders
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import io.github.kn65op.domag.R
 import io.github.kn65op.domag.ui.common.FragmentWithActionBar
 
-class GalleryFragment : FragmentWithActionBar() {
-
-    private lateinit var galleryViewModel: GalleryViewModel
+class ShortageFragment : FragmentWithActionBar() {
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        galleryViewModel =
-            ViewModelProviders.of(this).get(GalleryViewModel::class.java)
-        val root = inflater.inflate(R.layout.fragment_gallery, container, false)
-        val textView: TextView = root.findViewById(R.id.text_gallery)
-        galleryViewModel.text.observe(viewLifecycleOwner, {
-            textView.text = it
-        })
+        val root = inflater.inflate(R.layout.fragment_shrotage, container, false)
         setHasOptionsMenu(true)
         Log.i("HEHESZKI", "set to true")
-        val fab: FloatingActionButton = root.findViewById(R.id.floatingActionButton)
-        fab.setOnClickListener { view ->
-            Snackbar.make(view, "Inserted new", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show()
-        }
         return root
     }
 

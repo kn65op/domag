@@ -106,8 +106,11 @@ open class CategoriesPartTestSuite {
         viewHasChildWithText(R.id.fragment_categories_layout, amount.toString())
     }
 
-    private fun validateLimit(limit : FixedPointNumber, unit:String) {
-        viewHasText(R.id.fragment_categories_limit_info, "Configured minimum amount: ${limit.toString()} $unit")
+    private fun validateLimit(limit: FixedPointNumber, unit: String) {
+        viewHasText(
+            R.id.fragment_categories_limit_info,
+            "Configured minimum amount: ${limit.toString()} $unit"
+        )
     }
 
     private fun validateNoLimitText() {

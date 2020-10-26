@@ -1,58 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/linearLayout"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:layout_height="wrap_content">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
 
-        <LinearLayout
-            android:id="@+id/short_term_item_row_name_container"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="8"
-            android:orientation="horizontal">
+    <TextView
+        android:id="@+id/short_term_item_row_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toTopOf="@+id/short_term_item_row_date"
+        app:layout_constraintEnd_toStartOf="@+id/short_term_item_row_amount"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed"
+        app:layout_constraintHorizontal_weight="6"
+        />
 
-            <TextView
-                android:id="@+id/short_term_item_row_name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="24sp" />
-        </LinearLayout>
 
-        <TextView
-            android:id="@+id/short_term_item_row_amount"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:paddingHorizontal="1dp"
-            android:textAlignment="viewEnd"
-            android:textSize="24sp" />
+    <TextView
+        android:id="@+id/short_term_item_row_amount"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="1dp"
+        android:textAlignment="viewEnd"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toTopOf="@+id/short_term_consume_button"
+        app:layout_constraintEnd_toStartOf="@+id/short_term_item_row_unit"
+        app:layout_constraintStart_toEndOf="@+id/short_term_item_row_name"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintHorizontal_weight="2"
+        />
 
-        <TextView
-            android:id="@+id/short_term_item_row_unit"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:paddingHorizontal="1dp"
-            android:textSize="24sp" />
+    <TextView
+        android:id="@+id/short_term_item_row_unit"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="1dp"
+        android:textSize="24sp"
+        app:layout_constraintBaseline_toBaselineOf="@+id/short_term_item_row_amount"
+        app:layout_constraintEnd_toStartOf="@+id/short_term_consume_button"
+        app:layout_constraintStart_toEndOf="@+id/short_term_item_row_amount"
+        app:layout_constraintHorizontal_weight="1"
+        />
 
-        <ImageButton
-            android:id="@+id/short_term_consume_button"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            app:srcCompat="@drawable/ic_menu_send" />
+    <ImageButton
+        android:id="@+id/short_term_consume_button"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:contentDescription="@string/consume_button_text"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/short_term_item_row_unit"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_menu_send"
+        app:layout_constraintHorizontal_weight="1"
+        />
 
-    </LinearLayout>
 
     <TextView
         android:id="@+id/short_term_item_row_date"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:textSize="18sp" />
-</LinearLayout>
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/short_term_consume_button"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/short_term_item_row_name" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

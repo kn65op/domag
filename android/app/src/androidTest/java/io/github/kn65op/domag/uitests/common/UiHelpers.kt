@@ -28,7 +28,7 @@ fun viewDoNotHasText(text: String) {
     assertThat(element.exists(), CoreMatchers.equalTo(false))
 }
 
-fun dialogWithText(text : String) {
+fun dialogWithText(text: String) {
     onView(withText(text)).inRoot(RootMatchers.isDialog()).check(matches(isDisplayed()))
 }
 
