@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import io.github.kn65op.domag.R
 import io.github.kn65op.domag.database.database.DatabaseFactoryImpl
 import io.github.kn65op.domag.ui.common.FragmentWithActionBar
+import io.github.kn65op.domag.ui.utils.notifyIfNotComputing
 
 class ShortageFragment : FragmentWithActionBar() {
     private val dbFactory = DatabaseFactoryImpl()
@@ -27,7 +28,14 @@ class ShortageFragment : FragmentWithActionBar() {
     }
 
     private fun getDataFromDb() {
-        Log.d(LOG_TAG, "Not getting data from db yet")
+        Log.d(LOG_TAG, "Get all categories from db")
+        dbFactory.factory.createDatabase(requireContext()).categoryDao().getAll()
+            .observe(viewLifecycleOwner, {
+                activity?.runOnUiThread {
+                    Log.i(LOG_TAG, "Categories in db changed - notify recycler")
+                    recyclerView.notifyIfNotComputing()
+                }
+            })
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
