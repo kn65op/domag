@@ -124,6 +124,9 @@ val item6 =
 val item7 =
     Item(uid = 7, depotId = 4, categoryId = 4, amount = itemAmount7, bestBefore = bestBeforeItem7)
 
+val mainCategory1ItemsAmountCount = itemAmount1
+val category1InMainCategoryItemsAmountCount = itemAmount2 + itemAmount4 + itemAmount5
+
 val itemsFrom2 = listOf(item2, item3, item4, item5, item6, item7)
 val allItemsCount = itemsFrom2.size + 1
 
