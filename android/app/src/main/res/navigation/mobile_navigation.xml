@@ -54,7 +54,7 @@
         android:id="@+id/nav_shortage"
         android:name="io.github.kn65op.domag.ui.shortage.ShortageFragment"
         android:label="@string/menu_shortage"
-        tools:layout="@layout/fragment_shrotage" />
+        tools:layout="@layout/fragment_shortage" />
 
     <fragment
         android:id="@+id/nav_short_term"
