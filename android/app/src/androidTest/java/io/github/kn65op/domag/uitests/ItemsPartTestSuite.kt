@@ -24,7 +24,7 @@ open class ItemsPartBase {
     fun clearDb() {
         val db = factory.createDatabase(ApplicationProvider.getApplicationContext())
         db.clearAllTables()
-        Thread.sleep(500) // WA for aynschronous DB calls
+        Thread.sleep(500) // WA for asynchronous DB calls
     }
 
     internal fun assertDepotInContents(name: String) {
@@ -139,7 +139,7 @@ open class ItemsPartTestSuite : ItemsPartBase() {
     fun fillDb() {
         val db = factory.createDatabase(ApplicationProvider.getApplicationContext())
         fillData(db)
-        Thread.sleep(500) // WA for aynschronous DB calls
+        Thread.sleep(500) // WA for asynchronous DB calls
     }
 
     @Test

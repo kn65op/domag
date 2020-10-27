@@ -10,8 +10,8 @@ class ItemsUtilsTest {
     private val amount1  = FixedPointNumber(1)
     private val amount2  = FixedPointNumber(2)
     private val amountSum  = FixedPointNumber(3)
-    private val categoryId = 2;
-    private val depotId = 8;
+    private val categoryId = 2
+    private val depotId = 8
     private fun getItem(amount: FixedPointNumber) =
         Item(amount = amount, depotId = depotId, categoryId = categoryId)
 

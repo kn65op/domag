@@ -1,6 +1,5 @@
 package io.github.kn65op.domag.ui.shortTerm
 
-import android.app.Activity
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -11,7 +10,6 @@ import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
-import androidx.lifecycle.observe
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import io.github.kn65op.domag.R

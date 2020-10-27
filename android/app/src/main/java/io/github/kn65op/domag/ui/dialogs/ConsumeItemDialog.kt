@@ -23,7 +23,7 @@ class ConsumeItemDialog(
         suspend fun onConsume(amount: FixedPointNumber)
     }
 
-    lateinit var amountField: EditText
+    private lateinit var amountField: EditText
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val inflater = requireActivity().layoutInflater
@@ -54,11 +54,6 @@ class ConsumeItemDialog(
             else -> amountField.text.toString().toDouble()
         }
     )
-
-    private fun convertValue() = when (amountField.text.toString()) {
-        "" -> 0
-        else -> amountField.text.toString().toDouble()
-    }
 
     private fun getTitleText() =
         when (unit) {

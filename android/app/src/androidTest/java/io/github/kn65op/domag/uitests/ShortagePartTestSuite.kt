@@ -28,7 +28,7 @@ class ShortagePartTestSuite {
     fun fillDb() {
         val db = factory.createDatabase(ApplicationProvider.getApplicationContext())
         fillData(db)
-        Thread.sleep(500) // WA for aynschronous DB calls
+        Thread.sleep(500) // WA for asynchronous DB calls
         goToShortage()
     }
 
@@ -36,7 +36,7 @@ class ShortagePartTestSuite {
     fun clearDb() {
         val db = factory.createDatabase(ApplicationProvider.getApplicationContext())
         db.clearAllTables()
-        Thread.sleep(500) // WA for aynschronous DB calls
+        Thread.sleep(500) // WA for asynchronous DB calls
     }
 
     private fun goToShortage() {
@@ -44,7 +44,7 @@ class ShortagePartTestSuite {
     }
     private fun assertCategoryInContents(name: String, amount: FixedPointNumber, limit: FixedPointNumber) {
         viewHasChildWithText(R.id.fragment_shortage_recycler_view, name)
-        viewHasChildWithText(R.id.fragment_shortage_recycler_view, "${amount.toString()}/${limit.toString()}")
+        viewHasChildWithText(R.id.fragment_shortage_recycler_view, "$amount/$limit")
     }
 
     @Test

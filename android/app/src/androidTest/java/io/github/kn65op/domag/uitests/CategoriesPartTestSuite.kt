@@ -25,7 +25,7 @@ open class CategoriesPartTestSuite {
     fun fillDb() {
         val db = factory.createDatabase(ApplicationProvider.getApplicationContext())
         fillData(db)
-        Thread.sleep(500) // WA for aynschronous DB calls
+        Thread.sleep(500) // WA for asynchronous DB calls
         goToCategories()
     }
 
@@ -33,7 +33,7 @@ open class CategoriesPartTestSuite {
     fun clearDb() {
         val db = factory.createDatabase(ApplicationProvider.getApplicationContext())
         db.clearAllTables()
-        Thread.sleep(500) // WA for aynschronous DB calls
+        Thread.sleep(500) // WA for asynchronous DB calls
     }
 
     private fun goToCategories() {
@@ -109,7 +109,7 @@ open class CategoriesPartTestSuite {
     private fun validateLimit(limit: FixedPointNumber, unit: String) {
         viewHasText(
             R.id.fragment_categories_limit_info,
-            "Configured minimum amount: ${limit.toString()} $unit"
+            "Configured minimum amount: $limit $unit"
         )
     }
 

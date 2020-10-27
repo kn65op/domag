@@ -10,8 +10,8 @@ import io.github.kn65op.domag.database.relations.CategoryWithContents
 import org.junit.Test
 
 class CategoryFiltersTest {
-    private val categoryId = 2;
-    private val depotId = 8;
+    private val categoryId = 2
+    private val depotId = 8
     private val amountAboveLimit = FixedPointNumber(1.01)
     private val amountBelowLimit = FixedPointNumber(0.99)
     private val limitAmount = FixedPointNumber(1)
