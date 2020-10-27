@@ -22,9 +22,8 @@ class CategoryFiltersTest {
         Item(amount = amount, depotId = depotId, categoryId = categoryId)
 
     @Test
-    fun `empty categories should result in empty filtered categories`() {
+    fun `empty categories should result in empty filtered categories`() =
         assertThat(emptyList<CategoryWithContents>().filterUnderLimit(), equalTo(emptyList()))
-    }
 
     @Test
     fun `category above limit should result be filtered out`() {
@@ -57,12 +56,22 @@ class CategoryFiltersTest {
     }
 
     @Test
-    fun `with two item below limit should filter out` () {
+    fun `with two item below limit should filter out`() {
         val category = CategoryWithContents(
             limits = limit,
             items = listOf(getItem(amountBelowLimit), getItem(amountBelowLimit)),
             category = categoryBase
         )
         assertThat(listOf(category).filterUnderLimit(), equalTo(emptyList()))
+    }
+
+    @Test
+    fun `given category with no items shuold be left`() {
+        val category = CategoryWithContents(
+            limits = limit,
+            items = emptyList(),
+            category = categoryBase
+        )
+        assertThat(listOf(category).filterUnderLimit(), equalTo(listOf(category)))
     }
 }

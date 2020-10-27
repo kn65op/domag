@@ -1,5 +1,6 @@
 package io.github.kn65op.domag.database.filters
 
+import io.github.kn65op.android.lib.type.FixedPointNumber
 import io.github.kn65op.domag.database.relations.CategoryWithContents
 
 fun List<CategoryWithContents>.filterUnderLimit() =
@@ -7,5 +8,5 @@ fun List<CategoryWithContents>.filterUnderLimit() =
         val limits = category.limits
         val allItemsAmount = category.items.map { it.amount }
             .reduceOrNull { acc, number -> acc + number }
-        limits != null && allItemsAmount != null && limits.minimumDesiredAmount >= allItemsAmount
+        limits != null && limits.minimumDesiredAmount >= allItemsAmount ?: FixedPointNumber(0)
     }

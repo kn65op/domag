@@ -24,16 +24,19 @@ val depot2InMainDepot1 = DepotWithContents(Depot(name = depot2InMainDepot1Name, 
 
 const val mainCategory1Name = "category name"
 const val mainCategory2Name = "category name2"
+const val mainCategory3Name = "Sustenance 3"
 const val category1InMainCategory1Name = "categoryName"
 const val category2InMainCategory1Name = "category anoname 2"
 
 const val mainCategory1Unit = "l"
 const val mainCategory2Unit = "zzz"
-const val category1InMainCategory1Unit = "szt"
+const val category1InMainCategory1Unit = "pc"
 const val category2InMainCategory1Unit = "kg"
+const val someCategoryUnit = "g"
 
 val mainCategory1LimitAmount = FixedPointNumber(10)
 val category2InMainCategory1LimitAmount = FixedPointNumber(100)
+val someCategoryLimit = FixedPointNumber(50)
 
 val categoryLimitOne =
     CategoryLimit(uid = 1, categoryId = 1, minimumDesiredAmount = mainCategory1LimitAmount)
@@ -44,6 +47,9 @@ val categoryLimitTwo = CategoryLimit(
     minimumDesiredAmount = category2InMainCategory1LimitAmount
 )
 val category2inMainCategory1Limit = categoryLimitTwo
+val categoryLimitThree =
+    CategoryLimit(uid = 3, categoryId = 5, minimumDesiredAmount = someCategoryLimit)
+val mainCategory3Limit = categoryLimitThree
 
 val mainCategory1 =
     CategoryWithContents(
@@ -67,6 +73,11 @@ val category2InMainCategory1 =
             unit = category2InMainCategory1Unit
         ),
         limits = category2inMainCategory1Limit
+    )
+val mainCategory3 =
+    CategoryWithContents(
+        category = Category(name = mainCategory3Name, unit = someCategoryUnit),
+        limits = mainCategory3Limit
     )
 
 val itemAmount1 = FixedPointNumber(1.0)
@@ -126,6 +137,7 @@ val item7 =
 
 val mainCategory1ItemsAmountCount = itemAmount1
 val category1InMainCategoryItemsAmountCount = itemAmount2 + itemAmount4 + itemAmount5
+val mainCategory3ItemsAmountCount = FixedPointNumber(0)
 
 val itemsFrom2 = listOf(item2, item3, item4, item5, item6, item7)
 val allItemsCount = itemsFrom2.size + 1
@@ -146,14 +158,16 @@ fun fillData(db: AppDatabase) = runBlocking {
         listOf(
             mainCategory1.category,
             mainCategory2.category,
-            category1InMainCategory1.category
+            category1InMainCategory1.category,
         )
     )
     categoryDao.insert(category2InMainCategory1.category)
+    categoryDao.insert(mainCategory3.category)
 
     val categoryLimitDao = db.categoryLimitDao()
     categoryLimitDao.insert(categoryLimitOne)
     categoryLimitDao.insert(categoryLimitTwo)
+    categoryLimitDao.insert(categoryLimitThree)
 
     val itemDao = db.itemDao()
     itemDao.insert(item1)

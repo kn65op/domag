@@ -56,7 +56,8 @@ open class CategoryDatabaseTest  : DatabaseTest() {
                 isEqualRegardlessId(mainCategory1.category),
                 isEqualRegardlessId(mainCategory2.category),
                 isEqualRegardlessId(category1InMainCategory1.category),
-                isEqualRegardlessId(category2InMainCategory1.category)
+                isEqualRegardlessId(category2InMainCategory1.category),
+                isEqualRegardlessId(mainCategory3.category)
             )
         )
     }

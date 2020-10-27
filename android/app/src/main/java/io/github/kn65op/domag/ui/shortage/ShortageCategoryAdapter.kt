@@ -43,9 +43,10 @@ class ShortageCategoryAdapter(
 
     override fun onBindViewHolder(holder: CategoryViewHolder, position: Int) {
         val category = categories[position]
-        activity.runOnUiThread{
+        activity.runOnUiThread {
             holder.nameView.text = category.category.name
-            holder.detailsView.text = "${category.items.amount()}/${category.limits?.minimumDesiredAmount.toString()}"
+            holder.detailsView.text =
+                "${category.items.amount()}/${category.limits?.minimumDesiredAmount.toString()}"
         }
     }
 
