@@ -1,5 +1,6 @@
 package io.github.kn65op.domag.ui.shortTerm
 
+import android.app.Activity
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -9,6 +10,7 @@ import android.widget.TextView
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
 import androidx.lifecycle.observe
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
@@ -39,9 +41,8 @@ class ShortTermItemAdapter(
     private val consumeDialogController = ConsumeDialogController(activity)
 
     init {
-        items?.observe(lifecycleOwner) {
-            notifyDataSetChanged()
-        }
+        items?.observe(lifecycleOwner,
+            Observer { notifyDataSetChanged() })
     }
 
     override fun getItemCount(): Int {

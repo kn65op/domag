@@ -39,7 +39,7 @@ class ConsumeItemDialog(
             .setPositiveButton("Eloszka") { _, _ ->
                 Log.i(LOG_TAG, " Positive")
                 runBlocking { GlobalScope.launch { listener.onConsume(getAmount()) } }
-            }.setNegativeButton("Not eloszka") { dialog, _ ->
+            }.setNegativeButton("Not eloszka") { _, _ ->
                 Log.i(LOG_TAG, " Neg")
             }
         return builder.create()

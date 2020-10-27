@@ -39,9 +39,8 @@ class ConsumeDialogController(private val activity: FragmentActivity) {
     ) {
         Log.i(LOG_TAG, "Will consume")
         try {
-            val operation =
-                dbFactory.factory.createDatabase(activity.applicationContext)
-                    .consumeItem(itemId, amount)
+            dbFactory.factory.createDatabase(activity.applicationContext)
+                .consumeItem(itemId, amount)
             Log.i(LOG_TAG, "Consumed $fullName: $amount")
         } catch (notEnough: NotEnoughAmountToConsume) {
             retry(notEnough, itemId, fullName, category, currentAmount)

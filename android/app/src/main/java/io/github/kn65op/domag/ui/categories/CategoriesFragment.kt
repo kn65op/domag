@@ -90,7 +90,7 @@ class CategoriesFragment : FragmentWithActionBar() {
         if (it.limits != null) {
             fragment_categories_limit_info.text = requireActivity().getString(
                 R.string.categories_minimum_amount_text,
-                "${it.limits?.minimumDesiredAmount.toString()} ${it.category.unit}"
+                "${it.limits.minimumDesiredAmount.toString()} ${it.category.unit}"
             )
             fragment_categories_limit_info.visibility = View.VISIBLE
         } else {
