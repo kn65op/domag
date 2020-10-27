@@ -3,15 +3,19 @@ package io.github.kn65op.domag.ui.shortage
 import android.os.Bundle
 import android.util.Log
 import android.view.*
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.github.kn65op.domag.R
+import io.github.kn65op.domag.database.database.AppDatabase
 import io.github.kn65op.domag.database.database.DatabaseFactoryImpl
+import io.github.kn65op.domag.database.filters.filterUnderLimit
 import io.github.kn65op.domag.ui.common.FragmentWithActionBar
 import io.github.kn65op.domag.ui.utils.notifyIfNotComputing
 
 class ShortageFragment : FragmentWithActionBar() {
-    private val dbFactory = DatabaseFactoryImpl()
+    private lateinit var db: AppDatabase
     private lateinit var recyclerView: RecyclerView
+    private lateinit var recyclerAdapter: ShortageCategoryAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -20,7 +24,14 @@ class ShortageFragment : FragmentWithActionBar() {
     ): View? {
         val root = inflater.inflate(R.layout.fragment_shortage, container, false)
         recyclerView = root.findViewById(R.id.fragment_shortage_recycler_view)
+        recyclerAdapter = ShortageCategoryAdapter(requireActivity(), recyclerView)
+        val viewManager = LinearLayoutManager(context)
         setHasOptionsMenu(true)
+        recyclerView.apply {
+            setHasFixedSize(true)
+            layoutManager = viewManager
+            adapter = recyclerAdapter
+        }
 
         getDataFromDb()
 
@@ -29,12 +40,13 @@ class ShortageFragment : FragmentWithActionBar() {
 
     private fun getDataFromDb() {
         Log.d(LOG_TAG, "Get all categories from db")
-        dbFactory.factory.createDatabase(requireContext()).categoryDao().getAll()
+        val dbFactory = DatabaseFactoryImpl()
+        db = dbFactory.factory.createDatabase(requireContext())
+        db.categoryDao().getAllWithContents()
             .observe(viewLifecycleOwner, {
-                activity?.runOnUiThread {
-                    Log.i(LOG_TAG, "Categories in db changed - notify recycler")
-                    recyclerView.notifyIfNotComputing()
-                }
+                Log.d(LOG_TAG, "Observed all categories: ${it.size}")
+                recyclerAdapter.dataChanged(it.filterUnderLimit())
+                recyclerView.notifyIfNotComputing()
             })
     }
 

@@ -5,6 +5,7 @@ import io.github.kn65op.domag.database.relations.CategoryWithContents
 fun List<CategoryWithContents>.filterUnderLimit() =
     filter { category ->
         val limits = category.limits
-        limits != null && limits.minimumDesiredAmount >= (category.items.map { it.amount }
-            .reduce { acc, number -> acc + number })
+        val allItemsAmount = category.items.map { it.amount }
+            .reduceOrNull { acc, number -> acc + number }
+        limits != null && allItemsAmount != null && limits.minimumDesiredAmount >= allItemsAmount
     }

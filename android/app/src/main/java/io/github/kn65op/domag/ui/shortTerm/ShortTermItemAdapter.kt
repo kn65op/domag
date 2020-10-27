@@ -1,6 +1,5 @@
 package io.github.kn65op.domag.ui.shortTerm
 
-import android.app.Activity
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
