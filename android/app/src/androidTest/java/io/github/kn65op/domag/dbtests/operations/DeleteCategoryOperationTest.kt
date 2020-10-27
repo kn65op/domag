@@ -1,8 +1,8 @@
 package io.github.kn65op.domag.dbtests.operations
 
 import io.github.kn65op.domag.database.daos.CategoryDao
+import io.github.kn65op.domag.database.daos.CategoryLimitDao
 import io.github.kn65op.domag.database.daos.ConsumeDao
-import io.github.kn65op.domag.database.entities.Consume
 import io.github.kn65op.domag.database.operations.deleteCategory
 import io.github.kn65op.domag.database.relations.CategoryWithContents
 import io.github.kn65op.domag.dbtests.common.DatabaseTest
@@ -15,22 +15,23 @@ import org.hamcrest.MatcherAssert
 import org.hamcrest.Matchers
 import org.junit.Before
 import org.junit.Test
-import java.time.ZonedDateTime
 
 class DeleteCategoryOperationTest : DatabaseTest() {
     private lateinit var categoryDao: CategoryDao
     private lateinit var consumeDao: ConsumeDao
+    private lateinit var categoryLimitDao: CategoryLimitDao
 
     @Before
     fun createDao() {
         categoryDao = db.categoryDao()
         consumeDao = db.consumeDao()
+        categoryLimitDao = db.categoryLimitDao()
     }
 
     private fun findCategoryToRemove(): CategoryWithContents {
         val toRemove = getFromLiveData(categoryDao.findWithContentsByName(mainCategory1Name))
         MatcherAssert.assertThat(toRemove.size, CoreMatchers.equalTo(1))
-        return toRemove[0];
+        return toRemove[0]
     }
 
     @Test
@@ -79,5 +80,13 @@ class DeleteCategoryOperationTest : DatabaseTest() {
         MatcherAssert.assertThat(all, CoreMatchers.not(CoreMatchers.hasItem(shouldBeRemoved[0])))
         MatcherAssert.assertThat(all, CoreMatchers.not(CoreMatchers.hasItem(shouldBeRemoved[1])))
         MatcherAssert.assertThat(all, CoreMatchers.not(CoreMatchers.hasItem(shouldBeRemoved[2])))
+    }
+
+    @Test
+    fun deleteShouldDeleteAlsoCategoryLimit() = runBlocking {
+        val toRemove = findCategoryToRemove()
+        db.deleteCategory(toRemove)
+
+        MatcherAssert.assertThat(categoryLimitDao.getByCategoryIdImmediately(1), CoreMatchers.equalTo(null))
     }
 }

@@ -6,7 +6,6 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.rule.ActivityTestRule
 import io.github.kn65op.android.lib.type.FixedPointNumber
 import io.github.kn65op.domag.R
-import io.github.kn65op.domag.dbtests.common.assertNoItemInDb
 import io.github.kn65op.domag.dbtests.data.*
 import io.github.kn65op.domag.uitests.common.*
 import org.junit.After
@@ -25,17 +24,17 @@ open class ItemsPartBase {
     fun clearDb() {
         val db = factory.createDatabase(ApplicationProvider.getApplicationContext())
         db.clearAllTables()
-        Thread.sleep(500) // WA for aynschronous DB calls
+        Thread.sleep(500) // WA for asynchronous DB calls
     }
 
     internal fun assertDepotInContents(name: String) {
-        viewOrChildHasText(R.id.fragment_items_layout, name)
+        viewHasChildWithText(R.id.fragment_items_layout, name)
     }
 
     internal fun assertItemInContents(name: String, unit: String, amount: FixedPointNumber) {
-        viewOrChildHasText(R.id.fragment_items_layout, name)
-        viewOrChildHasText(R.id.fragment_items_layout, unit)
-        viewOrChildHasText(R.id.fragment_items_layout, amount.toString())
+        viewHasChildWithText(R.id.fragment_items_layout, name)
+        viewHasChildWithText(R.id.fragment_items_layout, unit)
+        viewHasChildWithText(R.id.fragment_items_layout, amount.toString())
     }
 
     internal fun assertDepotContentSize(size: Int) {
@@ -78,7 +77,7 @@ open class ItemsPartBase {
     }
 
     internal fun asserTitleIs(title: String) {
-        viewOrChildHasText(R.id.toolbar, title)
+        viewHasChildWithText(R.id.toolbar, title)
     }
 
     internal fun writeDescription(description: String) {
@@ -140,7 +139,7 @@ open class ItemsPartTestSuite : ItemsPartBase() {
     fun fillDb() {
         val db = factory.createDatabase(ApplicationProvider.getApplicationContext())
         fillData(db)
-        Thread.sleep(500) // WA for aynschronous DB calls
+        Thread.sleep(500) // WA for asynchronous DB calls
     }
 
     @Test
@@ -336,6 +335,7 @@ open class ItemsPartTestSuite : ItemsPartBase() {
         clickOnText(mainDepot1Name)
 
         openAddItem()
+        emptyItemAmount()
         applyItem()
 
         assertEmptyAmountDialog()

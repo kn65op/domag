@@ -21,7 +21,7 @@ class ShortTermItemsTestSuite {
     fun fillDb() {
         val db = factory.createDatabase(ApplicationProvider.getApplicationContext())
         fillData(db)
-        Thread.sleep(500) // WA for aynschronous DB calls
+        Thread.sleep(500) // WA for asynchronous DB calls
         goToShortTerm()
     }
 
@@ -29,7 +29,7 @@ class ShortTermItemsTestSuite {
     fun clearDb() {
         val db = factory.createDatabase(ApplicationProvider.getApplicationContext())
         db.clearAllTables()
-        Thread.sleep(500) // WA for aynschronous DB calls
+        Thread.sleep(500) // WA for asynchronous DB calls
     }
 
     private fun goToShortTerm() {
@@ -37,7 +37,7 @@ class ShortTermItemsTestSuite {
     }
 
     private fun assertItemInContents(name: String) {
-        viewOrChildHasText(R.id.short_term_items_recycler_view, name)
+        viewHasChildWithText(R.id.short_term_items_recycler_view, name)
     }
 
     private fun assertNoItemInContents(name: String) {

@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.Log
 import androidx.room.Room
 import io.github.kn65op.domag.database.database.migrations.MIGRATION_2_3
+import io.github.kn65op.domag.database.database.migrations.MIGRATION_3_4
 
 class SqlDatabaseFactory : DatabaseFactory {
     override fun createDatabase(applicationContext: Context): AppDatabase {
@@ -24,6 +25,6 @@ class SqlDatabaseFactory : DatabaseFactory {
             Room.databaseBuilder(
                 applicationContext,
                 AppDatabase::class.java, "database-name"
-            ).addMigrations(MIGRATION_2_3).build()
+            ).addMigrations(MIGRATION_2_3, MIGRATION_3_4).build()
     }
 }

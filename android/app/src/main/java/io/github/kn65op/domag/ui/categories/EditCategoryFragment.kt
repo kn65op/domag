@@ -11,10 +11,14 @@ import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner
+import io.github.kn65op.android.lib.type.FixedPointNumber
 import io.github.kn65op.domag.R
+import io.github.kn65op.domag.database.daos.CategoryLimitDao
 import io.github.kn65op.domag.database.database.AppDatabase
 import io.github.kn65op.domag.database.database.DatabaseFactoryImpl
 import io.github.kn65op.domag.database.entities.Category
+import io.github.kn65op.domag.database.entities.CategoryLimit
+import io.github.kn65op.domag.database.entities.withLimit
 import io.github.kn65op.domag.database.operations.deleteCategory
 import io.github.kn65op.domag.database.relations.CategoryWithContents
 import io.github.kn65op.domag.ui.common.FragmentWithActionBar
@@ -58,13 +62,12 @@ class EditCategoryFragment : FragmentWithActionBar(), AdapterView.OnItemSelected
                 categoryId = it
             }
         }
-        Log.i(LOG_TAG, "Using depotId: $categoryId")
         Log.i(LOG_TAG, "Editing category: $categoryId: $currentName with parent: $currentParent")
         actionBar()?.title =
             if (currentName.isNullOrEmpty()) context?.getString(R.string.edit_category_new_category) else currentName
     }
 
-    private fun readDepot() {
+    private fun readCategory() {
         categoryId?.let { searchCategoryId ->
             if (searchCategoryId != 0) {
                 context?.let { context ->
@@ -132,7 +135,7 @@ class EditCategoryFragment : FragmentWithActionBar(), AdapterView.OnItemSelected
     ): View? {
         val root = inflater.inflate(R.layout.fragment_edit_category, container, false)
 
-        readDepot()
+        readCategory()
 
         spinner = root.findViewById(R.id.edit_category_fragment_parent_spinner)
         recyclerView = root.findViewById(R.id.edit_category_content_view)
@@ -148,15 +151,16 @@ class EditCategoryFragment : FragmentWithActionBar(), AdapterView.OnItemSelected
             layoutManager = viewManager
             adapter = viewAdapter
         }
-        currentCategory.observe(viewLifecycleOwner, {
+        currentCategory.observe(viewLifecycleOwner, { category ->
             activity?.runOnUiThread {
                 if (!recyclerView.isComputingLayout) {
                     recyclerView.adapter?.notifyDataSetChanged()
                 }
-                currentName = it.category.name
+                currentName = category.category.name
                 currentName?.let { edit_category_category_name.replaceText(it) }
-                currentUnit = it.category.unit
+                currentUnit = category.category.unit
                 currentUnit?.let { edit_category_unit_field.replaceText(it) }
+                category.limits?.let { edit_category_minimum_amount_field.replaceText(it.minimumDesiredAmount.toString()) }
             }
         })
 
@@ -176,39 +180,8 @@ class EditCategoryFragment : FragmentWithActionBar(), AdapterView.OnItemSelected
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
         R.id.edit_depot_menu_confirm -> {
-            val name = edit_category_category_name.text.toString()
-            if (name.isNotEmpty()) {
-                val db = context?.let { it1 -> dbFactory.factory.createDatabase(it1) }
-                val dao = db?.categoryDao()
-                if (currentCategory.value == null) {
-                    lifecycleScope.launch {
-                        Log.i(LOG_TAG, "Insert $name with parent: $currentParent")
-                        dao?.insert(
-                            Category(
-                                name = name,
-                                unit = edit_category_unit_field.text.toString(),
-                                parentId = currentParent
-                            )
-                        )
-                        Log.i(LOG_TAG, "Inserted $name")
-                    }
-                } else {
-                    lifecycleScope.launch {
-                        Log.i(LOG_TAG, "Edit $name")
-                        currentCategory.value?.category?.let {
-                            val depot = Category(
-                                uid = it.uid,
-                                unit = edit_category_unit_field.text.toString(),
-                                name = name,
-                                parentId = currentParent
-                            )
-                            dao?.update(depot)
-                        }
-                        Log.i(LOG_TAG, "Edited $name")
-                    }
-                }
-            }
-            activity?.onBackPressed()
+            val db = context?.let { it1 -> dbFactory.factory.createDatabase(it1) }
+            db?.let { saveCategory(it) }
             true
         }
         R.id.edit_depot_menu_remove_depot_item -> {
@@ -228,6 +201,97 @@ class EditCategoryFragment : FragmentWithActionBar(), AdapterView.OnItemSelected
             true
         }
         else -> super.onOptionsItemSelected(item)
+    }
+
+    private fun saveCategory(db: AppDatabase) {
+        val name = readName()
+        val categoryDao = db.categoryDao()
+        val category = currentCategory.value
+        lifecycleScope.launch {
+            if (category == null) {
+                Log.i(LOG_TAG, "Insert $name with parent: $currentParent")
+                val categoryId = categoryDao.insert(
+                    Category(
+                        name = name,
+                        unit = edit_category_unit_field.text.toString(),
+                        parentId = currentParent
+                    )
+                )
+                Log.i(LOG_TAG, "Inserted $name")
+                saveLimit(db, categoryId.toInt())
+            } else {
+                val categoryId = category.category.uid
+                categoryId?.let { id ->
+                    Log.i(LOG_TAG, "Update $name")
+                    val depot = Category(
+                        uid = id,
+                        unit = edit_category_unit_field.text.toString(),
+                        name = name,
+                        parentId = currentParent
+                    )
+                    Log.i(LOG_TAG, "Update $depot")
+                    categoryDao.update(depot)
+                    Log.i(LOG_TAG, "Update $depot")
+                    Log.i(LOG_TAG, "Edited $name")
+                    saveLimit(db, id)
+                }
+            }
+        }.invokeOnCompletion {
+            activity?.onBackPressed()
+        }
+    }
+
+    private suspend fun saveLimit(db: AppDatabase, categoryId: Int) {
+        val minimumAmountText = edit_category_minimum_amount_field.text.toString()
+        val categoryLimitDao = db.categoryLimitDao()
+        val categoryLimit = categoryLimitDao.getByCategoryIdImmediately(categoryId)
+        if (minimumAmountText.isEmpty()) {
+            removeLimit(categoryId, categoryLimit, categoryLimitDao)
+            return
+        }
+        saveLimit(minimumAmountText, categoryLimit, categoryId, categoryLimitDao)
+    }
+
+    private suspend fun removeLimit(
+        categoryId: Int,
+        categoryLimit: CategoryLimit?,
+        categoryLimitDao: CategoryLimitDao
+    ) {
+        Log.i(LOG_TAG, "There is no minimum amount specified for $categoryId")
+        if (categoryLimit != null) {
+            Log.i(LOG_TAG, "Remove category limit ${categoryLimit.uid}")
+            categoryLimitDao.delete(categoryLimit)
+        }
+    }
+
+    private suspend fun saveLimit(
+        minimumAmountText: String,
+        categoryLimit: CategoryLimit?,
+        categoryId: Int,
+        categoryLimitDao: CategoryLimitDao
+    ) {
+        val minimumAmount =
+            FixedPointNumber(minimumAmountText.toDouble())
+        if (categoryLimit == null) {
+            Log.i(LOG_TAG, "insert new limit for $categoryId: $minimumAmount")
+            categoryLimitDao.insert(
+                CategoryLimit(
+                    categoryId = categoryId, minimumDesiredAmount = minimumAmount
+                )
+            )
+        } else {
+            Log.i(LOG_TAG, "update limit for $categoryId: $minimumAmount")
+            val newLimit = categoryLimit.withLimit(minimumAmount)
+            categoryLimitDao.update(newLimit)
+        }
+    }
+
+    private fun readName(): String {
+        val originalName = edit_category_category_name.text.toString()
+        return if (originalName.isEmpty())
+            "<UNNAMED>"
+        else
+            originalName
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

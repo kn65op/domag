@@ -101,7 +101,7 @@ class DepotAdapter(
                 db.categoryDao().findById(item.categoryId)
             Log.i(
                 LOG_TAG,
-                "Seach for category: ${item.categoryId}"
+                "Search for category: ${item.categoryId}"
             )
             val itemViewHolder = holder as ItemViewHolder
             Log.i(LOG_TAG, "Show item: $itemPosition")

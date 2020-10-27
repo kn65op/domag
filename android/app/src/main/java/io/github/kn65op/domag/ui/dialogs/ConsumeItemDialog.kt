@@ -23,7 +23,7 @@ class ConsumeItemDialog(
         suspend fun onConsume(amount: FixedPointNumber)
     }
 
-    lateinit var amountField: EditText
+    private lateinit var amountField: EditText
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val inflater = requireActivity().layoutInflater
@@ -39,7 +39,7 @@ class ConsumeItemDialog(
             .setPositiveButton("Eloszka") { _, _ ->
                 Log.i(LOG_TAG, " Positive")
                 runBlocking { GlobalScope.launch { listener.onConsume(getAmount()) } }
-            }.setNegativeButton("Not eloszka") { dialog, _ ->
+            }.setNegativeButton("Not eloszka") { _, _ ->
                 Log.i(LOG_TAG, " Neg")
             }
         return builder.create()
@@ -54,11 +54,6 @@ class ConsumeItemDialog(
             else -> amountField.text.toString().toDouble()
         }
     )
-
-    private fun convertValue() = when (amountField.text.toString()) {
-        "" -> 0
-        else -> amountField.text.toString().toDouble()
-    }
 
     private fun getTitleText() =
         when (unit) {

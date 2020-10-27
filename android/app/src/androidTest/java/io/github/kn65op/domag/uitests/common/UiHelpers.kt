@@ -8,8 +8,13 @@ import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiSelector
 import org.hamcrest.CoreMatchers
+import org.hamcrest.CoreMatchers.not
 
-fun viewOrChildHasText(id: Int, text: String) {
+fun viewHasText(id: Int, text: String) {
+    onView(withId(id)).check(matches(withText(text)))
+}
+
+fun viewHasChildWithText(id: Int, text: String) {
     onView(withId(id)).check(matches(hasDescendant(withText(text))))
 }
 
@@ -23,10 +28,14 @@ fun viewDoNotHasText(text: String) {
     assertThat(element.exists(), CoreMatchers.equalTo(false))
 }
 
-fun dialogWithText(text : String) {
+fun dialogWithText(text: String) {
     onView(withText(text)).inRoot(RootMatchers.isDialog()).check(matches(isDisplayed()))
 }
 
 fun viewIdVisible(id: Int) {
     onView(withId(id)).check(matches(isDisplayed()))
+}
+
+fun noViewVisible(id: Int) {
+    onView(withId(id)).check(matches(not(isDisplayed())))
 }

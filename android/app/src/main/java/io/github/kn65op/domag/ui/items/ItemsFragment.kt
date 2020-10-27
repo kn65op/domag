@@ -15,6 +15,7 @@ import io.github.kn65op.domag.database.entities.Depot
 import io.github.kn65op.domag.database.relations.DepotWithContents
 import io.github.kn65op.domag.ui.common.FragmentWithActionBar
 import io.github.kn65op.domag.ui.common.prepareFabs
+import io.github.kn65op.domag.ui.utils.notifyIfNotComputing
 
 class ItemsFragment : FragmentWithActionBar() {
     private val storedDepotTag = "depotId"
@@ -76,9 +77,7 @@ class ItemsFragment : FragmentWithActionBar() {
 
                 activity?.runOnUiThread {
                     Log.i(LOG_TAG, "Data has been changed")
-                    if (!recyclerView.isComputingLayout) {
-                        recyclerView.adapter?.notifyDataSetChanged()
-                    }
+                    recyclerView.notifyIfNotComputing()
                 }
             })
         } else {
@@ -171,3 +170,4 @@ class ItemsFragment : FragmentWithActionBar() {
         private const val LOG_TAG = "ItemsFragment"
     }
 }
+

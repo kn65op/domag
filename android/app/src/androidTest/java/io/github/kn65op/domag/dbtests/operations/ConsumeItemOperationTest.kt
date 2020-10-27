@@ -2,11 +2,9 @@ package io.github.kn65op.domag.dbtests.operations
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
-import com.natpryce.hamkrest.isA
 import com.natpryce.hamkrest.throws
 import io.github.kn65op.android.lib.type.FixedPointNumber
 import io.github.kn65op.domag.database.daos.ItemDao
-import io.github.kn65op.domag.database.entities.Consume
 import io.github.kn65op.domag.database.entities.Item
 import io.github.kn65op.domag.database.operations.NotEnoughAmountToConsume
 import io.github.kn65op.domag.database.operations.consumeItem
