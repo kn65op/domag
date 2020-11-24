@@ -1,2 +1,2 @@
-# domag2
+# domag
 Real domag
