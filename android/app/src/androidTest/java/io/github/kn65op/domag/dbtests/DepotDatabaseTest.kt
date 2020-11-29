@@ -10,6 +10,7 @@ import kotlinx.coroutines.runBlocking
 import org.hamcrest.CoreMatchers.*
 import org.hamcrest.Matcher
 import org.hamcrest.MatcherAssert.assertThat
+import org.hamcrest.Matchers.arrayContaining
 import org.hamcrest.Matchers.greaterThan
 import org.hamcrest.collection.IsArrayContainingInAnyOrder.arrayContainingInAnyOrder
 import org.junit.Before
@@ -129,6 +130,17 @@ class DepotDatabaseTest : DatabaseTest() {
         assertThat(
             rootDepots.toTypedArray(), arrayContainingInAnyOrder(
                 isEqualRegardlessId(mainDepot1.depot), isEqualRegardlessId(mainDepot2.depot)
+            )
+        )
+    }
+
+    @Test
+    fun rootDepotsShouldBeSorted() {
+        val rootDepots = getFromLiveData(depotDao.findRootDepotsSortedByName())
+
+        assertThat(
+            rootDepots.toTypedArray(), arrayContaining(
+                isEqualRegardlessId(mainDepot2.depot), isEqualRegardlessId(mainDepot1.depot)
             )
         )
     }

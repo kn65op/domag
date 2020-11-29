@@ -132,7 +132,7 @@ class ItemsFragment : FragmentWithActionBar() {
     }
 
     private fun getRootDepots(db: AppDatabase?) {
-        val rootObjects = db?.depotDao()?.findRootDepots()
+        val rootObjects = db?.depotDao()?.findRootDepotsSortedByName()
         rootObjects?.observe(viewLifecycleOwner, {
             Log.i(LOG_TAG, "Observed root objects: $it")
             if (it != null) {
