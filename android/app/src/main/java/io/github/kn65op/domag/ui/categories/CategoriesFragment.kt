@@ -13,9 +13,9 @@ import io.github.kn65op.domag.database.database.AppDatabase
 import io.github.kn65op.domag.database.database.DatabaseFactoryImpl
 import io.github.kn65op.domag.database.entities.Category
 import io.github.kn65op.domag.database.relations.CategoryWithContents
+import io.github.kn65op.domag.databinding.FragmentCategoriesBinding
 import io.github.kn65op.domag.ui.common.FragmentWithActionBar
 import io.github.kn65op.domag.ui.common.prepareFabs
-import kotlinx.android.synthetic.main.fragment_categories.*
 
 class CategoriesFragment : FragmentWithActionBar() {
     private val storedCategoryId = "categoryId"
@@ -24,6 +24,7 @@ class CategoriesFragment : FragmentWithActionBar() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var viewManager: RecyclerView.LayoutManager
     private lateinit var viewAdapter: RecyclerView.Adapter<*>
+    private lateinit var categoriesFragmentBinding: FragmentCategoriesBinding
     private var currentCategory = MutableLiveData<CategoryWithContents>()
     private var root = true
 
@@ -51,7 +52,8 @@ class CategoriesFragment : FragmentWithActionBar() {
         inflater: LayoutInflater,
         container: ViewGroup?
     ): View {
-        val root = inflater.inflate(R.layout.fragment_categories, container, false)
+        categoriesFragmentBinding = FragmentCategoriesBinding.inflate(inflater, container, false)
+        val root = categoriesFragmentBinding.root
 
         val currentContext = requireContext()
         recyclerView = root.findViewById(R.id.categories_recycler_view)
@@ -88,13 +90,14 @@ class CategoriesFragment : FragmentWithActionBar() {
 
     private fun prepareShowingLimit(it: CategoryWithContents) {
         if (it.limits != null) {
-            fragment_categories_limit_info.text = requireActivity().getString(
-                R.string.categories_minimum_amount_text,
-                "${it.limits.minimumDesiredAmount} ${it.category.unit}"
-            )
-            fragment_categories_limit_info.visibility = View.VISIBLE
+            categoriesFragmentBinding.fragmentCategoriesLimitInfo.text =
+                requireActivity().getString(
+                    R.string.categories_minimum_amount_text,
+                    "${it.limits.minimumDesiredAmount} ${it.category.unit}"
+                )
+            categoriesFragmentBinding.fragmentCategoriesLimitInfo.visibility = View.VISIBLE
         } else {
-            fragment_categories_limit_info.visibility = View.GONE
+            categoriesFragmentBinding.fragmentCategoriesLimitInfo.visibility = View.GONE
         }
     }
 
