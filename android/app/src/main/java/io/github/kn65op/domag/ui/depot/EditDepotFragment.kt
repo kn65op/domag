@@ -17,11 +17,11 @@ import io.github.kn65op.domag.database.database.DatabaseFactoryImpl
 import io.github.kn65op.domag.database.entities.Depot
 import io.github.kn65op.domag.database.operations.deleteDepot
 import io.github.kn65op.domag.database.relations.DepotWithContents
+import io.github.kn65op.domag.databinding.FragmentEditDepotBinding
 import io.github.kn65op.domag.ui.common.FragmentWithActionBar
 import io.github.kn65op.domag.ui.items.DepotAdapter
 import io.github.kn65op.domag.ui.utils.replaceText
 import io.github.kn65op.domag.utils.getAllButNotItAndDescendants
-import kotlinx.android.synthetic.main.fragment_edit_depot.*
 import kotlinx.coroutines.launch
 
 private const val CURRENT_DEPOT_NAME_PARAMETER = "currentName"
@@ -38,6 +38,7 @@ class EditDepotFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedLis
     private lateinit var viewAdapter: RecyclerView.Adapter<*>
     private lateinit var recyclerView: RecyclerView
     private lateinit var spinner: SearchableSpinner
+    private lateinit var fragmentBinding: FragmentEditDepotBinding
     private var currentDepot = MutableLiveData<DepotWithContents>()
     private var depotsThatCanBeParents = emptyList<Depot>()
     private var depots: List<Depot>? = null
@@ -124,7 +125,8 @@ class EditDepotFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedLis
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val root = inflater.inflate(R.layout.fragment_edit_depot, container, false)
+        fragmentBinding = FragmentEditDepotBinding.inflate(inflater, container, false)
+        val root = fragmentBinding.root
 
         readDepot()
 
@@ -149,7 +151,7 @@ class EditDepotFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedLis
                 }
                 currentName = it.depot.name
                 currentName?.let {
-                    edit_depot_depot_name.replaceText(it)
+                    fragmentBinding.editDepotDepotName.replaceText(it)
                 }
             }
         })
@@ -170,7 +172,7 @@ class EditDepotFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedLis
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
         R.id.edit_depot_menu_confirm -> {
-            val name = edit_depot_depot_name.text.toString()
+            val name = fragmentBinding.editDepotDepotName.text.toString()
             if (name.isNotEmpty()) {
                 val db = context?.let { it1 -> dbFactory.factory.createDatabase(it1) }
                 val dao = db?.depotDao()

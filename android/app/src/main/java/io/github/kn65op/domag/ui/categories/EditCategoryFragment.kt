@@ -21,10 +21,10 @@ import io.github.kn65op.domag.database.entities.CategoryLimit
 import io.github.kn65op.domag.database.entities.withLimit
 import io.github.kn65op.domag.database.operations.deleteCategory
 import io.github.kn65op.domag.database.relations.CategoryWithContents
+import io.github.kn65op.domag.databinding.FragmentEditCategoryBinding
 import io.github.kn65op.domag.ui.common.FragmentWithActionBar
 import io.github.kn65op.domag.ui.utils.replaceText
 import io.github.kn65op.domag.utils.getAllButNotItAndDescendants
-import kotlinx.android.synthetic.main.fragment_edit_category.*
 import kotlinx.coroutines.launch
 
 private const val CURRENT_CATEGORY_NAME_PARAMETER = "currentName"
@@ -43,6 +43,7 @@ class EditCategoryFragment : FragmentWithActionBar(), AdapterView.OnItemSelected
     private lateinit var viewAdapter: RecyclerView.Adapter<*>
     private lateinit var recyclerView: RecyclerView
     private lateinit var spinner: SearchableSpinner
+    private lateinit var editCategoryBinding: FragmentEditCategoryBinding
     private var currentCategory = MutableLiveData<CategoryWithContents>()
     private var possibleParentCategories = emptyList<Category>()
     private var categories: List<Category>? = null
@@ -133,7 +134,8 @@ class EditCategoryFragment : FragmentWithActionBar(), AdapterView.OnItemSelected
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val root = inflater.inflate(R.layout.fragment_edit_category, container, false)
+        editCategoryBinding = FragmentEditCategoryBinding.inflate(inflater, container, false)
+        val root = editCategoryBinding.root
 
         readCategory()
 
@@ -157,10 +159,14 @@ class EditCategoryFragment : FragmentWithActionBar(), AdapterView.OnItemSelected
                     recyclerView.adapter?.notifyDataSetChanged()
                 }
                 currentName = category.category.name
-                currentName?.let { edit_category_category_name.replaceText(it) }
+                currentName?.let { editCategoryBinding.editCategoryCategoryName.replaceText(it) }
                 currentUnit = category.category.unit
-                currentUnit?.let { edit_category_unit_field.replaceText(it) }
-                category.limits?.let { edit_category_minimum_amount_field.replaceText(it.minimumDesiredAmount.toString()) }
+                currentUnit?.let { editCategoryBinding.editCategoryUnitField.replaceText(it) }
+                category.limits?.let {
+                    editCategoryBinding.editCategoryMinimumAmountField.replaceText(
+                        it.minimumDesiredAmount.toString()
+                    )
+                }
             }
         })
 
@@ -213,7 +219,7 @@ class EditCategoryFragment : FragmentWithActionBar(), AdapterView.OnItemSelected
                 val categoryId = categoryDao.insert(
                     Category(
                         name = name,
-                        unit = edit_category_unit_field.text.toString(),
+                        unit = editCategoryBinding.editCategoryUnitField.text.toString(),
                         parentId = currentParent
                     )
                 )
@@ -225,7 +231,7 @@ class EditCategoryFragment : FragmentWithActionBar(), AdapterView.OnItemSelected
                     Log.i(LOG_TAG, "Update $name")
                     val depot = Category(
                         uid = id,
-                        unit = edit_category_unit_field.text.toString(),
+                        unit = editCategoryBinding.editCategoryUnitField.text.toString(),
                         name = name,
                         parentId = currentParent
                     )
@@ -242,7 +248,7 @@ class EditCategoryFragment : FragmentWithActionBar(), AdapterView.OnItemSelected
     }
 
     private suspend fun saveLimit(db: AppDatabase, categoryId: Int) {
-        val minimumAmountText = edit_category_minimum_amount_field.text.toString()
+        val minimumAmountText = editCategoryBinding.editCategoryMinimumAmountField.text.toString()
         val categoryLimitDao = db.categoryLimitDao()
         val categoryLimit = categoryLimitDao.getByCategoryIdImmediately(categoryId)
         if (minimumAmountText.isEmpty()) {
@@ -287,7 +293,7 @@ class EditCategoryFragment : FragmentWithActionBar(), AdapterView.OnItemSelected
     }
 
     private fun readName(): String {
-        val originalName = edit_category_category_name.text.toString()
+        val originalName = editCategoryBinding.editCategoryCategoryName.text.toString()
         return if (originalName.isEmpty())
             "<UNNAMED>"
         else
