@@ -1,4 +1,4 @@
-package io.github.kn65op.domag
+package io.github.kn65op.domag.activities
 
 import android.os.Bundle
 import android.view.Menu
@@ -11,6 +11,7 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.navigation.NavigationView
+import io.github.kn65op.domag.R
 
 class MainActivity :
     AppCompatActivity() {

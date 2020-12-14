@@ -19,7 +19,7 @@ import org.junit.runner.RunWith
 open class CategoriesPartTestSuite {
 
     @get:Rule
-    var activityRule = ActivityTestRule(activityFactory, true, true)
+    val activityRule = ActivityTestRule(activityFactory, true, true)
 
     @Before
     fun fillDb() {
