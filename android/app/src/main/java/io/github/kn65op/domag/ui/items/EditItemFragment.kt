@@ -16,11 +16,11 @@ import com.toptoche.searchablespinnerlibrary.SearchableSpinner
 import io.github.kn65op.android.lib.gui.dialogs.LocalDatePickerDialog
 import io.github.kn65op.android.lib.type.FixedPointNumber
 import io.github.kn65op.domag.R
-import io.github.kn65op.domag.database.database.AppDatabase
-import io.github.kn65op.domag.database.database.DatabaseFactoryImpl
-import io.github.kn65op.domag.database.entities.Category
-import io.github.kn65op.domag.database.entities.Depot
-import io.github.kn65op.domag.database.entities.Item
+import io.github.kn65op.domag.data.database.database.AppDatabase
+import io.github.kn65op.domag.data.database.database.DatabaseFactoryImpl
+import io.github.kn65op.domag.data.database.entities.Category
+import io.github.kn65op.domag.data.database.entities.Depot
+import io.github.kn65op.domag.data.database.entities.Item
 import io.github.kn65op.domag.ui.common.FragmentWithActionBar
 import io.github.kn65op.domag.ui.common.constructItemFullName
 import io.github.kn65op.domag.ui.common.createDialog

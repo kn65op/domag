@@ -12,11 +12,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner
 import io.github.kn65op.domag.R
-import io.github.kn65op.domag.database.database.AppDatabase
-import io.github.kn65op.domag.database.database.DatabaseFactoryImpl
-import io.github.kn65op.domag.database.entities.Depot
-import io.github.kn65op.domag.database.operations.deleteDepot
-import io.github.kn65op.domag.database.relations.DepotWithContents
+import io.github.kn65op.domag.data.database.database.AppDatabase
+import io.github.kn65op.domag.data.database.database.DatabaseFactoryImpl
+import io.github.kn65op.domag.data.database.entities.Depot
+import io.github.kn65op.domag.data.database.operations.deleteDepot
+import io.github.kn65op.domag.data.database.relations.DepotWithContents
 import io.github.kn65op.domag.databinding.FragmentEditDepotBinding
 import io.github.kn65op.domag.ui.common.FragmentWithActionBar
 import io.github.kn65op.domag.ui.items.DepotAdapter

@@ -9,10 +9,10 @@ import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.github.kn65op.domag.R
-import io.github.kn65op.domag.database.database.AppDatabase
-import io.github.kn65op.domag.database.database.DatabaseFactoryImpl
-import io.github.kn65op.domag.database.entities.Category
-import io.github.kn65op.domag.database.relations.CategoryWithContents
+import io.github.kn65op.domag.data.database.database.AppDatabase
+import io.github.kn65op.domag.data.database.database.DatabaseFactoryImpl
+import io.github.kn65op.domag.data.database.entities.Category
+import io.github.kn65op.domag.data.database.relations.CategoryWithContents
 import io.github.kn65op.domag.databinding.FragmentCategoriesBinding
 import io.github.kn65op.domag.ui.common.FragmentWithActionBar
 import io.github.kn65op.domag.ui.common.prepareFabs

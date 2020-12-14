@@ -1,7 +1,7 @@
 package io.github.kn65op.domag.dbtests.operations
 
-import io.github.kn65op.domag.database.daos.DepotDao
-import io.github.kn65op.domag.database.operations.deleteDepot
+import io.github.kn65op.domag.data.database.daos.DepotDao
+import io.github.kn65op.domag.data.database.operations.deleteDepot
 import io.github.kn65op.domag.dbtests.common.DatabaseTest
 import io.github.kn65op.domag.dbtests.common.assertNoItemInDb
 import io.github.kn65op.domag.dbtests.common.getFromLiveData

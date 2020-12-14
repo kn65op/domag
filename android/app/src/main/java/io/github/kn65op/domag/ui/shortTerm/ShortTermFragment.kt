@@ -8,7 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.github.kn65op.domag.R
-import io.github.kn65op.domag.database.database.DatabaseFactoryImpl
+import io.github.kn65op.domag.data.database.database.DatabaseFactoryImpl
 import java.time.ZonedDateTime
 
 class ShortTermFragment : Fragment() {

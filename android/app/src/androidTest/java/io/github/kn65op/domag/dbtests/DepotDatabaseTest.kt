@@ -1,7 +1,7 @@
 package io.github.kn65op.domag.dbtests
 
-import io.github.kn65op.domag.database.daos.DepotDao
-import io.github.kn65op.domag.database.entities.Depot
+import io.github.kn65op.domag.data.database.daos.DepotDao
+import io.github.kn65op.domag.data.database.entities.Depot
 import io.github.kn65op.domag.dbtests.common.DatabaseTest
 import io.github.kn65op.domag.dbtests.common.getFromLiveData
 import io.github.kn65op.domag.dbtests.data.*

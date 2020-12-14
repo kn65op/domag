@@ -1,7 +1,7 @@
 package io.github.kn65op.domag.dbtests.common
 
-import io.github.kn65op.domag.database.database.AppDatabase
-import io.github.kn65op.domag.database.entities.Item
+import io.github.kn65op.domag.data.database.database.AppDatabase
+import io.github.kn65op.domag.data.database.entities.Item
 import org.hamcrest.CoreMatchers
 import org.hamcrest.MatcherAssert
 

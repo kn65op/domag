@@ -2,12 +2,12 @@ package io.github.kn65op.domag.dbtests.data
 
 import android.content.Context
 import androidx.room.Room
-import io.github.kn65op.domag.database.database.AppDatabase
-import io.github.kn65op.domag.database.relations.CategoryWithContents
-import io.github.kn65op.domag.database.relations.DepotWithContents
+import io.github.kn65op.domag.data.database.database.AppDatabase
+import io.github.kn65op.domag.data.database.relations.CategoryWithContents
+import io.github.kn65op.domag.data.database.relations.DepotWithContents
 import io.github.kn65op.domag.uitests.common.descriptionCategoryDelimiter
 import io.github.kn65op.android.lib.type.FixedPointNumber
-import io.github.kn65op.domag.database.entities.*
+import io.github.kn65op.domag.data.database.entities.*
 import kotlinx.coroutines.runBlocking
 import java.time.ZonedDateTime
 
