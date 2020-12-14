@@ -5,6 +5,7 @@ import androidx.room.Relation
 import io.github.kn65op.domag.database.entities.Category
 import io.github.kn65op.domag.database.entities.CategoryLimit
 import io.github.kn65op.domag.database.entities.Item
+import io.github.kn65op.domag.database.entities.ItemWithInfo
 
 data class CategoryWithContents(
     @Embedded

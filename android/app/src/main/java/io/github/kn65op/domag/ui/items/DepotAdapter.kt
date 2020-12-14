@@ -13,12 +13,13 @@ import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import io.github.kn65op.domag.R
 import io.github.kn65op.domag.database.database.DatabaseFactoryImpl
+import io.github.kn65op.domag.database.entities.Item
 import io.github.kn65op.domag.database.relations.DepotWithContents
 import io.github.kn65op.domag.ui.common.constructItemFullName
 import io.github.kn65op.domag.ui.dialogs.ConsumeDialogController
 
 class DepotAdapter(
-    private var depot: LiveData<DepotWithContents>,
+    private val depot: LiveData<DepotWithContents>,
     private val activity: FragmentActivity,
     private val lifecycleOwner: LifecycleOwner
 ) :
@@ -40,6 +41,7 @@ class DepotAdapter(
     private val itemOnPosition = 2
     private val dbFactory = DatabaseFactoryImpl()
     private val consumeDialogController = ConsumeDialogController(activity)
+    private val itemsInDepot: List<Item> = emptyList()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder =
         when (viewType) {
