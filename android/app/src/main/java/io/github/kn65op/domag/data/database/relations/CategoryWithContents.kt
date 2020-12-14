@@ -2,9 +2,9 @@ package io.github.kn65op.domag.data.database.relations
 
 import androidx.room.Embedded
 import androidx.room.Relation
-import io.github.kn65op.domag.data.database.entities.Category
-import io.github.kn65op.domag.data.database.entities.CategoryLimit
-import io.github.kn65op.domag.data.database.entities.Item
+import io.github.kn65op.domag.data.entities.Category
+import io.github.kn65op.domag.data.entities.CategoryLimit
+import io.github.kn65op.domag.data.entities.Item
 
 data class CategoryWithContents(
     @Embedded

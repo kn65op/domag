@@ -3,7 +3,7 @@ package io.github.kn65op.domag.data.database.utils
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import io.github.kn65op.android.lib.type.FixedPointNumber
-import io.github.kn65op.domag.data.database.entities.Item
+import io.github.kn65op.domag.data.entities.Item
 import org.junit.Test
 
 class ItemsUtilsTest {

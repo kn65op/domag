@@ -3,9 +3,9 @@ package io.github.kn65op.domag.data.database.filters
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import io.github.kn65op.android.lib.type.FixedPointNumber
-import io.github.kn65op.domag.data.database.entities.Category
-import io.github.kn65op.domag.data.database.entities.CategoryLimit
-import io.github.kn65op.domag.data.database.entities.Item
+import io.github.kn65op.domag.data.entities.Category
+import io.github.kn65op.domag.data.entities.CategoryLimit
+import io.github.kn65op.domag.data.entities.Item
 import io.github.kn65op.domag.data.database.relations.CategoryWithContents
 import org.junit.Test
 

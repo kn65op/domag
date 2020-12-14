@@ -5,7 +5,7 @@ import android.widget.Toast
 import androidx.fragment.app.FragmentActivity
 import io.github.kn65op.android.lib.type.FixedPointNumber
 import io.github.kn65op.domag.data.database.database.DatabaseFactoryImpl
-import io.github.kn65op.domag.data.database.entities.Category
+import io.github.kn65op.domag.data.entities.Category
 import io.github.kn65op.domag.data.database.operations.NotEnoughAmountToConsume
 import io.github.kn65op.domag.data.database.operations.consumeItem
 

@@ -4,7 +4,7 @@ import androidx.room.*
 import io.github.kn65op.domag.data.database.converters.ZoneDateTimeConverters
 import io.github.kn65op.android.lib.type.FixedPointNumberConverter
 import io.github.kn65op.domag.data.database.daos.*
-import io.github.kn65op.domag.data.database.entities.*
+import io.github.kn65op.domag.data.entities.*
 
 @Database(
     entities = [Depot::class, Item::class, Category::class, Consume::class, CategoryLimit::class],

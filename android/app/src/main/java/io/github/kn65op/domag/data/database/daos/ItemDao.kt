@@ -2,7 +2,7 @@ package io.github.kn65op.domag.data.database.daos
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
-import io.github.kn65op.domag.data.database.entities.Item
+import io.github.kn65op.domag.data.entities.Item
 import java.time.ZonedDateTime
 
 @Dao

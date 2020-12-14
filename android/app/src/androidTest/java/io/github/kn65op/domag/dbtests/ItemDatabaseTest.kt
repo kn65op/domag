@@ -1,7 +1,7 @@
 package io.github.kn65op.domag.dbtests
 
 import io.github.kn65op.domag.data.database.daos.ItemDao
-import io.github.kn65op.domag.data.database.entities.withDescription
+import io.github.kn65op.domag.data.entities.withDescription
 import io.github.kn65op.domag.dbtests.common.DatabaseTest
 import io.github.kn65op.domag.dbtests.common.assertItemInDb
 import io.github.kn65op.domag.dbtests.common.assertNoItemInDb

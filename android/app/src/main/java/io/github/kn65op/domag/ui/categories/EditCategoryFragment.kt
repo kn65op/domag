@@ -16,9 +16,9 @@ import io.github.kn65op.domag.R
 import io.github.kn65op.domag.data.database.daos.CategoryLimitDao
 import io.github.kn65op.domag.data.database.database.AppDatabase
 import io.github.kn65op.domag.data.database.database.DatabaseFactoryImpl
-import io.github.kn65op.domag.data.database.entities.Category
-import io.github.kn65op.domag.data.database.entities.CategoryLimit
-import io.github.kn65op.domag.data.database.entities.withLimit
+import io.github.kn65op.domag.data.entities.Category
+import io.github.kn65op.domag.data.entities.CategoryLimit
+import io.github.kn65op.domag.data.entities.withLimit
 import io.github.kn65op.domag.data.database.operations.deleteCategory
 import io.github.kn65op.domag.data.database.relations.CategoryWithContents
 import io.github.kn65op.domag.databinding.FragmentEditCategoryBinding

@@ -7,7 +7,7 @@ import io.github.kn65op.domag.data.database.relations.CategoryWithContents
 import io.github.kn65op.domag.data.database.relations.DepotWithContents
 import io.github.kn65op.domag.uitests.common.descriptionCategoryDelimiter
 import io.github.kn65op.android.lib.type.FixedPointNumber
-import io.github.kn65op.domag.data.database.entities.*
+import io.github.kn65op.domag.data.entities.*
 import kotlinx.coroutines.runBlocking
 import java.time.ZonedDateTime
 

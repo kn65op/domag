@@ -1,4 +1,4 @@
-package io.github.kn65op.domag.data.database.entities
+package io.github.kn65op.domag.data.entities
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
