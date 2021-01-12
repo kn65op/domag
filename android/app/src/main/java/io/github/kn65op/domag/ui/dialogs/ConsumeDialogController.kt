@@ -4,13 +4,15 @@ import android.util.Log
 import android.widget.Toast
 import androidx.fragment.app.FragmentActivity
 import io.github.kn65op.android.lib.type.FixedPointNumber
-import io.github.kn65op.domag.data.database.database.DatabaseFactoryImpl
-import io.github.kn65op.domag.data.entities.Category
+import io.github.kn65op.domag.data.database.database.AppDatabase
 import io.github.kn65op.domag.data.database.operations.NotEnoughAmountToConsume
 import io.github.kn65op.domag.data.database.operations.consumeItem
+import io.github.kn65op.domag.data.entities.Category
 
-class ConsumeDialogController(private val activity: FragmentActivity) {
-    private val dbFactory = DatabaseFactoryImpl()
+class ConsumeDialogController(
+    private val activity: FragmentActivity,
+    private val db: AppDatabase
+) {
 
     fun startConsumeDialog(
         itemId: Int,
@@ -39,8 +41,7 @@ class ConsumeDialogController(private val activity: FragmentActivity) {
     ) {
         Log.i(LOG_TAG, "Will consume")
         try {
-            dbFactory.factory.createDatabase(activity.applicationContext)
-                .consumeItem(itemId, amount)
+            db.consumeItem(itemId, amount)
             Log.i(LOG_TAG, "Consumed $fullName: $amount")
         } catch (notEnough: NotEnoughAmountToConsume) {
             retry(notEnough, itemId, fullName, category, currentAmount)

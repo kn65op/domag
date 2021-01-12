@@ -12,15 +12,16 @@ import androidx.lifecycle.LiveData
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import io.github.kn65op.domag.R
-import io.github.kn65op.domag.data.database.database.DatabaseFactoryImpl
+import io.github.kn65op.domag.data.database.database.AppDatabase
 import io.github.kn65op.domag.data.database.relations.DepotWithContents
 import io.github.kn65op.domag.ui.common.constructItemFullName
 import io.github.kn65op.domag.ui.dialogs.ConsumeDialogController
 
 class DepotAdapter(
     private var depot: LiveData<DepotWithContents>,
-    private val activity: FragmentActivity,
-    private val lifecycleOwner: LifecycleOwner
+    activity: FragmentActivity,
+    private val lifecycleOwner: LifecycleOwner,
+    private val db: AppDatabase,
 ) :
     RecyclerView.Adapter<DepotAdapter.ViewHolder>() {
     open class ViewHolder(view: View) : RecyclerView.ViewHolder(view)
@@ -38,8 +39,7 @@ class DepotAdapter(
 
     private val depotOnPosition = 1
     private val itemOnPosition = 2
-    private val dbFactory = DatabaseFactoryImpl()
-    private val consumeDialogController = ConsumeDialogController(activity)
+    private val consumeDialogController = ConsumeDialogController(activity, db)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder =
         when (viewType) {
@@ -96,7 +96,6 @@ class DepotAdapter(
         if (depotContent != null) {
             val itemPosition = position - depotContent.depots.size
             val item = depotContent.items[itemPosition]
-            val db = dbFactory.factory.createDatabase(activity.applicationContext)
             val category =
                 db.categoryDao().findById(item.categoryId)
             Log.i(

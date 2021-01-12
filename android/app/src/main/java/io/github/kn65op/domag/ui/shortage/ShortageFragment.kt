@@ -7,13 +7,14 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.github.kn65op.domag.R
 import io.github.kn65op.domag.data.database.database.AppDatabase
-import io.github.kn65op.domag.data.database.database.DatabaseFactoryImpl
 import io.github.kn65op.domag.data.database.filters.filterUnderLimit
 import io.github.kn65op.domag.ui.common.FragmentWithActionBar
 import io.github.kn65op.domag.ui.utils.notifyIfNotComputing
+import javax.inject.Inject
 
 class ShortageFragment : FragmentWithActionBar() {
-    private lateinit var db: AppDatabase
+    @Inject
+    lateinit var db: AppDatabase
     private lateinit var recyclerView: RecyclerView
     private lateinit var recyclerAdapter: ShortageCategoryAdapter
 
@@ -40,8 +41,6 @@ class ShortageFragment : FragmentWithActionBar() {
 
     private fun getDataFromDb() {
         Log.d(LOG_TAG, "Get all categories from db")
-        val dbFactory = DatabaseFactoryImpl()
-        db = dbFactory.factory.createDatabase(requireContext())
         db.categoryDao().getAllWithContents()
             .observe(viewLifecycleOwner, {
                 Log.d(LOG_TAG, "Observed all categories: ${it.size}")

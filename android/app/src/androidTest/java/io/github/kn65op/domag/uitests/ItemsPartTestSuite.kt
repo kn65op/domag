@@ -30,13 +30,6 @@ open class ItemsPartBase {
     protected val item1FullDescription =
         "$item1Description$descriptionCategoryDelimiter$mainCategory1Name"
 
-    @After
-    fun clearDb() {
-        val db = factory.createDatabase(ApplicationProvider.getApplicationContext())
-        db.clearAllTables()
-        Thread.sleep(500) // WA for asynchronous DB calls
-    }
-
     internal fun assertDepotInContents(name: String) {
         viewHasChildWithText(R.id.fragment_items_layout, name)
     }
@@ -148,11 +141,11 @@ open class ItemsPartWithEmptyDbTestSuite : ItemsPartBase() {
 @UninstallModules(SqlDatabaseModule::class)
 @HiltAndroidTest
 open class ItemsPartTestSuite : ItemsPartBase() {
-    @Inject lateinit var db : AppDatabase
+    @Inject
+    lateinit var db: AppDatabase
 
     @Before
-    fun prepareTestEnvironment()
-    {
+    fun prepareTestEnvironment() {
         injectObjects()
         fillDb()
     }
@@ -163,6 +156,12 @@ open class ItemsPartTestSuite : ItemsPartBase() {
 
     fun fillDb() {
         fillData(db)
+        Thread.sleep(500) // WA for asynchronous DB calls
+    }
+
+    @After
+    fun clearDb() {
+        db.clearAllTables()
         Thread.sleep(500) // WA for asynchronous DB calls
     }
 

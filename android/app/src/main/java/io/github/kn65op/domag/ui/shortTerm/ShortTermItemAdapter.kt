@@ -24,7 +24,7 @@ import java.time.format.FormatStyle
 class ShortTermItemAdapter(
     lifecycleOwner: LifecycleOwner,
     val items: LiveData<List<Item>>?,
-    val db: AppDatabase?,
+    val db: AppDatabase,
     val activity: FragmentActivity
 ) :
     RecyclerView.Adapter<ShortTermItemAdapter.ItemViewHolder>() {
@@ -36,7 +36,7 @@ class ShortTermItemAdapter(
         val consumeButton: ImageButton = view.findViewById(R.id.short_term_consume_button)
     }
 
-    private val consumeDialogController = ConsumeDialogController(activity)
+    private val consumeDialogController = ConsumeDialogController(activity, db)
 
     init {
         items?.observe(lifecycleOwner,
@@ -64,13 +64,13 @@ class ShortTermItemAdapter(
             Log.i(LOG_TAG, "Bind $position")
             GlobalScope.launch {
                 Log.i(LOG_TAG, "Start routine")
-                val categoryDao = db?.categoryDao()
-                val category = categoryDao?.findWithContentsByIdImmediately(item.categoryId)
-                category?.let {
-                    val depotDao = db?.depotDao()
+                val categoryDao = db.categoryDao()
+                val category = categoryDao.findWithContentsByIdImmediately(item.categoryId)
+                category.let {
+                    val depotDao = db.depotDao()
                     val name = if (item.description.isNullOrEmpty())
                         "${category.category.name} in ${
-                            depotDao?.getDepotName(
+                            depotDao.getDepotName(
                                 item.depotId
                             )
                         }"
@@ -80,7 +80,7 @@ class ShortTermItemAdapter(
                                 R.string.inside
                             )
                         } ${
-                            depotDao?.getDepotName(
+                            depotDao.getDepotName(
                                 item.depotId
                             )
                         }"

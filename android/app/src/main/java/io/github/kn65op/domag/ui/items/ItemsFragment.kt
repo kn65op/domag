@@ -11,7 +11,6 @@ import androidx.recyclerview.widget.RecyclerView
 import dagger.hilt.android.AndroidEntryPoint
 import io.github.kn65op.domag.R
 import io.github.kn65op.domag.data.database.database.AppDatabase
-import io.github.kn65op.domag.data.database.database.DatabaseFactoryImpl
 import io.github.kn65op.domag.data.entities.Depot
 import io.github.kn65op.domag.data.database.relations.DepotWithContents
 import io.github.kn65op.domag.ui.common.FragmentWithActionBar
@@ -23,7 +22,6 @@ import javax.inject.Inject
 class ItemsFragment : FragmentWithActionBar() {
     private val storedDepotTag = "depotId"
 
-    private val dbFactory = DatabaseFactoryImpl()
     @Inject
     lateinit var db: AppDatabase
     private lateinit var recyclerView: RecyclerView
@@ -41,7 +39,6 @@ class ItemsFragment : FragmentWithActionBar() {
 
         Log.i(LOG_TAG, "Received depot: $depotId")
 
-        //val db = context?.let { dbFactory.factory.createDatabase(it) }
         if (depotId == null || depotId == 0) {
             getRootDepots(db)
         } else {
@@ -61,7 +58,7 @@ class ItemsFragment : FragmentWithActionBar() {
         val currentContext = context
         if (currentContext != null) {
             recyclerView = root.findViewById(R.id.items_recycler_view)
-            viewAdapter= DepotAdapter(currentDepot, requireActivity(), viewLifecycleOwner)
+            viewAdapter = DepotAdapter(currentDepot, requireActivity(), viewLifecycleOwner, db)
 
             viewManager = LinearLayoutManager(currentContext)
             recyclerView.apply {

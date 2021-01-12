@@ -7,12 +7,16 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import dagger.hilt.android.AndroidEntryPoint
 import io.github.kn65op.domag.R
-import io.github.kn65op.domag.data.database.database.DatabaseFactoryImpl
+import io.github.kn65op.domag.data.database.database.AppDatabase
 import java.time.ZonedDateTime
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class ShortTermFragment : Fragment() {
-    private val dbFactory = DatabaseFactoryImpl()
+    @Inject
+    lateinit var db: AppDatabase
     private lateinit var recyclerView: RecyclerView
     private lateinit var viewManager: RecyclerView.LayoutManager
     private lateinit var viewAdapter: RecyclerView.Adapter<*>
@@ -23,8 +27,7 @@ class ShortTermFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val root = inflater.inflate(R.layout.fragment_short_term, container, false)
-        val db = context?.let { dbFactory.factory.createDatabase(it) }
-        val data = db?.itemDao()?.getWithBestBeforeBefore(ZonedDateTime.now().plusDays(7))
+        val data = db.itemDao().getWithBestBeforeBefore(ZonedDateTime.now().plusDays(7))
         viewAdapter = ShortTermItemAdapter(viewLifecycleOwner, data, db, requireActivity())
         viewManager = LinearLayoutManager(context)
         recyclerView = root.findViewById(R.id.short_term_items_recycler_view)
