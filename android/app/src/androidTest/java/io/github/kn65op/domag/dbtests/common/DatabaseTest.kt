@@ -12,24 +12,15 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 
-@UninstallModules(SqlDatabaseModule::class)
-@HiltAndroidTest
 open class DatabaseTest {
-    @get:Rule
-    var hiltRule = HiltAndroidRule(this)
-
     @get:Rule
     var instantTaskExecutorRule = InstantTaskExecutorRule()
     protected lateinit var db: AppDatabase
 
-    fun prepareTestEnvironment()
-    {
-
-    }
-
     @Before
     fun createDb() {
-        db = io.github.kn65op.domag.dbtests.data.createDb(ApplicationProvider.getApplicationContext())
+        db =
+            io.github.kn65op.domag.dbtests.data.createDb(ApplicationProvider.getApplicationContext())
     }
 
     @Before
