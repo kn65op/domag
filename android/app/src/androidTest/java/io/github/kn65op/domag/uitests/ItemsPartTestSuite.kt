@@ -149,11 +149,11 @@ open class ItemsPartTestSuite : ItemsPartBase() {
         fillDb()
     }
 
-    fun injectObjects() {
+    private fun injectObjects() {
         hiltRule.inject()
     }
 
-    fun fillDb() {
+    private fun fillDb() {
         fillData(db)
         Thread.sleep(500) // WA for asynchronous DB calls
     }
