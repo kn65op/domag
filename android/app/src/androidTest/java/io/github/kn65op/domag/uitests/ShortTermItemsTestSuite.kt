@@ -1,6 +1,5 @@
 package io.github.kn65op.domag.uitests
 
-import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.rule.ActivityTestRule
 import dagger.hilt.android.testing.HiltAndroidRule
