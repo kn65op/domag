@@ -11,21 +11,22 @@ import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner
+import dagger.hilt.android.AndroidEntryPoint
 import io.github.kn65op.android.lib.type.FixedPointNumber
 import io.github.kn65op.domag.R
-import io.github.kn65op.domag.database.daos.CategoryLimitDao
-import io.github.kn65op.domag.database.database.AppDatabase
-import io.github.kn65op.domag.database.database.DatabaseFactoryImpl
-import io.github.kn65op.domag.database.entities.Category
-import io.github.kn65op.domag.database.entities.CategoryLimit
-import io.github.kn65op.domag.database.entities.withLimit
-import io.github.kn65op.domag.database.operations.deleteCategory
-import io.github.kn65op.domag.database.relations.CategoryWithContents
+import io.github.kn65op.domag.data.database.daos.CategoryLimitDao
+import io.github.kn65op.domag.data.database.database.AppDatabase
+import io.github.kn65op.domag.data.entities.Category
+import io.github.kn65op.domag.data.entities.CategoryLimit
+import io.github.kn65op.domag.data.entities.withLimit
+import io.github.kn65op.domag.data.database.operations.deleteCategory
+import io.github.kn65op.domag.data.database.relations.CategoryWithContents
 import io.github.kn65op.domag.databinding.FragmentEditCategoryBinding
 import io.github.kn65op.domag.ui.common.FragmentWithActionBar
 import io.github.kn65op.domag.ui.utils.replaceText
 import io.github.kn65op.domag.utils.getAllButNotItAndDescendants
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 private const val CURRENT_CATEGORY_NAME_PARAMETER = "currentName"
 private const val CURRENT_CATEGORY_UNIT_PARAMETER = "currentUnit"
@@ -33,8 +34,10 @@ private const val PARENT_ID_PARAMETER = "currentParent"
 private const val PARENT_ID_ACTION_PARAMETER = "parentId"
 private const val CURRENT_CATEGORY_ID_PARAMETER = "categoryId"
 
+@AndroidEntryPoint
 class EditCategoryFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedListener {
-    private val dbFactory = DatabaseFactoryImpl()
+    @Inject
+    lateinit var db: AppDatabase
     private var currentName: String? = null
     private var currentUnit: String? = null
     private var currentParent: Int? = null
@@ -71,23 +74,20 @@ class EditCategoryFragment : FragmentWithActionBar(), AdapterView.OnItemSelected
     private fun readCategory() {
         categoryId?.let { searchCategoryId ->
             if (searchCategoryId != 0) {
-                context?.let { context ->
-                    val db = dbFactory.factory.createDatabase(context)
-                    db.categoryDao().findWithContentsById(searchCategoryId)
-                        .observe(viewLifecycleOwner, {
-                            if (it != null) {
-                                currentCategory.value = it
-                                currentParent = it.category.parentId
-                                currentUnit = it.category.unit
-                                Log.i(
-                                    LOG_TAG,
-                                    "Editing category: ${it.category.uid}: ${it.category.name} with parent: ${it.category.parentId}"
-                                )
-                                actionBar()?.title = currentName
-                                prepareCategorySelectorIfReady(currentCategory, categories)
-                            }
-                        })
-                }
+                db.categoryDao().findWithContentsById(searchCategoryId)
+                    .observe(viewLifecycleOwner, {
+                        if (it != null) {
+                            currentCategory.value = it
+                            currentParent = it.category.parentId
+                            currentUnit = it.category.unit
+                            Log.i(
+                                LOG_TAG,
+                                "Editing category: ${it.category.uid}: ${it.category.name} with parent: ${it.category.parentId}"
+                            )
+                            actionBar()?.title = currentName
+                            prepareCategorySelectorIfReady(currentCategory, categories)
+                        }
+                    })
             }
         }
     }
@@ -146,7 +146,7 @@ class EditCategoryFragment : FragmentWithActionBar(), AdapterView.OnItemSelected
         spinner.setPositiveButton(context?.getString(R.string.spinner_select_text))
 
         viewManager = LinearLayoutManager(context)
-        viewAdapter = CategoryAdapter(currentCategory, requireActivity(), this)
+        viewAdapter = CategoryAdapter(currentCategory, requireActivity(), this, db)
 
         recyclerView.apply {
             setHasFixedSize(true)
@@ -170,7 +170,6 @@ class EditCategoryFragment : FragmentWithActionBar(), AdapterView.OnItemSelected
             }
         })
 
-        val db = context?.let { dbFactory.factory.createDatabase(it) }
         getAllCategories(db)
 
         setHasOptionsMenu(true)
@@ -186,16 +185,14 @@ class EditCategoryFragment : FragmentWithActionBar(), AdapterView.OnItemSelected
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
         R.id.edit_depot_menu_confirm -> {
-            val db = context?.let { it1 -> dbFactory.factory.createDatabase(it1) }
-            db?.let { saveCategory(it) }
+            db.let { saveCategory(it) }
             true
         }
         R.id.edit_depot_menu_remove_depot_item -> {
-            val db = context?.let { it1 -> dbFactory.factory.createDatabase(it1) }
             currentCategory.value?.let {
                 val parent = it.category.parentId
                 lifecycleScope.launch {
-                    db?.deleteCategory(it)
+                    db.deleteCategory(it)
                 }
                 val action =
                     EditCategoryFragmentDirections.actionEditCategoryToNavCategories(

@@ -8,8 +8,8 @@ import android.widget.TextView
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
 import io.github.kn65op.domag.R
-import io.github.kn65op.domag.database.relations.CategoryWithContents
-import io.github.kn65op.domag.database.utils.amount
+import io.github.kn65op.domag.data.database.relations.CategoryWithContents
+import io.github.kn65op.domag.data.database.utils.amount
 import io.github.kn65op.domag.ui.utils.notifyIfNotComputing
 
 class ShortageCategoryAdapter(

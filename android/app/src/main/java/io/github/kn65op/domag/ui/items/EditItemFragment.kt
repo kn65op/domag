@@ -13,14 +13,14 @@ import androidx.lifecycle.lifecycleScope
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner
+import dagger.hilt.android.AndroidEntryPoint
 import io.github.kn65op.android.lib.gui.dialogs.LocalDatePickerDialog
 import io.github.kn65op.android.lib.type.FixedPointNumber
 import io.github.kn65op.domag.R
-import io.github.kn65op.domag.database.database.AppDatabase
-import io.github.kn65op.domag.database.database.DatabaseFactoryImpl
-import io.github.kn65op.domag.database.entities.Category
-import io.github.kn65op.domag.database.entities.Depot
-import io.github.kn65op.domag.database.entities.Item
+import io.github.kn65op.domag.data.database.database.AppDatabase
+import io.github.kn65op.domag.data.entities.Category
+import io.github.kn65op.domag.data.entities.Depot
+import io.github.kn65op.domag.data.entities.Item
 import io.github.kn65op.domag.ui.common.FragmentWithActionBar
 import io.github.kn65op.domag.ui.common.constructItemFullName
 import io.github.kn65op.domag.ui.common.createDialog
@@ -31,14 +31,17 @@ import java.time.LocalTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
+import javax.inject.Inject
 
 private const val ITEM_ID_PARAMETER = "itemId"
 private const val DEPOT_ID_PARAMETER = "depotId"
 private const val CATEGORY_ID_PARAMETER = "categoryId"
 
+@AndroidEntryPoint
 class EditItemFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedListener,
     LocalDatePickerDialog.DatePickerListener {
-    private val dbFactory = DatabaseFactoryImpl()
+    @Inject
+    lateinit var db: AppDatabase
     private var initialDepoId: Int? = null
     private var initialCategoryId: Int? = null
     private var itemId: Int? = null
@@ -76,7 +79,7 @@ class EditItemFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedList
 
         itemId?.let()
         {
-            dbFactory.factory.createDatabase(requireContext()).itemDao().findById(it)
+            db.itemDao().findById(it)
                 .observe(viewLifecycleOwner, { item ->
                     item?.let {
                         currentItem = item
@@ -117,7 +120,6 @@ class EditItemFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedList
             amountField.replaceText(1.toString())
         }
 
-        val db = dbFactory.factory.createDatabase(requireContext())
         collectAllCategories(db)
         collectAllDepots(db)
 
@@ -213,7 +215,6 @@ class EditItemFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedList
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
         R.id.edit_item_menu_confirm -> {
-            val db = dbFactory.factory.createDatabase(requireContext())
             when {
                 depotSpinner.selectedItemPosition == -1 -> {
                     createDialog(requireActivity(), R.string.edit_item_no_depot_dialog_message)
@@ -228,7 +229,7 @@ class EditItemFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedList
             true
         }
         R.id.edit_item_menu_remove_item_item -> {
-            val dao = dbFactory.factory.createDatabase(requireContext()).itemDao()
+            val dao = db.itemDao()
             currentItem?.let {
                 lifecycleScope.launch { dao.delete(it) }
             }

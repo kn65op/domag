@@ -1,6 +1,6 @@
 package io.github.kn65op.domag.dbtests
 
-import io.github.kn65op.domag.database.daos.ConsumeDao
+import io.github.kn65op.domag.data.database.daos.ConsumeDao
 import io.github.kn65op.domag.dbtests.common.DatabaseTest
 import io.github.kn65op.domag.dbtests.common.getFromLiveData
 import kotlinx.coroutines.runBlocking

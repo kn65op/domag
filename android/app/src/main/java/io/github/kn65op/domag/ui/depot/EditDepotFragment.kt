@@ -11,26 +11,29 @@ import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner
+import dagger.hilt.android.AndroidEntryPoint
 import io.github.kn65op.domag.R
-import io.github.kn65op.domag.database.database.AppDatabase
-import io.github.kn65op.domag.database.database.DatabaseFactoryImpl
-import io.github.kn65op.domag.database.entities.Depot
-import io.github.kn65op.domag.database.operations.deleteDepot
-import io.github.kn65op.domag.database.relations.DepotWithContents
+import io.github.kn65op.domag.data.database.database.AppDatabase
+import io.github.kn65op.domag.data.entities.Depot
+import io.github.kn65op.domag.data.database.operations.deleteDepot
+import io.github.kn65op.domag.data.database.relations.DepotWithContents
 import io.github.kn65op.domag.databinding.FragmentEditDepotBinding
 import io.github.kn65op.domag.ui.common.FragmentWithActionBar
 import io.github.kn65op.domag.ui.items.DepotAdapter
 import io.github.kn65op.domag.ui.utils.replaceText
 import io.github.kn65op.domag.utils.getAllButNotItAndDescendants
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 private const val CURRENT_DEPOT_NAME_PARAMETER = "currentName"
 private const val PARENT_ID_PARAMETER = "currentParent"
 private const val PARENT_ID_ACTION_PARAMETER = "parentId"
 private const val CURRENT_DEPOT_ID_PARAMETER = "depotId"
 
+@AndroidEntryPoint
 class EditDepotFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedListener {
-    private val dbFactory = DatabaseFactoryImpl()
+    @Inject
+    lateinit var db: AppDatabase
     private var currentName: String? = null
     private var currentParent: Int? = null
     private var depotId: Int? = null
@@ -64,21 +67,18 @@ class EditDepotFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedLis
     private fun readDepot() {
         depotId?.let { searchDepotId ->
             if (searchDepotId != 0) {
-                context?.let { context ->
-                    val db = dbFactory.factory.createDatabase(context)
-                    db.depotDao().findWithContentsById(searchDepotId)
-                        .observe(viewLifecycleOwner, {
-                            if (it != null) {
-                                currentDepot.value = it
-                                currentParent = it.depot.parentId
-                                Log.i(
-                                    LOG_TAG,
-                                    "Editing depot: ${it.depot.uid}: ${it.depot.name} with parent: ${it.depot.parentId}"
-                                )
-                            }
-                            prepareParentDepotSelectorIfReady(currentDepot, depots)
-                        })
-                }
+                db.depotDao().findWithContentsById(searchDepotId)
+                    .observe(viewLifecycleOwner, {
+                        if (it != null) {
+                            currentDepot.value = it
+                            currentParent = it.depot.parentId
+                            Log.i(
+                                LOG_TAG,
+                                "Editing depot: ${it.depot.uid}: ${it.depot.name} with parent: ${it.depot.parentId}"
+                            )
+                        }
+                        prepareParentDepotSelectorIfReady(currentDepot, depots)
+                    })
             }
         }
     }
@@ -137,7 +137,7 @@ class EditDepotFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedLis
         spinner.setPositiveButton(context?.getString(R.string.spinner_select_text))
 
         viewManager = LinearLayoutManager(context)
-        viewAdapter = DepotAdapter(currentDepot, requireActivity(), this)
+        viewAdapter = DepotAdapter(currentDepot, requireActivity(), this, db)
 
         recyclerView.apply {
             setHasFixedSize(true)
@@ -156,7 +156,6 @@ class EditDepotFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedLis
             }
         })
 
-        val db = context?.let { dbFactory.factory.createDatabase(it) }
         getAllDepots(db)
 
         setHasOptionsMenu(true)
@@ -174,12 +173,11 @@ class EditDepotFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedLis
         R.id.edit_depot_menu_confirm -> {
             val name = fragmentBinding.editDepotDepotName.text.toString()
             if (name.isNotEmpty()) {
-                val db = context?.let { it1 -> dbFactory.factory.createDatabase(it1) }
-                val dao = db?.depotDao()
+                val dao = db.depotDao()
                 if (currentDepot.value == null) {
                     lifecycleScope.launch {
                         Log.i(LOG_TAG, "Insert $name with parent: $currentParent")
-                        dao?.insert(Depot(name = name, parentId = currentParent))
+                        dao.insert(Depot(name = name, parentId = currentParent))
                         Log.i(LOG_TAG, "Inserted $name")
                     }
                 } else {
@@ -187,7 +185,7 @@ class EditDepotFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedLis
                         Log.i(LOG_TAG, "Edit $name")
                         currentDepot.value?.depot?.let {
                             val depot = Depot(uid = it.uid, name = name, parentId = currentParent)
-                            dao?.update(depot)
+                            dao.update(depot)
                         }
                         Log.i(LOG_TAG, "Edited $name")
                     }
@@ -197,11 +195,10 @@ class EditDepotFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedLis
             true
         }
         R.id.edit_depot_menu_remove_depot_item -> {
-            val db = context?.let { it1 -> dbFactory.factory.createDatabase(it1) }
             currentDepot.value?.let {
                 val parent = it.depot.parentId
                 lifecycleScope.launch {
-                    db?.deleteDepot(it)
+                    db.deleteDepot(it)
                 }
                 val action =
                     EditDepotFragmentDirections.actionEditContainerToNavItems(

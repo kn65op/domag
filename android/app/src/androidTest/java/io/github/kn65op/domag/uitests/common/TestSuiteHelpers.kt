@@ -2,9 +2,9 @@ package io.github.kn65op.domag.uitests.common
 
 import android.content.Intent
 import androidx.test.runner.intercepting.SingleActivityFactory
-import io.github.kn65op.domag.MainActivity
-import io.github.kn65op.domag.database.database.DatabaseFactoryImpl
-import io.github.kn65op.domag.database.database.MemoryDatabaseFactory
+import io.github.kn65op.domag.activities.MainActivity
+import io.github.kn65op.domag.data.database.database.DatabaseFactoryImpl
+import io.github.kn65op.domag.data.database.database.MemoryDatabaseFactory
 
 var factory = MemoryDatabaseFactory()
 

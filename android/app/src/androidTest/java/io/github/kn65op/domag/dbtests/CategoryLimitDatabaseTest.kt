@@ -1,8 +1,8 @@
 package io.github.kn65op.domag.dbtests
 
 import io.github.kn65op.android.lib.type.FixedPointNumber
-import io.github.kn65op.domag.database.daos.CategoryLimitDao
-import io.github.kn65op.domag.database.entities.CategoryLimit
+import io.github.kn65op.domag.data.database.daos.CategoryLimitDao
+import io.github.kn65op.domag.data.entities.CategoryLimit
 import io.github.kn65op.domag.dbtests.common.DatabaseTest
 import io.github.kn65op.domag.dbtests.common.assertNoData
 import io.github.kn65op.domag.dbtests.common.getFromLiveData

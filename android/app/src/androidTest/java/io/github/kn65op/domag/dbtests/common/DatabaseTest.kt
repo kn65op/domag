@@ -2,7 +2,11 @@ package io.github.kn65op.domag.dbtests.common
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.core.app.ApplicationProvider
-import io.github.kn65op.domag.database.database.AppDatabase
+import dagger.hilt.android.testing.HiltAndroidRule
+import dagger.hilt.android.testing.HiltAndroidTest
+import dagger.hilt.android.testing.UninstallModules
+import io.github.kn65op.domag.application.modules.SqlDatabaseModule
+import io.github.kn65op.domag.data.database.database.AppDatabase
 import io.github.kn65op.domag.dbtests.data.fillData
 import org.junit.After
 import org.junit.Before
@@ -15,7 +19,8 @@ open class DatabaseTest {
 
     @Before
     fun createDb() {
-        db = io.github.kn65op.domag.dbtests.data.createDb(ApplicationProvider.getApplicationContext())
+        db =
+            io.github.kn65op.domag.dbtests.data.createDb(ApplicationProvider.getApplicationContext())
     }
 
     @Before

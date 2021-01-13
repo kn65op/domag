@@ -1,10 +1,10 @@
 package io.github.kn65op.domag.dbtests.operations
 
-import io.github.kn65op.domag.database.daos.CategoryDao
-import io.github.kn65op.domag.database.daos.CategoryLimitDao
-import io.github.kn65op.domag.database.daos.ConsumeDao
-import io.github.kn65op.domag.database.operations.deleteCategory
-import io.github.kn65op.domag.database.relations.CategoryWithContents
+import io.github.kn65op.domag.data.database.daos.CategoryDao
+import io.github.kn65op.domag.data.database.daos.CategoryLimitDao
+import io.github.kn65op.domag.data.database.daos.ConsumeDao
+import io.github.kn65op.domag.data.database.operations.deleteCategory
+import io.github.kn65op.domag.data.database.relations.CategoryWithContents
 import io.github.kn65op.domag.dbtests.common.DatabaseTest
 import io.github.kn65op.domag.dbtests.common.assertNoItemInDb
 import io.github.kn65op.domag.dbtests.common.getFromLiveData

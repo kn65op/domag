@@ -8,19 +8,22 @@ import androidx.lifecycle.MutableLiveData
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import dagger.hilt.android.AndroidEntryPoint
 import io.github.kn65op.domag.R
-import io.github.kn65op.domag.database.database.AppDatabase
-import io.github.kn65op.domag.database.database.DatabaseFactoryImpl
-import io.github.kn65op.domag.database.entities.Depot
-import io.github.kn65op.domag.database.relations.DepotWithContents
+import io.github.kn65op.domag.data.database.database.AppDatabase
+import io.github.kn65op.domag.data.entities.Depot
+import io.github.kn65op.domag.data.database.relations.DepotWithContents
 import io.github.kn65op.domag.ui.common.FragmentWithActionBar
 import io.github.kn65op.domag.ui.common.prepareFabs
 import io.github.kn65op.domag.ui.utils.notifyIfNotComputing
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class ItemsFragment : FragmentWithActionBar() {
     private val storedDepotTag = "depotId"
 
-    private val dbFactory = DatabaseFactoryImpl()
+    @Inject
+    lateinit var db: AppDatabase
     private lateinit var recyclerView: RecyclerView
     private lateinit var viewManager: RecyclerView.LayoutManager
     private lateinit var viewAdapter: RecyclerView.Adapter<*>
@@ -36,7 +39,6 @@ class ItemsFragment : FragmentWithActionBar() {
 
         Log.i(LOG_TAG, "Received depot: $depotId")
 
-        val db = context?.let { dbFactory.factory.createDatabase(it) }
         if (depotId == null || depotId == 0) {
             getRootDepots(db)
         } else {
@@ -56,7 +58,7 @@ class ItemsFragment : FragmentWithActionBar() {
         val currentContext = context
         if (currentContext != null) {
             recyclerView = root.findViewById(R.id.items_recycler_view)
-            viewAdapter = DepotAdapter(currentDepot, requireActivity(), viewLifecycleOwner)
+            viewAdapter = DepotAdapter(currentDepot, requireActivity(), viewLifecycleOwner, db)
 
             viewManager = LinearLayoutManager(currentContext)
             recyclerView.apply {

@@ -4,10 +4,10 @@ import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import com.natpryce.hamkrest.throws
 import io.github.kn65op.android.lib.type.FixedPointNumber
-import io.github.kn65op.domag.database.daos.ItemDao
-import io.github.kn65op.domag.database.entities.Item
-import io.github.kn65op.domag.database.operations.NotEnoughAmountToConsume
-import io.github.kn65op.domag.database.operations.consumeItem
+import io.github.kn65op.domag.data.database.daos.ItemDao
+import io.github.kn65op.domag.data.entities.Item
+import io.github.kn65op.domag.data.database.operations.NotEnoughAmountToConsume
+import io.github.kn65op.domag.data.database.operations.consumeItem
 import io.github.kn65op.domag.dbtests.common.*
 import io.github.kn65op.domag.dbtests.data.item1
 import io.github.kn65op.domag.dbtests.data.itemAmount1
