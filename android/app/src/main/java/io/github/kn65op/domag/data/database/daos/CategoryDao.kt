@@ -2,7 +2,7 @@ package io.github.kn65op.domag.data.database.daos
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
-import io.github.kn65op.domag.data.entities.Category
+import io.github.kn65op.domag.data.database.entities.Category
 import io.github.kn65op.domag.data.database.relations.CategoryWithContents
 
 @Dao

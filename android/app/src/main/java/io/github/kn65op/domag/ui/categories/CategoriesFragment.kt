@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import dagger.hilt.android.AndroidEntryPoint
 import io.github.kn65op.domag.R
 import io.github.kn65op.domag.data.database.database.AppDatabase
-import io.github.kn65op.domag.data.entities.Category
+import io.github.kn65op.domag.data.database.entities.Category
 import io.github.kn65op.domag.data.database.relations.CategoryWithContents
 import io.github.kn65op.domag.databinding.FragmentCategoriesBinding
 import io.github.kn65op.domag.ui.common.FragmentWithActionBar

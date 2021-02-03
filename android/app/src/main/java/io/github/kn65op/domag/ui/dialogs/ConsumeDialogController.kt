@@ -7,7 +7,7 @@ import io.github.kn65op.android.lib.type.FixedPointNumber
 import io.github.kn65op.domag.data.database.database.AppDatabase
 import io.github.kn65op.domag.data.database.operations.NotEnoughAmountToConsume
 import io.github.kn65op.domag.data.database.operations.consumeItem
-import io.github.kn65op.domag.data.entities.Category
+import io.github.kn65op.domag.data.database.entities.Category
 
 class ConsumeDialogController(
     private val activity: FragmentActivity,
