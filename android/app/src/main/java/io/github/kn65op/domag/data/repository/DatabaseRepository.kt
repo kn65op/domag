@@ -12,6 +12,7 @@ import javax.inject.Inject
 class DatabaseRepository @Inject constructor(private val db : AppDatabase) : Repository
 {
     val categories = MutableLiveData<List<Category>>()
+    val depots = MutableLiveData<List<Depot>>()
 
     override fun getAllCategories(): LiveData<List<Category>> {
         categories.value = emptyList()
@@ -19,7 +20,8 @@ class DatabaseRepository @Inject constructor(private val db : AppDatabase) : Rep
     }
 
     override fun getAllDepots(): LiveData<List<Depot>> {
-        TODO("Not yet implemented")
+        depots.value = emptyList()
+        return depots
     }
 
     override fun getAllItems(): LiveData<List<Item>> {

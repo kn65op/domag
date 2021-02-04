@@ -18,7 +18,6 @@ import javax.inject.Inject
 open class DatabaseRepositoryBaseTest {
     @get:Rule
     var hiltRule = HiltAndroidRule(this)
-
 }
 
 @RunWith(AndroidJUnit4::class)
@@ -44,5 +43,10 @@ class DatabaseRepositoryTestWhenDatabaseEmpty : DatabaseRepositoryBaseTest() {
     @Test
     fun shouldReturnNoCategories() {
         assertThat(getFromLiveData(repository.getAllCategories()), isEmpty)
+    }
+
+    @Test
+    fun shouldReturnNoDepots() {
+        assertThat(getFromLiveData(repository.getAllDepots()), isEmpty)
     }
 }
