@@ -1,6 +1,7 @@
 package io.github.kn65op.domag.data.repository
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import io.github.kn65op.domag.data.database.database.AppDatabase
 import io.github.kn65op.domag.data.model.Category
 import io.github.kn65op.domag.data.model.DataId
@@ -10,8 +11,11 @@ import javax.inject.Inject
 
 class DatabaseRepository @Inject constructor(private val db : AppDatabase) : Repository
 {
+    val categories = MutableLiveData<List<Category>>()
+
     override fun getAllCategories(): LiveData<List<Category>> {
-        TODO("Not yet implemented")
+        categories.value = emptyList()
+        return categories
     }
 
     override fun getAllDepots(): LiveData<List<Depot>> {
