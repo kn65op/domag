@@ -12,6 +12,7 @@ import javax.inject.Inject
 class DatabaseRepository @Inject constructor(private val db: AppDatabase) : Repository {
     override fun getAllCategories(): LiveData<List<Category>> {
         val categories = MutableLiveData<List<Category>>()
+        db.categoryDao().getAll().
         categories.value = emptyList()
         return categories
     }
