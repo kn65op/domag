@@ -1,6 +1,5 @@
 package io.github.kn65op.domag.data.repository
 
-import android.util.Log
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.natpryce.hamkrest.*
@@ -12,7 +11,10 @@ import io.github.kn65op.domag.application.modules.SqlDatabaseModule
 import io.github.kn65op.domag.data.database.database.AppDatabase
 import io.github.kn65op.domag.dbtests.data.fillData
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
@@ -26,6 +28,17 @@ open class DatabaseRepositoryBaseTest {
     var hiltRule = HiltAndroidRule(this)
 }
 
+private val oneElement = 1
+
+@OptIn(ExperimentalCoroutinesApi::class)
+suspend fun <FlowContent> validateFlowFirstElement(
+    flow: Flow<FlowContent>,
+    validationFunction: (FlowContent) -> Unit
+) {
+    flow.take(oneElement).collect { validationFunction(it) }
+}
+
+
 @RunWith(AndroidJUnit4::class)
 @UninstallModules(SqlDatabaseModule::class)
 @HiltAndroidTest
@@ -38,7 +51,6 @@ class DatabaseRepositoryTestWhenDatabaseEmpty : DatabaseRepositoryBaseTest() {
     lateinit var repository: DatabaseRepository
 
     private val notExistingEntry = 34
-    private val oneElement = 1
 
     @Before
     fun prepareTestEnvironment() {
@@ -49,19 +61,9 @@ class DatabaseRepositoryTestWhenDatabaseEmpty : DatabaseRepositoryBaseTest() {
         hiltRule.inject()
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
-    suspend fun <FlowContent> validateFlowFirstElement(
-        flow: Flow<FlowContent>,
-        validationFunction: (FlowContent) -> Unit
-    ) {
-        flow.take(oneElement).collect { validationFunction(it) }
-    }
-
     @Test
     fun shouldReturnNoCategories(): Unit = runBlocking {
-        Log.i("KOTEK" , "3")
         validateFlowFirstElement(repository.getAllCategories()) {
-            Log.i("KOTEK" , "2")
             assertThat(it, isEmpty)
         }
     }
@@ -112,6 +114,7 @@ class DatabaseRepositoryTestWhenDatabaseFilled : DatabaseRepositoryBaseTest() {
     @Before
     fun prepareTestEnvironment() {
         injectObjects()
+        fillDatabase()
     }
 
     @After
@@ -124,22 +127,28 @@ class DatabaseRepositoryTestWhenDatabaseFilled : DatabaseRepositoryBaseTest() {
         hiltRule.inject()
     }
 
-    fun fillDatabase() {
+    private fun fillDatabase() {
         fillData(db)
     }
 
     @Test
-    fun shouldNotBeEmpty(): Unit = runBlocking {
-        assertThat(repository.getAllCategories().first().size, greaterThan(0))
+    fun categoriesShouldNotBeEmpty(): Unit = runBlocking {
+        validateFlowFirstElement(repository.getAllCategories()) {
+            assertThat(it.size, greaterThan(0))
+        }
     }
 
     @Test
     fun shouldNotFoundNotExistingEntry() = runBlocking {
-        assertThat(repository.getCategory(notExistingEntryId).first(), absent())
+        validateFlowFirstElement(repository.getCategory(notExistingEntryId)) {
+            assertThat(it, absent())
+        }
     }
 
     @Test
     fun shouldFoundExistingEntry() = runBlocking {
-        assertThat(repository.getCategory(notExistingEntryId).first(), present())
+        validateFlowFirstElement(repository.getCategory(existingEntryId)) {
+            assertThat(it, present())
+        }
     }
 }
