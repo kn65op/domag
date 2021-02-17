@@ -8,7 +8,7 @@ data class Category(
 
     val name: String,
     val unit: String,
-    val minimumDesiredAmount: FixedPointNumber,
+    val minimumDesiredAmount: FixedPointNumber?,
     val parent: Category?,
     val children: List<Category>,
     val items: List<Item>,

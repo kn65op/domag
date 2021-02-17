@@ -11,7 +11,8 @@ import dagger.hilt.android.testing.UninstallModules
 import io.github.kn65op.domag.application.modules.SqlDatabaseModule
 import io.github.kn65op.domag.data.database.database.AppDatabase
 import io.github.kn65op.domag.dbtests.data.fillData
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
@@ -37,6 +38,7 @@ class DatabaseRepositoryTestWhenDatabaseEmpty : DatabaseRepositoryBaseTest() {
     lateinit var repository: DatabaseRepository
 
     private val notExistingEntry = 34
+    private val oneElement = 1
 
     @Before
     fun prepareTestEnvironment() {
@@ -47,9 +49,21 @@ class DatabaseRepositoryTestWhenDatabaseEmpty : DatabaseRepositoryBaseTest() {
         hiltRule.inject()
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
+    suspend fun <FlowContent> validateFlowFirstElement(
+        flow: Flow<FlowContent>,
+        validationFunction: (FlowContent) -> Unit
+    ) {
+        flow.take(oneElement).collect { validationFunction(it) }
+    }
+
     @Test
-    fun shouldReturnNoCategories() = runBlocking {
-        assertThat(repository.getAllCategories().first(), isEmpty)
+    fun shouldReturnNoCategories(): Unit = runBlocking {
+        Log.i("KOTEK" , "3")
+        validateFlowFirstElement(repository.getAllCategories()) {
+            Log.i("KOTEK" , "2")
+            assertThat(it, isEmpty)
+        }
     }
 
     @Test
@@ -115,7 +129,7 @@ class DatabaseRepositoryTestWhenDatabaseFilled : DatabaseRepositoryBaseTest() {
     }
 
     @Test
-    fun shouldNotBeEmpty() = runBlocking {
+    fun shouldNotBeEmpty(): Unit = runBlocking {
         assertThat(repository.getAllCategories().first().size, greaterThan(0))
     }
 
