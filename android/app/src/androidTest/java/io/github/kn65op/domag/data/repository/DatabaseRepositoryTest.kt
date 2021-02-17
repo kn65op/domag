@@ -1,11 +1,10 @@
 package io.github.kn65op.domag.data.repository
 
+import android.util.Log
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.natpryce.hamkrest.*
 import com.natpryce.hamkrest.assertion.assertThat
-import com.natpryce.hamkrest.equalTo
-import com.natpryce.hamkrest.greaterThan
-import com.natpryce.hamkrest.isEmpty
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.UninstallModules
@@ -93,7 +92,8 @@ class DatabaseRepositoryTestWhenDatabaseFilled : DatabaseRepositoryBaseTest() {
     @Inject
     lateinit var db: AppDatabase
 
-    private val notExistingEntry = 34
+    private val notExistingEntryId = 34
+    private val existingEntryId = 34
 
     @Before
     fun prepareTestEnvironment() {
@@ -117,5 +117,15 @@ class DatabaseRepositoryTestWhenDatabaseFilled : DatabaseRepositoryBaseTest() {
     @Test
     fun shouldNotBeEmpty() = runBlocking {
         assertThat(repository.getAllCategories().first().size, greaterThan(0))
+    }
+
+    @Test
+    fun shouldNotFoundNotExistingEntry() = runBlocking {
+        assertThat(repository.getCategory(notExistingEntryId).first(), absent())
+    }
+
+    @Test
+    fun shouldFoundExistingEntry() = runBlocking {
+        assertThat(repository.getCategory(notExistingEntryId).first(), present())
     }
 }
