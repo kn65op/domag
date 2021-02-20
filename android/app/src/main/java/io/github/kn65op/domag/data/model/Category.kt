@@ -10,7 +10,7 @@ data class Category(
     val name: String,
     val unit: String,
     val minimumDesiredAmount: FixedPointNumber?,
-    val parent: RawCategory?,
+    val parentId: Int?,
     val children: List<RawCategory>,
     val items: List<RawItem>,
 ) : HasUid

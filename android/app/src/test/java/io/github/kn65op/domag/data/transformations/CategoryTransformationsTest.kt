@@ -21,16 +21,28 @@ class CategoryTransformationsTest {
         name = name,
         unit = unit,
         minimumDesiredAmount = null,
-        parent = null,
         children = emptyList(),
         items = emptyList(),
+        parentId = null,
+    )
+    private val modelRawCategoryBase = RawCategory(
+        uid = uid,
+        name = name,
+        unit = unit,
+        parentId = null,
     )
     private val minimumAmount = FixedPointNumber(2.32)
+    private val parentId = 2323
 
     @Test
     fun `should transform category without parent, children and limit`() {
 
         assertThat(dbCategoryWithContentsBase.toModelCategory(), equalTo(modelCategoryBase))
+    }
+
+    @Test
+    fun `should transform category to raw category`() {
+        assertThat(dbCategoryBase.toModelRawCategory(), equalTo(modelRawCategoryBase))
     }
 
     @Test
@@ -57,14 +69,14 @@ class CategoryTransformationsTest {
     }
 
     @Test
-    fun `should transfor children to raw categories`() {
+    fun `should transform children to raw categories`() {
         val childCategory1Id = 22
         val childCategory1Name = "Child 1"
         val childCategory1Unit = "Child Unit 1"
         val childCategory1 = DbCategory(
             uid = childCategory1Id,
             name = childCategory1Name,
-            parentId = 8,
+            parentId = uid,
             unit = childCategory1Unit,
         )
         val childCategory2Id = 222
@@ -73,7 +85,7 @@ class CategoryTransformationsTest {
         val childCategory2 = DbCategory(
             uid = childCategory2Id,
             name = childCategory2Name,
-            parentId = 8,
+            parentId = uid,
             unit = childCategory2Unit,
         )
 
@@ -84,17 +96,38 @@ class CategoryTransformationsTest {
             uid = childCategory1Id,
             name = childCategory1Name,
             unit = childCategory1Unit,
+            parentId = uid,
         )
 
         val childModelCategory2 = RawCategory(
             uid = childCategory2Id,
             name = childCategory2Name,
             unit = childCategory2Unit,
+            parentId = uid,
         )
 
-        val modelCategory = modelCategoryBase.copy(children = listOf(childModelCategory1, childModelCategory2))
+        val modelCategory =
+            modelCategoryBase.copy(children = listOf(childModelCategory1, childModelCategory2))
 
         assertThat(dbCategory.toModelCategory(), equalTo(modelCategory))
+    }
 
+    @Test
+    fun `should transform parent id`() {
+        val dbCategory = dbCategoryBase.copy(parentId = parentId)
+        val dbCategoryWithContents = dbCategoryWithContentsBase.copy(category = dbCategory)
+
+        val modelCategory = modelCategoryBase.copy(parentId = parentId)
+
+        assertThat(dbCategoryWithContents.toModelCategory(), equalTo(modelCategory))
+    }
+
+    @Test
+    fun `should transform parent id in RawCategory`() {
+        val dbCategory = dbCategoryBase.copy(parentId = parentId)
+
+        val rawModelCategory = modelRawCategoryBase.copy(parentId = parentId)
+
+        assertThat(dbCategory.toModelRawCategory(), equalTo(rawModelCategory))
     }
 }

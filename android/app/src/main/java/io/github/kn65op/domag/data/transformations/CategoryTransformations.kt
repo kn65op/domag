@@ -10,7 +10,7 @@ fun CategoryWithContents.toModelCategory() = Category(
     name = category.name,
     unit = category.unit,
     minimumDesiredAmount = limits?.minimumDesiredAmount,
-    parent = null,
+    parentId = category.parentId,
     children = categories.map { it.toModelRawCategory() },
     items = emptyList()
 )
@@ -18,5 +18,6 @@ fun CategoryWithContents.toModelCategory() = Category(
 fun DbCategory.toModelRawCategory() = RawCategory(
     uid = uid,
     name = name,
-    unit = unit
+    unit = unit,
+    parentId = parentId,
 )

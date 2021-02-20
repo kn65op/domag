@@ -9,4 +9,5 @@ data class RawCategory(
 
     val name: String,
     val unit: String,
+    val parentId: Int?,
 ) : HasUid
