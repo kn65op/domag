@@ -4,13 +4,9 @@ import io.github.kn65op.android.lib.type.FixedPointNumber
 import io.github.kn65op.domag.data.repository.DatabaseRepository
 import io.github.kn65op.domag.utils.types.HasUid
 
-data class Category(
+data class RawCategory(
     override val uid: Int?,
 
     val name: String,
     val unit: String,
-    val minimumDesiredAmount: FixedPointNumber?,
-    val parent: RawCategory?,
-    val children: List<RawCategory>,
-    val items: List<RawItem>,
 ) : HasUid
