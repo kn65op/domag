@@ -108,8 +108,8 @@ class DatabaseRepositoryTestWhenDatabaseFilled : DatabaseRepositoryBaseTest() {
     @Inject
     lateinit var db: AppDatabase
 
-    private val notExistingEntryId = 34
-    private val existingEntryId = 1
+    private val nonExistingCategoryId = 34
+    private val existingCategoryId = 1
 
     @Before
     fun prepareTestEnvironment() {
@@ -139,16 +139,17 @@ class DatabaseRepositoryTestWhenDatabaseFilled : DatabaseRepositoryBaseTest() {
     }
 
     @Test
-    fun shouldNotFoundNotExistingEntry() = runBlocking {
-        validateFlowFirstElement(repository.getCategory(notExistingEntryId)) {
+    fun shouldNotFoundNotExistingCategory() = runBlocking {
+        validateFlowFirstElement(repository.getCategory(nonExistingCategoryId)) {
             assertThat(it, absent())
         }
     }
 
     @Test
-    fun shouldFoundExistingEntry() = runBlocking {
-        validateFlowFirstElement(repository.getCategory(existingEntryId)) {
+    fun shouldFoundExistingCategory() = runBlocking {
+        validateFlowFirstElement(repository.getCategory(existingCategoryId)) {
             assertThat(it, present())
         }
     }
+
 }
