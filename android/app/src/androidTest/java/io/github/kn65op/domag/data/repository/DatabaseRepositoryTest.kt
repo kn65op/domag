@@ -109,7 +109,7 @@ class DatabaseRepositoryTestWhenDatabaseFilled : DatabaseRepositoryBaseTest() {
     lateinit var db: AppDatabase
 
     private val notExistingEntryId = 34
-    private val existingEntryId = 34
+    private val existingEntryId = 1
 
     @Before
     fun prepareTestEnvironment() {

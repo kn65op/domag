@@ -73,11 +73,11 @@ interface CategoryDao {
 
     @Transaction
     @Query("SELECT rowid, * FROM category WHERE rowid = :categoryIds")
-    fun findWithContentsByIdFlow(categoryIds: Int): Flow<CategoryWithContents>
+    fun findWithContentsByIdFlow(categoryIds: Int): Flow<CategoryWithContents?>
 
     @Transaction
     @Query("SELECT rowid, * FROM category WHERE rowid IN (:categoryIds)")
-    fun findWithContentsByIdFlow(categoryIds: IntArray): Flow<List<CategoryWithContents>>
+    fun findWithContentsByIdFlow(categoryIds: IntArray): Flow<List<CategoryWithContents?>>
 
     @Query("SELECT rowid, * FROM category WHERE rowid = :categoryIds")
     fun findByIdFlow(categoryIds: Int): Flow<Category>
@@ -87,7 +87,7 @@ interface CategoryDao {
 
     @Transaction
     @Query("SELECT rowid, * FROM category WHERE name MATCH :name")
-    fun findWithContentsByNameFlow(name: String): Flow<List<CategoryWithContents>>
+    fun findWithContentsByNameFlow(name: String): Flow<List<CategoryWithContents?>>
 
     @Transaction
     @Query("SELECT rowid, * FROM category WHERE name MATCH :name")

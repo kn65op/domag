@@ -31,6 +31,9 @@ class DatabaseRepository @Inject constructor(private val db: AppDatabase) : Repo
         items = emptyList()
     )
 
+    @JvmName("toModelCategoryNullable")
+    private fun toModelCategory(category: CategoryWithContents?) = category?.let { toModelCategory(it) }
+
     override fun getAllDepots(): Flow<List<Depot>> =
         flow {
             emit(emptyList<Depot>())
@@ -43,7 +46,11 @@ class DatabaseRepository @Inject constructor(private val db: AppDatabase) : Repo
 
     override fun getCategory(id: DataId): Flow<Category?> =
         flow {
-            emit(null)
+            val allCategoriesFlow = db.categoryDao().findWithContentsByIdFlow(id)
+            allCategoriesFlow.collect { dbCategory ->
+                val modelCategory = toModelCategory(dbCategory)
+                emit(modelCategory)
+            }
         }
 
     override fun getDepot(id: DataId): Flow<Depot?> =

@@ -184,7 +184,7 @@ open class CategoryDatabaseTest : DatabaseTest() {
         val categoryWithItems = categoryDao.findWithContentsByIdFlow(3).first()
 
         assertThat(
-            categoryWithItems.items.toTypedArray(),
+            categoryWithItems?.items?.toTypedArray(),
             arrayContainingInAnyOrder(item2, item4, item5)
         )
     }
@@ -207,7 +207,7 @@ open class CategoryDatabaseTest : DatabaseTest() {
         val categoryWithChildren = categoryDao.findWithContentsByIdFlow(1).first()
 
         assertThat(
-            categoryWithChildren.categories.toTypedArray(), arrayContainingInAnyOrder(
+            categoryWithChildren?.categories?.toTypedArray(), arrayContainingInAnyOrder(
                 isEqualRegardlessId(category1InMainCategory1.category), isEqualRegardlessId(
                     category2InMainCategory1.category
                 )
