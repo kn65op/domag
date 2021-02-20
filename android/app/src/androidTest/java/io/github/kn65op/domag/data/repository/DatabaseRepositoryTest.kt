@@ -9,6 +9,7 @@ import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.UninstallModules
 import io.github.kn65op.domag.application.modules.SqlDatabaseModule
 import io.github.kn65op.domag.data.database.database.AppDatabase
+import io.github.kn65op.domag.data.model.Category
 import io.github.kn65op.domag.dbtests.data.fillData
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
@@ -151,5 +152,4 @@ class DatabaseRepositoryTestWhenDatabaseFilled : DatabaseRepositoryBaseTest() {
             assertThat(it, present())
         }
     }
-
 }

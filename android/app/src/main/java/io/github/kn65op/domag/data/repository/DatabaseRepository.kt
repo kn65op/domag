@@ -1,11 +1,11 @@
 package io.github.kn65op.domag.data.repository
 
 import io.github.kn65op.domag.data.database.database.AppDatabase
-import io.github.kn65op.domag.data.database.relations.CategoryWithContents
 import io.github.kn65op.domag.data.model.Category
 import io.github.kn65op.domag.data.model.DataId
 import io.github.kn65op.domag.data.model.Depot
 import io.github.kn65op.domag.data.model.Item
+import io.github.kn65op.domag.data.transformations.toModelCategory
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
@@ -16,23 +16,10 @@ class DatabaseRepository @Inject constructor(private val db: AppDatabase) : Repo
         flow {
             val allCategoriesFlow = db.categoryDao().getAllWithContentsFlow()
             allCategoriesFlow.collect { dbCategories ->
-                val modelCategories = dbCategories.map { toModelCategory(it) }
+                val modelCategories = dbCategories.map { it.toModelCategory() }
                 emit(modelCategories)
             }
         }
-
-    private fun toModelCategory(category: CategoryWithContents) = Category(
-        uid = category.category.uid,
-        name = category.category.name,
-        unit = category.category.unit,
-        minimumDesiredAmount = category.limits?.minimumDesiredAmount,
-        parent = null,
-        children = emptyList(),
-        items = emptyList()
-    )
-
-    @JvmName("toModelCategoryNullable")
-    private fun toModelCategory(category: CategoryWithContents?) = category?.let { toModelCategory(it) }
 
     override fun getAllDepots(): Flow<List<Depot>> =
         flow {
@@ -48,7 +35,7 @@ class DatabaseRepository @Inject constructor(private val db: AppDatabase) : Repo
         flow {
             val allCategoriesFlow = db.categoryDao().findWithContentsByIdFlow(id)
             allCategoriesFlow.collect { dbCategory ->
-                val modelCategory = toModelCategory(dbCategory)
+                val modelCategory = dbCategory?.toModelCategory()
                 emit(modelCategory)
             }
         }
