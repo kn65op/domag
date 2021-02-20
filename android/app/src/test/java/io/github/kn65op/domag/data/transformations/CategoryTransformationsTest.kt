@@ -8,25 +8,33 @@ import io.github.kn65op.domag.data.database.entities.Category as DbCategory
 import org.junit.Test
 
 class CategoryTransformationsTest {
+    private val uid = 1
+    private val name = "Name"
+    private val unit = "Unit"
+    private val dbCategoryBase = DbCategory(uid = uid, parentId = null, name = name, unit = unit)
+    private val dbCategoryWithContentsBase = CategoryWithContents(category = dbCategoryBase)
+    private val modelCategoryBase = ModelCategory(
+        uid = uid,
+        name = name,
+        unit = unit,
+        minimumDesiredAmount = null,
+        parent = null,
+        children = emptyList(),
+        items = emptyList(),
+    )
 
     @Test
     fun `should transform category without parent, children and limit`() {
-        val uid = 1
-        val name = "Name"
-        val unit = "Unit"
-        val dbCategory = DbCategory(uid = uid, parentId = null, name = name, unit = unit)
-        val dbCategoryWithContents = CategoryWithContents(category = dbCategory)
-        val modelCategory = ModelCategory(
-            uid = uid,
-            name = name,
-            unit = unit,
-            minimumDesiredAmount = null,
-            parent = null,
-            children = emptyList(),
-            items = emptyList(),
-        )
+
+        assertThat(dbCategoryWithContentsBase.toModelCategory(), equalTo(modelCategoryBase))
+    }
+
+    @Test
+    fun `should transform category without uid`() {
+        val db = dbCategoryBase.copy(uid = null)
+        val dbCategoryWithContents = CategoryWithContents(category = db)
+        val modelCategory = modelCategoryBase.copy(uid = null)
 
         assertThat(dbCategoryWithContents.toModelCategory(), equalTo(modelCategory))
     }
-
 }
