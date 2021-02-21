@@ -85,17 +85,23 @@ class DatabaseRepositoryTestWhenDatabaseEmpty : DatabaseRepositoryBaseTest() {
 
     @Test
     fun shouldReturnNoCategory() = runBlocking {
-        assertThat(repository.getCategory(notExistingEntry).first(), absent())
+        validateFlowFirstElement(repository.getCategory(notExistingEntry)) {
+            assertThat(it, present())
+        }
     }
 
     @Test
     fun shouldReturnNoDepot() = runBlocking {
-        assertThat(repository.getDepot(notExistingEntry).first(), absent())
+        validateFlowFirstElement(repository.getDepot(notExistingEntry)) {
+            assertThat(it, present())
+        }
     }
 
     @Test
     fun shouldReturnNoItem() = runBlocking {
-        assertThat(repository.getItem(notExistingEntry).first(), absent())
+        validateFlowFirstElement(repository.getItem(notExistingEntry)) {
+            assertThat(it, present())
+        }
     }
 }
 
