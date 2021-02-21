@@ -54,5 +54,13 @@ class ItemTransformationsTest {
 
         assertThat(item.toRawItem(), equalTo(rawItem))
     }
+
+    @Test
+    fun `should transform without description`() {
+        val item = itemBase.copy(description = null)
+        val rawItem = rawItemBase.copy(description = null)
+
+        assertThat(item.toRawItem(), equalTo(rawItem))
+    }
 }
 
