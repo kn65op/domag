@@ -1,10 +1,7 @@
 package io.github.kn65op.domag.data.repository
 
 import io.github.kn65op.domag.data.database.database.AppDatabase
-import io.github.kn65op.domag.data.model.Category
-import io.github.kn65op.domag.data.model.DataId
-import io.github.kn65op.domag.data.model.Depot
-import io.github.kn65op.domag.data.model.Item
+import io.github.kn65op.domag.data.model.*
 import io.github.kn65op.domag.data.transformations.toModelCategory
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
@@ -26,9 +23,9 @@ class DatabaseRepository @Inject constructor(private val db: AppDatabase) : Repo
             emit(emptyList<Depot>())
         }
 
-    override fun getAllItems(): Flow<List<Item>> =
+    override fun getAllItems(): Flow<List<RawItem>> =
         flow {
-            emit(emptyList<Item>())
+            emit(emptyList<RawItem>())
         }
 
     override fun getCategory(id: DataId): Flow<Category?> =
@@ -45,7 +42,7 @@ class DatabaseRepository @Inject constructor(private val db: AppDatabase) : Repo
             emit(null)
         }
 
-    override fun getItem(id: DataId): Flow<Item?> =
+    override fun getItem(id: DataId): Flow<RawItem?> =
         flow {
             emit(null)
         }
