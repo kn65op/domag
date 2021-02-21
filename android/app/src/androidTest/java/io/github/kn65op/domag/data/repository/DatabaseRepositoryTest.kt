@@ -71,12 +71,16 @@ class DatabaseRepositoryTestWhenDatabaseEmpty : DatabaseRepositoryBaseTest() {
 
     @Test
     fun shouldReturnNoDepots() = runBlocking {
-        assertThat((repository.getAllDepots().first()), isEmpty)
+        validateFlowFirstElement(repository.getAllDepots()) {
+            assertThat(it, isEmpty)
+        }
     }
 
     @Test
     fun shouldReturnNoItems() = runBlocking {
-        assertThat((repository.getAllItems().first()), isEmpty)
+        validateFlowFirstElement(repository.getAllItems()) {
+            assertThat(it, isEmpty)
+        }
     }
 
     @Test
