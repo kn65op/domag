@@ -86,21 +86,21 @@ class DatabaseRepositoryTestWhenDatabaseEmpty : DatabaseRepositoryBaseTest() {
     @Test
     fun shouldReturnNoCategory() = runBlocking {
         validateFlowFirstElement(repository.getCategory(notExistingEntry)) {
-            assertThat(it, present())
+            assertThat(it, absent())
         }
     }
 
     @Test
     fun shouldReturnNoDepot() = runBlocking {
         validateFlowFirstElement(repository.getDepot(notExistingEntry)) {
-            assertThat(it, present())
+            assertThat(it, absent())
         }
     }
 
     @Test
     fun shouldReturnNoItem() = runBlocking {
         validateFlowFirstElement(repository.getItem(notExistingEntry)) {
-            assertThat(it, present())
+            assertThat(it, absent())
         }
     }
 }
@@ -145,7 +145,7 @@ class DatabaseRepositoryTestWhenDatabaseFilled : DatabaseRepositoryBaseTest() {
     @Test
     fun categoriesShouldNotBeEmpty(): Unit = runBlocking {
         validateFlowFirstElement(repository.getAllCategories()) {
-            assertThat(it.size, greaterThan(0))
+            assertThat(it, !isEmpty)
         }
     }
 
