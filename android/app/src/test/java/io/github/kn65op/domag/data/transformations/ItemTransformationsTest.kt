@@ -47,5 +47,12 @@ class ItemTransformationsTest {
         assertThat(item.toRawItem(), equalTo(rawItem))
     }
 
+    @Test
+    fun `should transform without uid`() {
+        val item = itemBase.copy(uid = null)
+        val rawItem = rawItemBase.copy(uid = null)
+
+        assertThat(item.toRawItem(), equalTo(rawItem))
+    }
 }
 
