@@ -141,7 +141,7 @@ class DatabaseRepositoryTestWhenDatabaseFilled : DatabaseRepositoryBaseTest() {
     }
 
     @Test
-    fun categoriesShouldNotBeEmpty(): Unit = runBlocking {
+    fun categoriesShouldNotBeEmpty() = runBlocking {
         validateFlowFirstElement(repository.getAllCategories()) {
             assertThat(it, !isEmpty)
         }
@@ -151,6 +151,13 @@ class DatabaseRepositoryTestWhenDatabaseFilled : DatabaseRepositoryBaseTest() {
     fun shouldFoundExistingCategory() = runBlocking {
         validateFlowFirstElement(repository.getCategory(existingCategoryId)) {
             assertThat(it, present())
+        }
+    }
+
+    @Test
+    fun itemsShouldNotBeEmpty() = runBlocking {
+        validateFlowFirstElement(repository.getAllItems()) {
+            assertThat(it, !isEmpty)
         }
     }
 }

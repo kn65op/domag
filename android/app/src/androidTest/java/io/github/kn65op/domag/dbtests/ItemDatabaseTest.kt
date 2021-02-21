@@ -7,6 +7,7 @@ import io.github.kn65op.domag.dbtests.common.assertItemInDb
 import io.github.kn65op.domag.dbtests.common.assertNoItemInDb
 import io.github.kn65op.domag.dbtests.common.getFromLiveData
 import io.github.kn65op.domag.dbtests.data.*
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
@@ -23,8 +24,13 @@ class ItemDatabaseTest : DatabaseTest() {
     }
 
     @Test
-    fun getAllItems() = runBlocking {
+    fun getAllItemsLD() = runBlocking {
         assertThat(getFromLiveData(itemDao.getAll()).size, equalTo(allItemsCount))
+    }
+
+    @Test
+    fun getAllItems() = runBlocking {
+        assertThat(itemDao.getAllFlow().first().size, equalTo(allItemsCount))
     }
 
     @Test
