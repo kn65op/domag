@@ -5,7 +5,8 @@ import java.time.ZonedDateTime
 
 data class RawItem(
     val uid: Int? = null,
-
+    val depotId: Int,
+    val categoryId: Int,
     val amount: FixedPointNumber,
     val description: String? = null,
     val bestBefore: ZonedDateTime? = null,
