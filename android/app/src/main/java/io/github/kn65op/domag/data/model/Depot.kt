@@ -6,7 +6,7 @@ data class Depot(
     override val uid: Int? = null,
 
     val name: String,
-    val parent: Depot?,
-    val children: List<Depot>,
-    val items: List<Item>,
+    val parentId: Int?,
+    val children: List<RawDepot>,
+    val items: List<RawItem>,
 ) : HasUid
