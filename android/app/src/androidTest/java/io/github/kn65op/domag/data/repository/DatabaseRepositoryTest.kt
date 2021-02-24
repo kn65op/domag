@@ -118,7 +118,7 @@ class DatabaseRepositoryTestWhenDatabaseFilled : DatabaseRepositoryBaseTest() {
     lateinit var db: AppDatabase
 
     private val nonExistingCategoryId = 34
-    private val existingCategoryId = 1
+    private val existingId = 1
 
     @Before
     fun prepareTestEnvironment() {
@@ -149,7 +149,7 @@ class DatabaseRepositoryTestWhenDatabaseFilled : DatabaseRepositoryBaseTest() {
 
     @Test
     fun shouldFoundExistingCategory() = runBlocking {
-        validateFlowFirstElement(repository.getCategory(existingCategoryId)) {
+        validateFlowFirstElement(repository.getCategory(existingId)) {
             assertThat(it, present())
         }
     }
@@ -163,8 +163,23 @@ class DatabaseRepositoryTestWhenDatabaseFilled : DatabaseRepositoryBaseTest() {
 
     @Test
     fun shouldFoundExistingItem() = runBlocking {
-        validateFlowFirstElement(repository.getItem(existingCategoryId)) {
+        validateFlowFirstElement(repository.getItem(existingId)) {
             assertThat(it, present())
         }
     }
+
+    @Test
+    fun depotsShouldNotBeEmpty() = runBlocking {
+        validateFlowFirstElement(repository.getAllDepots()) {
+            assertThat(it, !isEmpty)
+        }
+    }
+
+    @Test
+    fun shouldFoundExistingDepot() = runBlocking {
+        validateFlowFirstElement(repository.getDepot(existingId)) {
+            assertThat(it, present())
+        }
+    }
+
 }
