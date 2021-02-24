@@ -160,4 +160,11 @@ class DatabaseRepositoryTestWhenDatabaseFilled : DatabaseRepositoryBaseTest() {
             assertThat(it, !isEmpty)
         }
     }
+
+    @Test
+    fun shouldFoundExistingItem() = runBlocking {
+        validateFlowFirstElement(repository.getItem(existingCategoryId)) {
+            assertThat(it, present())
+        }
+    }
 }

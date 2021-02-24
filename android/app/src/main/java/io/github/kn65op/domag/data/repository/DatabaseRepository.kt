@@ -51,6 +51,10 @@ class DatabaseRepository @Inject constructor(private val db: AppDatabase) : Repo
 
     override fun getItem(id: DataId): Flow<RawItem?> =
         flow {
-            emit(null)
+            val itemFlow = db.itemDao().findByIdFlow(id)
+            itemFlow.collect { dbItem ->
+                val modelItem = dbItem?.toRawItem()
+                emit(modelItem)
+            }
         }
 }

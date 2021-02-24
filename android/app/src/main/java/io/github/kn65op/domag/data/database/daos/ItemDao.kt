@@ -20,6 +20,9 @@ interface ItemDao {
     @Query("SELECT * FROM item WHERE uid = :itemIds")
     fun findById(itemIds: Int): LiveData<Item>
 
+    @Query("SELECT * FROM item WHERE uid = :itemIds")
+    fun findByIdFlow(itemIds: Int): Flow<Item?>
+
     @Query("SELECT * FROM item WHERE rowid IN (:itemIds)")
     fun findByIds(itemIds: IntArray): LiveData<List<Item>>
 

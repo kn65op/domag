@@ -34,8 +34,14 @@ class ItemDatabaseTest : DatabaseTest() {
     }
 
     @Test
-    fun getItemById() = runBlocking {
+    fun getItemByIdLD() = runBlocking {
         val item = getFromLiveData(itemDao.findById(1))
+        assertThat(item, equalTo(item1))
+    }
+
+    @Test
+    fun getItemById() = runBlocking {
+        val item = itemDao.findByIdFlow(1).first()
         assertThat(item, equalTo(item1))
     }
 
