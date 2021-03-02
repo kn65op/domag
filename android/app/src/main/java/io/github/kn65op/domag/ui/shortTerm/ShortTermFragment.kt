@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import dagger.hilt.android.AndroidEntryPoint
 import io.github.kn65op.domag.R
 import io.github.kn65op.domag.data.database.database.AppDatabase
+import io.github.kn65op.domag.data.repository.Repository
 import java.time.ZonedDateTime
 import javax.inject.Inject
 
@@ -17,6 +18,8 @@ import javax.inject.Inject
 class ShortTermFragment : Fragment() {
     @Inject
     lateinit var db: AppDatabase
+    @Inject
+    lateinit var dataRepository : Repository
     private lateinit var recyclerView: RecyclerView
     private lateinit var viewManager: RecyclerView.LayoutManager
     private lateinit var viewAdapter: RecyclerView.Adapter<*>
