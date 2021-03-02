@@ -9,6 +9,7 @@ import io.github.kn65op.domag.data.transformations.toRawItem
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
+import java.time.ZonedDateTime
 import javax.inject.Inject
 
 class DatabaseRepository @Inject constructor(private val db: AppDatabase) : Repository {
@@ -31,6 +32,14 @@ class DatabaseRepository @Inject constructor(private val db: AppDatabase) : Repo
     override fun getAllItems(): Flow<List<RawItem>> =
         flow {
             val allItemsFlow = db.itemDao().getAllFlow()
+            allItemsFlow.collect { item ->
+                emit(item.map { it.toRawItem() })
+            }
+        }
+
+    override fun getItemsWithBestBeforeBefore(date: ZonedDateTime): Flow<List<RawItem>> =
+        flow {
+            val allItemsFlow = db.itemDao().getWithBestBeforeBeforeFlow(date)
             allItemsFlow.collect { item ->
                 emit(item.map { it.toRawItem() })
             }

@@ -20,6 +20,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import java.time.ZonedDateTime
 import javax.inject.Inject
 
 open class DatabaseRepositoryBaseTest {
@@ -101,6 +102,13 @@ class DatabaseRepositoryTestWhenDatabaseEmpty : DatabaseRepositoryBaseTest() {
             assertThat(it, absent())
         }
     }
+
+    @Test
+    fun shouldGetItemsWithBestBefore() = runBlocking {
+        validateFlowFirstElement(repository.getItemsWithBestBeforeBefore(ZonedDateTime.now())) {
+            assertThat(it, isEmpty)
+        }
+    }
 }
 
 @RunWith(AndroidJUnit4::class)
@@ -179,6 +187,13 @@ class DatabaseRepositoryTestWhenDatabaseFilled : DatabaseRepositoryBaseTest() {
     fun shouldFoundExistingDepot() = runBlocking {
         validateFlowFirstElement(repository.getDepot(existingId)) {
             assertThat(it, present())
+        }
+    }
+
+    @Test
+    fun shouldGetItemsWithBestBefore() = runBlocking {
+        validateFlowFirstElement(repository.getItemsWithBestBeforeBefore(ZonedDateTime.now())) {
+            assertThat(it, !isEmpty)
         }
     }
 

@@ -75,12 +75,22 @@ class ItemDatabaseTest : DatabaseTest() {
     }
 
     @Test
-    fun getItesmsWithBetsBeforeBeforeDate() = runBlocking {
+    fun getItesmsWithBetsBeforeBeforeDateLD() = runBlocking {
         val items = getFromLiveData(
             itemDao.getWithBestBeforeBefore(
                 ZonedDateTime.now().plusDays(7).minusHours(1)
             )
         )
+
+        assertThat(items, equalTo(listOf(item2, item3, item5, item7)))
+    }
+
+    @Test
+    fun getItesmsWithBetsBeforeBeforeDate() = runBlocking {
+        val items =
+            itemDao.getWithBestBeforeBeforeFlow(
+                ZonedDateTime.now().plusDays(7).minusHours(1)
+            ).first()
 
         assertThat(items, equalTo(listOf(item2, item3, item5, item7)))
     }
