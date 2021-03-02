@@ -1,6 +1,6 @@
 package io.github.kn65op.domag.matchers
 
-import io.github.kn65op.domag.data.entities.Category
+import io.github.kn65op.domag.data.database.entities.Category
 import org.hamcrest.BaseMatcher
 import org.hamcrest.Description
 

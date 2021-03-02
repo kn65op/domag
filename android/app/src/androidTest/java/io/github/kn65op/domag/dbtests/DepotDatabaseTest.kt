@@ -1,11 +1,12 @@
 package io.github.kn65op.domag.dbtests
 
 import io.github.kn65op.domag.data.database.daos.DepotDao
-import io.github.kn65op.domag.data.entities.Depot
+import io.github.kn65op.domag.data.database.entities.Depot
 import io.github.kn65op.domag.dbtests.common.DatabaseTest
 import io.github.kn65op.domag.dbtests.common.getFromLiveData
 import io.github.kn65op.domag.dbtests.data.*
 import io.github.kn65op.domag.matchers.isEqualRegardlessId
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.CoreMatchers.*
 import org.hamcrest.Matcher
@@ -48,7 +49,7 @@ class DepotDatabaseTest : DatabaseTest() {
     }
 
     @Test
-    fun getAll() {
+    fun getAllLD() {
         val all = getFromLiveData(depotDao.getAll())
         assertThat(
             all.toTypedArray(),
@@ -62,13 +63,37 @@ class DepotDatabaseTest : DatabaseTest() {
     }
 
     @Test
-    fun findById() {
+    fun getAll() = runBlocking {
+        val all = depotDao.getAllFlow().first()
+        assertThat(
+            all.toTypedArray(),
+            arrayContainingInAnyOrder(
+                isEqualRegardlessId(mainDepot1.depot),
+                isEqualRegardlessId(mainDepot2.depot),
+                isEqualRegardlessId(depot1InMainDepot1.depot),
+                isEqualRegardlessId(depot2InMainDepot1.depot)
+            )
+        )
+    }
+
+    @Test
+    fun findByIdLD() {
         val toFind = getFromLiveData(depotDao.findByName(mainDepot1.depot.name))
         assertThat(toFind.size, equalTo(1))
 
         val found = getFromLiveData(depotDao.findWithContentsById(toFind[0].uid as Int))
 
         assertThat(toFind[0], equalTo(found.depot))
+    }
+
+    @Test
+    fun findById() = runBlocking {
+        val toFind = getFromLiveData(depotDao.findByName(mainDepot1.depot.name))
+        assertThat(toFind.size, equalTo(1))
+
+        val found = depotDao.findByIdFlow(toFind[0].uid as Int).first()
+
+        assertThat(toFind[0], equalTo(found?.depot))
     }
 
     @Test

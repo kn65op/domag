@@ -5,7 +5,7 @@ import com.natpryce.hamkrest.equalTo
 import com.natpryce.hamkrest.throws
 import io.github.kn65op.android.lib.type.FixedPointNumber
 import io.github.kn65op.domag.data.database.daos.ItemDao
-import io.github.kn65op.domag.data.entities.Item
+import io.github.kn65op.domag.data.database.entities.Item
 import io.github.kn65op.domag.data.database.operations.NotEnoughAmountToConsume
 import io.github.kn65op.domag.data.database.operations.consumeItem
 import io.github.kn65op.domag.dbtests.common.*

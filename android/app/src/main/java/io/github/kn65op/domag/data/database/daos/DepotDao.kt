@@ -2,8 +2,9 @@ package io.github.kn65op.domag.data.database.daos
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
-import io.github.kn65op.domag.data.entities.Depot
+import io.github.kn65op.domag.data.database.entities.Depot
 import io.github.kn65op.domag.data.database.relations.DepotWithContents
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface DepotDao {
@@ -13,7 +14,15 @@ interface DepotDao {
 
     @Transaction
     @Query("SELECT rowid, * FROM depot")
+    fun getAllFlow(): Flow<List<Depot>>
+
+    @Transaction
+    @Query("SELECT rowid, * FROM depot")
     fun getAllWithContents(): LiveData<List<DepotWithContents>>
+
+    @Transaction
+    @Query("SELECT rowid, * FROM depot")
+    fun getAllWithContentsFlow(): Flow<List<DepotWithContents>>
 
     @Transaction
     @Query("SELECT rowid, * FROM depot WHERE rowid = :depotId")
@@ -29,6 +38,9 @@ interface DepotDao {
 
     @Query("SELECT rowid, * FROM depot WHERE rowid = :depotIds")
     fun findById(depotIds: Int): LiveData<Depot>
+
+    @Query("SELECT rowid, * FROM depot WHERE rowid IN (:depotIds)")
+    fun findByIdFlow(depotIds: Int): Flow<DepotWithContents?>
 
     @Query("SELECT rowid, * FROM depot WHERE rowid IN (:depotIds)")
     fun findById(depotIds: IntArray): LiveData<List<Depot>>

@@ -1,12 +1,13 @@
 package io.github.kn65op.domag.dbtests
 
 import io.github.kn65op.domag.data.database.daos.ItemDao
-import io.github.kn65op.domag.data.entities.withDescription
+import io.github.kn65op.domag.data.database.entities.withDescription
 import io.github.kn65op.domag.dbtests.common.DatabaseTest
 import io.github.kn65op.domag.dbtests.common.assertItemInDb
 import io.github.kn65op.domag.dbtests.common.assertNoItemInDb
 import io.github.kn65op.domag.dbtests.common.getFromLiveData
 import io.github.kn65op.domag.dbtests.data.*
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
@@ -23,13 +24,24 @@ class ItemDatabaseTest : DatabaseTest() {
     }
 
     @Test
-    fun getAllItems() = runBlocking {
+    fun getAllItemsLD() = runBlocking {
         assertThat(getFromLiveData(itemDao.getAll()).size, equalTo(allItemsCount))
     }
 
     @Test
-    fun getItemById() = runBlocking {
+    fun getAllItems() = runBlocking {
+        assertThat(itemDao.getAllFlow().first().size, equalTo(allItemsCount))
+    }
+
+    @Test
+    fun getItemByIdLD() = runBlocking {
         val item = getFromLiveData(itemDao.findById(1))
+        assertThat(item, equalTo(item1))
+    }
+
+    @Test
+    fun getItemById() = runBlocking {
+        val item = itemDao.findByIdFlow(1).first()
         assertThat(item, equalTo(item1))
     }
 

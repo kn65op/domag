@@ -14,7 +14,7 @@ import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import io.github.kn65op.domag.R
 import io.github.kn65op.domag.data.database.database.AppDatabase
-import io.github.kn65op.domag.data.entities.Item
+import io.github.kn65op.domag.data.database.entities.Item
 import io.github.kn65op.domag.ui.dialogs.ConsumeDialogController
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch

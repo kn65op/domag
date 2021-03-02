@@ -2,8 +2,8 @@ package io.github.kn65op.domag.data.database.operations
 
 import io.github.kn65op.android.lib.type.FixedPointNumber
 import io.github.kn65op.domag.data.database.database.AppDatabase
-import io.github.kn65op.domag.data.entities.Consume
-import io.github.kn65op.domag.data.entities.Item
+import io.github.kn65op.domag.data.database.entities.Consume
+import io.github.kn65op.domag.data.database.entities.Item
 import java.time.ZonedDateTime
 
 suspend fun AppDatabase.consumeItem(itemId: Int, consumedAmount: FixedPointNumber) {
