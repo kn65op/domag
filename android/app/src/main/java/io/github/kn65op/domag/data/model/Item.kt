@@ -7,8 +7,8 @@ data class Item(
     val uid: Int? = null,
 
     val amount: FixedPointNumber,
-    val depot: Depot,
-    val category: Category,
+    val depot: RawDepot?,
+    val category: RawCategory?,
     val description: String? = null,
     val bestBefore: ZonedDateTime? = null,
     val consumes: List<Consume>,

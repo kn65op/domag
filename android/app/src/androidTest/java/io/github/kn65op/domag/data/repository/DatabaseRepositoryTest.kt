@@ -196,5 +196,4 @@ class DatabaseRepositoryTestWhenDatabaseFilled : DatabaseRepositoryBaseTest() {
             assertThat(it, !isEmpty)
         }
     }
-
 }
