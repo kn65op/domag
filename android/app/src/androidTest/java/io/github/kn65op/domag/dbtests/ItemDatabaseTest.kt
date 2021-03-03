@@ -1,7 +1,10 @@
 package io.github.kn65op.domag.dbtests
 
+import com.natpryce.hamkrest.absent
+import com.natpryce.hamkrest.assertion.assertThat
 import io.github.kn65op.domag.data.database.daos.ItemDao
 import io.github.kn65op.domag.data.database.entities.withDescription
+import io.github.kn65op.domag.data.database.relations.ItemWithExtra
 import io.github.kn65op.domag.dbtests.common.DatabaseTest
 import io.github.kn65op.domag.dbtests.common.assertItemInDb
 import io.github.kn65op.domag.dbtests.common.assertNoItemInDb
@@ -17,6 +20,9 @@ import java.time.ZonedDateTime
 
 class ItemDatabaseTest : DatabaseTest() {
     private lateinit var itemDao: ItemDao
+
+    private val someId = 1
+    private val notExistingId = 181128
 
     @Before
     fun createDao() {
@@ -102,6 +108,30 @@ class ItemDatabaseTest : DatabaseTest() {
         itemDao.delete(itemToDelete)
 
         assertNoItemInDb(itemToDelete, db)
+    }
+
+    @Test
+    fun getNotExistingItemWithExtra() = runBlocking {
+        val item = itemDao.findWithExtraById(notExistingId).first()
+
+        assertThat(item, absent())
+    }
+
+    @Test
+    fun getItemWithExtra() = runBlocking {
+        val item = itemDao.findWithExtraById(someId).first()
+        val onlyItem = itemDao.findByIdFlow(someId).first()
+
+        assertThat(
+            item,
+            equalTo(
+                ItemWithExtra(
+                    item = onlyItem!!,
+                    category = mainCategory1.category.copy(uid = 1),
+                    depot = mainDepot1.depot.copy(uid = 1)
+                )
+            )
+        )
     }
 }
 

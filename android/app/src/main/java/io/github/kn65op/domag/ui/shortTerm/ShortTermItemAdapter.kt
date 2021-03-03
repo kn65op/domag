@@ -14,7 +14,6 @@ import io.github.kn65op.domag.R
 import io.github.kn65op.domag.data.database.database.AppDatabase
 import io.github.kn65op.domag.data.model.RawItem
 import io.github.kn65op.domag.ui.dialogs.ConsumeDialogController
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
@@ -70,7 +69,7 @@ class ShortTermItemAdapter(
     }
 
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
-        items.get(position).let { item ->
+        items.elementAtOrNull(position)?.let { item ->
             Log.i(LOG_TAG, "Bind $position")
             GlobalScope.launch {
                 Log.i(LOG_TAG, "Start routine")

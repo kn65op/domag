@@ -19,8 +19,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import javax.inject.Inject
 
-open class ItemsPartBase {
-    @get:Rule
+open class ItemsPartBase { @get:Rule
     var hiltRule = HiltAndroidRule(this)
 
     @get:Rule
@@ -492,4 +491,5 @@ open class ItemsPartTestSuite : ItemsPartBase() {
 
         viewIdVisible(R.id.consume_dialog_description)
     }
+
 }
