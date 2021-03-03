@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import dagger.hilt.android.AndroidEntryPoint
@@ -18,8 +19,9 @@ import javax.inject.Inject
 class ShortTermFragment : Fragment() {
     @Inject
     lateinit var db: AppDatabase
+
     @Inject
-    lateinit var dataRepository : Repository
+    lateinit var dataRepository: Repository
     private lateinit var recyclerView: RecyclerView
     private lateinit var viewManager: RecyclerView.LayoutManager
     private lateinit var viewAdapter: RecyclerView.Adapter<*>
@@ -30,8 +32,8 @@ class ShortTermFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val root = inflater.inflate(R.layout.fragment_short_term, container, false)
-        val data = db.itemDao().getWithBestBeforeBefore(ZonedDateTime.now().plusDays(7))
-        viewAdapter = ShortTermItemAdapter(viewLifecycleOwner, data, db, requireActivity())
+        val items = dataRepository.getItemsWithBestBeforeBefore(ZonedDateTime.now().plusDays(7))
+        viewAdapter = ShortTermItemAdapter(lifecycleScope, items, db, requireActivity())
         viewManager = LinearLayoutManager(context)
         recyclerView = root.findViewById(R.id.short_term_items_recycler_view)
 

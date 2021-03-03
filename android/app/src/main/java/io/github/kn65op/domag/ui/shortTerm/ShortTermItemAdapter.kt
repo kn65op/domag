@@ -7,23 +7,24 @@ import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.fragment.app.FragmentActivity
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.Observer
+import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import io.github.kn65op.domag.R
 import io.github.kn65op.domag.data.database.database.AppDatabase
-import io.github.kn65op.domag.data.database.entities.Item
+import io.github.kn65op.domag.data.model.RawItem
 import io.github.kn65op.domag.ui.dialogs.ConsumeDialogController
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 
 class ShortTermItemAdapter(
-    lifecycleOwner: LifecycleOwner,
-    val items: LiveData<List<Item>>?,
+    lifecycleScope: LifecycleCoroutineScope,
+    itemsFlow: Flow<List<RawItem>>,
     val db: AppDatabase,
     val activity: FragmentActivity
 ) :
@@ -37,14 +38,23 @@ class ShortTermItemAdapter(
     }
 
     private val consumeDialogController = ConsumeDialogController(activity, db)
+    private var items : List<RawItem> = emptyList()
 
     init {
-        items?.observe(lifecycleOwner,
-            Observer { notifyDataSetChanged() })
+        lifecycleScope.launch { test(itemsFlow) }
     }
 
+
+    private suspend fun test(itemsFlow: Flow<List<RawItem>>) {
+        itemsFlow.collect {
+            items = it
+            notifyDataSetChanged()
+        }
+    }
+
+
     override fun getItemCount(): Int {
-        val size = items?.value?.size ?: 0
+        val size = items.size
         Log.i(LOG_TAG, "Found $size items")
         return size
     }
@@ -60,7 +70,7 @@ class ShortTermItemAdapter(
     }
 
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
-        items?.value?.get(position)?.let { item ->
+        items.get(position).let { item ->
             Log.i(LOG_TAG, "Bind $position")
             GlobalScope.launch {
                 Log.i(LOG_TAG, "Start routine")
