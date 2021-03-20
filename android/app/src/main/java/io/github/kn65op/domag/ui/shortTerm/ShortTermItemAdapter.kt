@@ -12,6 +12,7 @@ import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import io.github.kn65op.domag.R
 import io.github.kn65op.domag.data.database.database.AppDatabase
+import io.github.kn65op.domag.data.model.Item
 import io.github.kn65op.domag.data.model.RawItem
 import io.github.kn65op.domag.ui.dialogs.ConsumeDialogController
 import kotlinx.coroutines.GlobalScope
@@ -23,8 +24,8 @@ import java.time.format.FormatStyle
 
 class ShortTermItemAdapter(
     lifecycleScope: LifecycleCoroutineScope,
-    itemsFlow: Flow<List<RawItem>>,
-    val db: AppDatabase,
+    itemsFlow: Flow<List<Item>>,
+    db: AppDatabase,
     val activity: FragmentActivity
 ) :
     RecyclerView.Adapter<ShortTermItemAdapter.ItemViewHolder>() {
@@ -37,14 +38,14 @@ class ShortTermItemAdapter(
     }
 
     private val consumeDialogController = ConsumeDialogController(activity, db)
-    private var items : List<RawItem> = emptyList()
+    private var items: List<Item> = emptyList()
 
     init {
         lifecycleScope.launch { test(itemsFlow) }
     }
 
 
-    private suspend fun test(itemsFlow: Flow<List<RawItem>>) {
+    private suspend fun test(itemsFlow: Flow<List<Item>>) {
         itemsFlow.collect {
             items = it
             notifyDataSetChanged()
@@ -73,27 +74,17 @@ class ShortTermItemAdapter(
             Log.i(LOG_TAG, "Bind $position")
             GlobalScope.launch {
                 Log.i(LOG_TAG, "Start routine")
-                val categoryDao = db.categoryDao()
-                val category = categoryDao.findWithContentsByIdImmediately(item.categoryId)
-                category.let {
-                    val depotDao = db.depotDao()
+                val category = item.category
+                category?.let {
                     val name = if (item.description.isNullOrEmpty())
-                        "${category.category.name} in ${
-                            depotDao.getDepotName(
-                                item.depotId
-                            )
-                        }"
+                        "${category.name} in ${item.depot?.name}"
                     else
-                        "${item.description} (${category.category.name}) ${
+                        "${item.description} (${category.name}) ${
                             activity.applicationContext.getString(
                                 R.string.inside
                             )
-                        } ${
-                            depotDao.getDepotName(
-                                item.depotId
-                            )
-                        }"
-                    val unit = categoryDao.getCategoryUnit(item.categoryId)
+                        } ${item.depot?.name}"
+                    val unit = item.category.unit
                     activity.runOnUiThread {
                         holder.amount.text = item.amount.toString()
                         holder.name.text = name
@@ -104,7 +95,7 @@ class ShortTermItemAdapter(
                                 consumeDialogController.startConsumeDialog(
                                     itemId = item.uid,
                                     fullName = name,
-                                    category = category.category,
+                                    category = category,
                                     currentAmount = item.amount
                                 )
                             }

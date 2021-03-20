@@ -2,10 +2,7 @@ package io.github.kn65op.domag.data.repository
 
 import io.github.kn65op.domag.data.database.database.AppDatabase
 import io.github.kn65op.domag.data.model.*
-import io.github.kn65op.domag.data.transformations.toModelCategory
-import io.github.kn65op.domag.data.transformations.toModelDepot
-import io.github.kn65op.domag.data.transformations.toModelRawDepot
-import io.github.kn65op.domag.data.transformations.toRawItem
+import io.github.kn65op.domag.data.transformations.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
@@ -37,11 +34,11 @@ class DatabaseRepository @Inject constructor(private val db: AppDatabase) : Repo
             }
         }
 
-    override fun getItemsWithBestBeforeBefore(date: ZonedDateTime): Flow<List<RawItem>> =
+    override fun getItemsWithBestBeforeBefore(date: ZonedDateTime): Flow<List<Item>> =
         flow {
             val allItemsFlow = db.itemDao().getWithBestBeforeBeforeFlow(date)
             allItemsFlow.collect { item ->
-                emit(item.map { it.toRawItem() })
+                emit(item.map { it.toItem() })
             }
         }
 

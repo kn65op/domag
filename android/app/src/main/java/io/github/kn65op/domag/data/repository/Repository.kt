@@ -14,5 +14,5 @@ interface Repository {
 
     fun getAllItems(): Flow<List<RawItem>>
     fun getItem(id: DataId): Flow<RawItem?>
-    fun getItemsWithBestBeforeBefore(date: ZonedDateTime): Flow<List<RawItem>>
+    fun getItemsWithBestBeforeBefore(date: ZonedDateTime): Flow<List<Item>>
 }

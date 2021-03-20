@@ -8,6 +8,10 @@ import io.github.kn65op.domag.data.database.relations.DepotWithContents
 import io.github.kn65op.domag.uitests.common.descriptionCategoryDelimiter
 import io.github.kn65op.android.lib.type.FixedPointNumber
 import io.github.kn65op.domag.data.database.entities.*
+import io.github.kn65op.domag.data.database.relations.ItemWithExtra
+import io.github.kn65op.domag.data.transformations.toModelDepot
+import io.github.kn65op.domag.data.transformations.toModelRawCategory
+import io.github.kn65op.domag.data.transformations.toModelRawDepot
 import kotlinx.coroutines.runBlocking
 import java.time.ZonedDateTime
 
@@ -16,10 +20,12 @@ const val mainDepot2Name = "name2"
 const val depot1InMainDepot1Name = "depotName"
 const val depot2InMainDepot1Name = "depot anoname 2"
 
-val mainDepot1 = DepotWithContents(depot = Depot(name = mainDepot1Name))
-val mainDepot2 = DepotWithContents(depot = Depot(name = mainDepot2Name))
-val depot1InMainDepot1 = DepotWithContents(Depot(name = depot1InMainDepot1Name, parentId = 1))
-val depot2InMainDepot1 = DepotWithContents(Depot(name = depot2InMainDepot1Name, parentId = 1))
+val mainDepot1 = DepotWithContents(depot = Depot(uid = 1, name = mainDepot1Name))
+val mainDepot2 = DepotWithContents(depot = Depot(uid = 2, name = mainDepot2Name))
+val depot1InMainDepot1 =
+    DepotWithContents(Depot(uid = 3, name = depot1InMainDepot1Name, parentId = 1))
+val depot2InMainDepot1 =
+    DepotWithContents(Depot(uid = 4, name = depot2InMainDepot1Name, parentId = 1))
 
 
 const val mainCategory1Name = "category name"
@@ -53,13 +59,20 @@ val mainCategory3Limit = categoryLimitThree
 
 val mainCategory1 =
     CategoryWithContents(
-        category = Category(name = mainCategory1Name, unit = mainCategory1Unit),
+        category = Category(uid = 1, name = mainCategory1Name, unit = mainCategory1Unit),
         limits = mainCategory1Limit
     )
 val mainCategory2 =
-    CategoryWithContents(category = Category(name = mainCategory2Name, unit = mainCategory2Unit))
+    CategoryWithContents(
+        category = Category(
+            uid = 2,
+            name = mainCategory2Name,
+            unit = mainCategory2Unit
+        )
+    )
 val category1InMainCategory1 = CategoryWithContents(
     Category(
+        uid = 3,
         name = category1InMainCategory1Name,
         parentId = 1,
         unit = category1InMainCategory1Unit
@@ -68,6 +81,7 @@ val category1InMainCategory1 = CategoryWithContents(
 val category2InMainCategory1 =
     CategoryWithContents(
         Category(
+            uid = 4,
             name = category2InMainCategory1Name,
             parentId = 1,
             unit = category2InMainCategory1Unit
@@ -181,3 +195,38 @@ fun createDb(context: Context) = Room.inMemoryDatabaseBuilder(
     context, AppDatabase::class.java
 ).build()
 
+val itemWithExtra1 = ItemWithExtra(
+    item = item1,
+    depot = mainDepot1.depot,
+    category = mainCategory1.category,
+)
+val itemWithExtra2 = ItemWithExtra(
+    item = item2,
+    depot = depot1InMainDepot1.depot,
+    category = category1InMainCategory1.category,
+)
+val itemWithExtra3 = ItemWithExtra(
+    item = item3,
+    depot = mainDepot2.depot,
+    category = mainCategory2.category,
+)
+val itemWithExtra4 = ItemWithExtra(
+    item = item4,
+    depot = mainDepot1.depot,
+    category = category1InMainCategory1.category,
+)
+val itemWithExtra5 = ItemWithExtra(
+    item = item5,
+    depot = depot1InMainDepot1.depot,
+    category = category1InMainCategory1.category,
+)
+val itemWithExtra6 = ItemWithExtra(
+    item = item6,
+    depot = mainDepot2.depot,
+    category = category2InMainCategory1.category,
+)
+val itemWithExtra7 = ItemWithExtra(
+    item = item7,
+    depot = depot2InMainDepot1.depot,
+    category = category2InMainCategory1.category,
+)

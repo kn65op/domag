@@ -11,6 +11,5 @@ data class Item(
     val category: RawCategory?,
     val description: String? = null,
     val bestBefore: ZonedDateTime? = null,
-    val consumes: List<Consume>,
 )
 

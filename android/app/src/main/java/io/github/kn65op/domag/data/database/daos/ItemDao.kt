@@ -37,7 +37,7 @@ interface ItemDao {
     fun getWithBestBeforeBefore(date: ZonedDateTime?): LiveData<List<Item>>
 
     @Query("SELECT * FROM item WHERE bestBefore < :date ORDER BY bestBefore")
-    fun getWithBestBeforeBeforeFlow(date: ZonedDateTime): Flow<List<Item>>
+    fun getWithBestBeforeBeforeFlow(date: ZonedDateTime): Flow<List<ItemWithExtra>>
 
     @Insert
     suspend fun insert(items: List<Item>)

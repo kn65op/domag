@@ -21,5 +21,4 @@ fun DbItemWithExtra.toItem() = Item(
     category = category?.toModelRawCategory(),
     description = item.description,
     bestBefore = item.bestBefore,
-    consumes = emptyList(),
 )

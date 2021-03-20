@@ -98,7 +98,10 @@ class ItemDatabaseTest : DatabaseTest() {
                 ZonedDateTime.now().plusDays(7).minusHours(1)
             ).first()
 
-        assertThat(items, equalTo(listOf(item2, item3, item5, item7)))
+        assertThat(
+            items,
+            equalTo(listOf(itemWithExtra2, itemWithExtra3, itemWithExtra5, itemWithExtra7))
+        )
     }
 
     @Test
