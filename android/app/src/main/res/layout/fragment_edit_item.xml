@@ -75,7 +75,7 @@
             android:layout_height="wrap_content"
             android:text="@string/edit_item_depot_text" />
 
-        <com.toptoche.searchablespinnerlibrary.SearchableSpinner
+        <io.github.kn65op.android.lib.gui.searchablespinner.SearchableSpinner
             android:id="@+id/edit_item_depot_spinner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
@@ -94,7 +94,7 @@
             android:layout_height="wrap_content"
             android:text="@string/edit_item_category_text" />
 
-        <com.toptoche.searchablespinnerlibrary.SearchableSpinner
+        <io.github.kn65op.android.lib.gui.searchablespinner.SearchableSpinner
             android:id="@+id/edit_item_category_spinner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

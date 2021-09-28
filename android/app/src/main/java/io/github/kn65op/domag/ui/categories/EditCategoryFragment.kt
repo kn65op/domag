@@ -10,8 +10,9 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.toptoche.searchablespinnerlibrary.SearchableSpinner
 import dagger.hilt.android.AndroidEntryPoint
+import io.github.kn65op.android.lib.gui.searchablespinner.ArraySearchableSpinnerEntries
+import io.github.kn65op.android.lib.gui.searchablespinner.SearchableSpinner
 import io.github.kn65op.android.lib.type.FixedPointNumber
 import io.github.kn65op.domag.R
 import io.github.kn65op.domag.data.database.daos.CategoryLimitDao
@@ -23,6 +24,7 @@ import io.github.kn65op.domag.data.database.operations.deleteCategory
 import io.github.kn65op.domag.data.database.relations.CategoryWithContents
 import io.github.kn65op.domag.databinding.FragmentEditCategoryBinding
 import io.github.kn65op.domag.ui.common.FragmentWithActionBar
+import io.github.kn65op.domag.ui.utils.StringSearchableSpinnerEntryConverter
 import io.github.kn65op.domag.ui.utils.replaceText
 import io.github.kn65op.domag.utils.getAllButNotItAndDescendants
 import kotlinx.coroutines.launch
@@ -35,7 +37,7 @@ private const val PARENT_ID_ACTION_PARAMETER = "parentId"
 private const val CURRENT_CATEGORY_ID_PARAMETER = "categoryId"
 
 @AndroidEntryPoint
-class EditCategoryFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedListener {
+class EditCategoryFragment : FragmentWithActionBar() {
     @Inject
     lateinit var db: AppDatabase
     private var currentName: String? = null
@@ -114,11 +116,11 @@ class EditCategoryFragment : FragmentWithActionBar(), AdapterView.OnItemSelected
     private fun prepareCategorySelector(category: Category?, categories: List<Category>) {
         possibleParentCategories =
             if (category == null) categories else getAllButNotItAndDescendants(category, categories)
-        val possibleParents =
-            ArrayAdapter<String>(requireContext(), android.R.layout.simple_spinner_item)
-        possibleParents.add(context?.getString(R.string.edit_depot_parent_select_no_parent))
-        possibleParents.addAll(possibleParentCategories.map { it.name })
-        spinner.adapter = possibleParents
+        spinner.entries = ArraySearchableSpinnerEntries(
+            arrayOf(requireContext().getString(R.string.edit_depot_parent_select_no_parent)) + possibleParentCategories.map { it.name },
+            StringSearchableSpinnerEntryConverter(),
+            requireContext()
+        )
         Log.i(LOG_TAG, "Possible parent categories: ${possibleParentCategories.size}")
         val parentDepotPosition =
             possibleParentCategories.indexOfFirst {
@@ -127,7 +129,7 @@ class EditCategoryFragment : FragmentWithActionBar(), AdapterView.OnItemSelected
             } + PARENT_SHIFT
         Log.i(LOG_TAG, "Index $parentDepotPosition")
         spinner.setSelection(parentDepotPosition)
-        spinner.onItemSelectedListener = this
+        spinner.onSelectionListener = { position: Int -> parentSelected(position) }
     }
 
     override fun onCreateView(
@@ -141,9 +143,6 @@ class EditCategoryFragment : FragmentWithActionBar(), AdapterView.OnItemSelected
 
         spinner = root.findViewById(R.id.edit_category_fragment_parent_spinner)
         recyclerView = root.findViewById(R.id.edit_category_content_view)
-
-        spinner.setTitle(context?.getString(R.string.edit_category_parent_text))
-        spinner.setPositiveButton(context?.getString(R.string.spinner_select_text))
 
         viewManager = LinearLayoutManager(context)
         viewAdapter = CategoryAdapter(currentCategory, requireActivity(), this, db)
@@ -305,16 +304,12 @@ class EditCategoryFragment : FragmentWithActionBar(), AdapterView.OnItemSelected
         super.onSaveInstanceState(outState)
     }
 
-    override fun onItemSelected(p0: AdapterView<*>?, p1: View?, position: Int, p3: Long) {
+    fun parentSelected(position: Int) {
         currentParent = if (position == 0)
             null
         else
             possibleParentCategories[position - PARENT_SHIFT].uid
         Log.i(LOG_TAG, "Set parent id $currentParent")
-    }
-
-    override fun onNothingSelected(p0: AdapterView<*>?) {
-        currentParent = null
     }
 
     companion object {
