@@ -23,7 +23,7 @@
         android:layout_height="wrap_content"
         android:text="@string/edit_depot_parent_text" />
 
-    <com.toptoche.searchablespinnerlibrary.SearchableSpinner
+    <io.github.kn65op.android.lib.gui.searchablespinner.SearchableSpinner
         android:id="@+id/edit_depot_fragment_parent_spinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
