@@ -70,8 +70,7 @@ class ItemTransformationsTest {
         depot = rawDepot,
         category = rawCategory,
         description = description,
-        bestBefore = null,
-        consumes = emptyList()
+        bestBefore = null
     )
 
     @Test
