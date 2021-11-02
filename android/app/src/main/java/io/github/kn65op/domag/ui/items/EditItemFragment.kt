@@ -12,9 +12,11 @@ import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
-import com.toptoche.searchablespinnerlibrary.SearchableSpinner
 import dagger.hilt.android.AndroidEntryPoint
 import io.github.kn65op.android.lib.gui.dialogs.LocalDatePickerDialog
+import io.github.kn65op.android.lib.gui.searchablespinner.ArraySearchableSpinnerEntries
+import io.github.kn65op.android.lib.gui.searchablespinner.SearchableSpinner
+import io.github.kn65op.android.lib.gui.searchablespinner.SearchableSpinnerEntryConverter
 import io.github.kn65op.android.lib.type.FixedPointNumber
 import io.github.kn65op.domag.R
 import io.github.kn65op.domag.data.database.database.AppDatabase
@@ -24,6 +26,7 @@ import io.github.kn65op.domag.data.database.entities.Item
 import io.github.kn65op.domag.ui.common.FragmentWithActionBar
 import io.github.kn65op.domag.ui.common.constructItemFullName
 import io.github.kn65op.domag.ui.common.createDialog
+import io.github.kn65op.domag.ui.utils.StringSearchableSpinnerEntryConverter
 import io.github.kn65op.domag.ui.utils.replaceText
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -109,11 +112,6 @@ class EditItemFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedList
             }
         }
 
-        depotSpinner.setTitle(context?.getString(R.string.edit_item_depot_spinner_title))
-        depotSpinner.setPositiveButton(context?.getString(R.string.spinner_select_text))
-        categorySpinner.setTitle(context?.getString(R.string.edit_item_category_spinner_title))
-        categorySpinner.setPositiveButton(context?.getString(R.string.spinner_select_text))
-        bestBeforeField.setOnClickListener { startDatePicker() }
         bestBeforeField.setOnFocusChangeListener { _, gained -> if (gained) startDatePicker() }
         bestBeforeRemoveButton.setOnClickListener { clearDate() }
         if (itemId == null) {
@@ -150,25 +148,17 @@ class EditItemFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedList
     private fun prepareAllCategoriesSpinner(categories: List<Category>) {
         allCategories = categories
         Log.i(LOG_TAG, "Observed all categories: ${allCategories.size}")
-        val list =
-            ArrayAdapter<String>(requireContext(), android.R.layout.simple_spinner_item)
-        list.addAll(categories.map { it.name })
-        categorySpinner.adapter = list
-        categorySpinner.onItemSelectedListener =
-            object : AdapterView.OnItemSelectedListener {
-                override fun onItemSelected(
-                    p0: AdapterView<*>?, p1: View?, selected: Int, p3: Long
-                ) {
-                    actionBar()?.title = constructItemFullName(
-                        allCategories[selected].name,
-                        descriptionField.text.toString()
-                    )
-                }
-
-                override fun onNothingSelected(p0: AdapterView<*>?) {
-                    Log.i(LOG_TAG, "Nothing selected")
-                }
-            }
+        categorySpinner.entries =  ArraySearchableSpinnerEntries(
+            categories.map { it.name }.toTypedArray(),
+            StringSearchableSpinnerEntryConverter(),
+            requireContext()
+        )
+        categorySpinner.onSelectionListener = { position: Int ->
+            actionBar()?.title = constructItemFullName(
+                allCategories[position].name,
+                descriptionField.text.toString()
+            )
+        }
     }
 
     private fun collectAllDepots(db: AppDatabase?) {
@@ -177,11 +167,11 @@ class EditItemFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedList
             if (depots != null) {
                 allDepots = depots
                 Log.i(LOG_TAG, "Observed all depots: ${allCategories.size}")
-                val list =
-                    ArrayAdapter<String>(requireContext(), android.R.layout.simple_spinner_item)
-                list.addAll(depots.map { it.name })
-                depotSpinner.adapter = list
-                depotSpinner.onItemSelectedListener = this
+                depotSpinner.entries = ArraySearchableSpinnerEntries(
+                    depots.map { it.name }.toTypedArray(),
+                    StringSearchableSpinnerEntryConverter(),
+                    requireContext()
+                )
                 selectProperSpinnerEntry()
             }
         })
