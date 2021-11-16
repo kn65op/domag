@@ -196,4 +196,11 @@ class DatabaseRepositoryTestWhenDatabaseFilled : DatabaseRepositoryBaseTest() {
             assertThat(it, !isEmpty)
         }
     }
+
+    @Test
+    fun shouldGetRootDepots() = runBlocking {
+        validateFlowFirstElement(repository.getRootDepots()) {
+            assertThat(it, !isEmpty)
+        }
+    }
 }

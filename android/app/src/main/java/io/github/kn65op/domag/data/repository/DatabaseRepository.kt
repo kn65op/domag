@@ -65,4 +65,12 @@ class DatabaseRepository @Inject constructor(private val db: AppDatabase) : Repo
                 emit(dbItem?.toRawItem())
             }
         }
+
+    fun getRootDepots(): Flow<List<Depot>> =
+        flow {
+            val depots = db.depotDao().findRootDepotsFlow()
+            depots.collect { dbDepots ->
+                emit(dbDepots.map { it.toModelDepot() })
+            }
+        }
 }

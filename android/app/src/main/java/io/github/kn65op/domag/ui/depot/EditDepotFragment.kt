@@ -18,6 +18,7 @@ import io.github.kn65op.domag.data.database.database.AppDatabase
 import io.github.kn65op.domag.data.database.entities.Depot
 import io.github.kn65op.domag.data.database.operations.deleteDepot
 import io.github.kn65op.domag.data.database.relations.DepotWithContents
+import io.github.kn65op.domag.data.repository.Repository
 import io.github.kn65op.domag.databinding.FragmentEditDepotBinding
 import io.github.kn65op.domag.ui.common.FragmentWithActionBar
 import io.github.kn65op.domag.ui.items.DepotAdapter
@@ -36,6 +37,8 @@ private const val CURRENT_DEPOT_ID_PARAMETER = "depotId"
 class EditDepotFragment : FragmentWithActionBar() {
     @Inject
     lateinit var db: AppDatabase
+    @Inject
+    lateinit var dataRepository: Repository
     private var currentName: String? = null
     private var currentParent: Int? = null
     private var depotId: Int? = null
@@ -138,7 +141,7 @@ class EditDepotFragment : FragmentWithActionBar() {
         recyclerView = root.findViewById(R.id.edit_depot_content_view)
 
         viewManager = LinearLayoutManager(context)
-        viewAdapter = DepotAdapter(currentDepot, requireActivity(), this, db)
+        viewAdapter = DepotAdapter(dataRepository.getAllDepots(), currentDepot, requireActivity(), this, db)
 
         recyclerView.apply {
             setHasFixedSize(true)

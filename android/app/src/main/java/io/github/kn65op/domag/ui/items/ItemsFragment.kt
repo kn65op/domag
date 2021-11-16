@@ -13,6 +13,7 @@ import io.github.kn65op.domag.R
 import io.github.kn65op.domag.data.database.database.AppDatabase
 import io.github.kn65op.domag.data.database.entities.Depot
 import io.github.kn65op.domag.data.database.relations.DepotWithContents
+import io.github.kn65op.domag.data.repository.Repository
 import io.github.kn65op.domag.ui.common.FragmentWithActionBar
 import io.github.kn65op.domag.ui.common.prepareFabs
 import io.github.kn65op.domag.ui.utils.notifyIfNotComputing
@@ -24,6 +25,9 @@ class ItemsFragment : FragmentWithActionBar() {
 
     @Inject
     lateinit var db: AppDatabase
+    @Inject
+    lateinit var dataRepository: Repository
+
     private lateinit var recyclerView: RecyclerView
     private lateinit var viewManager: RecyclerView.LayoutManager
     private lateinit var viewAdapter: RecyclerView.Adapter<*>
@@ -54,11 +58,10 @@ class ItemsFragment : FragmentWithActionBar() {
         container: ViewGroup?
     ): View {
         val root = inflater.inflate(R.layout.fragment_items, container, false)
-
         val currentContext = context
         if (currentContext != null) {
             recyclerView = root.findViewById(R.id.items_recycler_view)
-            viewAdapter = DepotAdapter(currentDepot, requireActivity(), viewLifecycleOwner, db)
+            viewAdapter = DepotAdapter(dataRepository.getAllDepots(), currentDepot, requireActivity(), viewLifecycleOwner, db)
 
             viewManager = LinearLayoutManager(currentContext)
             recyclerView.apply {

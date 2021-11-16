@@ -14,10 +14,13 @@ import androidx.recyclerview.widget.RecyclerView
 import io.github.kn65op.domag.R
 import io.github.kn65op.domag.data.database.database.AppDatabase
 import io.github.kn65op.domag.data.database.relations.DepotWithContents
+import io.github.kn65op.domag.data.model.Depot
 import io.github.kn65op.domag.ui.common.constructItemFullName
 import io.github.kn65op.domag.ui.dialogs.ConsumeDialogController
+import kotlinx.coroutines.flow.Flow
 
 class DepotAdapter(
+    depotsFlow : Flow<List<Depot>>,
     private var depot: LiveData<DepotWithContents>,
     activity: FragmentActivity,
     private val lifecycleOwner: LifecycleOwner,
