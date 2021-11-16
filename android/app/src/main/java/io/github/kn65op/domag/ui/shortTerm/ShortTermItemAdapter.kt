@@ -13,7 +13,6 @@ import androidx.recyclerview.widget.RecyclerView
 import io.github.kn65op.domag.R
 import io.github.kn65op.domag.data.database.database.AppDatabase
 import io.github.kn65op.domag.data.model.Item
-import io.github.kn65op.domag.data.model.RawItem
 import io.github.kn65op.domag.ui.dialogs.ConsumeDialogController
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.Flow
@@ -41,13 +40,13 @@ class ShortTermItemAdapter(
     private var items: List<Item> = emptyList()
 
     init {
-        lifecycleScope.launch { test(itemsFlow) }
+        lifecycleScope.launch { observe(itemsFlow) }
     }
 
 
-    private suspend fun test(itemsFlow: Flow<List<Item>>) {
+    private suspend fun observe(itemsFlow: Flow<List<Item>>) {
         itemsFlow.collect {
-            items = it
+            items = it.sortedBy { item -> item.description?.lowercase() }
             notifyDataSetChanged()
         }
     }
@@ -74,16 +73,8 @@ class ShortTermItemAdapter(
             Log.i(LOG_TAG, "Bind $position")
             GlobalScope.launch {
                 Log.i(LOG_TAG, "Start routine")
-                val category = item.category
-                category?.let {
-                    val name = if (item.description.isNullOrEmpty())
-                        "${category.name} in ${item.depot?.name}"
-                    else
-                        "${item.description} (${category.name}) ${
-                            activity.applicationContext.getString(
-                                R.string.inside
-                            )
-                        } ${item.depot?.name}"
+                val name = getFullName(item)
+                item.category?.let {
                     val unit = item.category.unit
                     activity.runOnUiThread {
                         holder.amount.text = item.amount.toString()
@@ -95,7 +86,7 @@ class ShortTermItemAdapter(
                                 consumeDialogController.startConsumeDialog(
                                     itemId = item.uid,
                                     fullName = name,
-                                    category = category,
+                                    category = item.category,
                                     currentAmount = item.amount
                                 )
                             }
@@ -110,6 +101,20 @@ class ShortTermItemAdapter(
                 holder.itemView.findNavController().navigate(action)
             }
         }
+    }
+
+    private fun getFullName(
+        item: Item,
+    ): String {
+        val category = item.category
+        return if (item.description.isNullOrEmpty())
+            "${category?.name} in ${item.depot?.name}"
+        else
+            "${item.description} (${category?.name}) ${
+                activity.applicationContext.getString(
+                    R.string.inside
+                )
+            } ${item.depot?.name}"
     }
 
     companion object {
