@@ -57,7 +57,7 @@ interface DepotDao {
     fun findRootDepots(): LiveData<List<Depot>>
 
     @Query("SELECT rowid, * FROM depot WHERE parentId IS NULL")
-    fun findRootDepotsFlow(): Flow<List<DepotWithContents>>
+    fun findRootDepotsFlow(): Flow<List<Depot>>
 
     @Query("SELECT name FROM depot WHERE rowId = :id")
     fun getDepotName(id: Int): String
