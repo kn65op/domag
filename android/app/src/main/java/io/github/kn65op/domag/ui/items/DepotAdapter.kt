@@ -58,7 +58,9 @@ class DepotAdapter(
     private suspend fun observe(depotFlow: Flow<Depot?>) {
         Log.i("KOT", "23")
         depotFlow.collect {
-            depot = it
+            depot =
+                it?.copy(items = it?.items?.sortedBy { item -> item.description?.lowercase() })
+                    ?.copy(children = it?.children?.sortedBy { depot -> depot.name.lowercase() })
             Log.i("KOT", "23.5")
             notifyDataSetChanged()
         }
