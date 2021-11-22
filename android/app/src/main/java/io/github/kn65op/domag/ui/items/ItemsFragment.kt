@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.util.Log
 import android.view.*
 import androidx.activity.addCallback
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -12,7 +11,6 @@ import androidx.recyclerview.widget.RecyclerView
 import dagger.hilt.android.AndroidEntryPoint
 import io.github.kn65op.domag.R
 import io.github.kn65op.domag.data.database.database.AppDatabase
-import io.github.kn65op.domag.data.database.relations.DepotWithContents
 import io.github.kn65op.domag.data.model.Depot
 import io.github.kn65op.domag.data.operations.getRootDepots
 import io.github.kn65op.domag.data.repository.Repository
@@ -114,6 +112,8 @@ class ItemsFragment : FragmentWithActionBar() {
             Log.i(LOG_TAG, "Data has been changed")
             recyclerView.notifyIfNotComputing()
         }
+
+        if (!isRootDepot) actionBar()?.title = depot?.name
     }
 
     private fun prepareFabMenu(root: View) {
