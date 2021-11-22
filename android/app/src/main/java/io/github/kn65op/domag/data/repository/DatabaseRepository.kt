@@ -66,7 +66,7 @@ class DatabaseRepository @Inject constructor(private val db: AppDatabase) : Repo
             }
         }
 
-    fun getRootDepots(): Flow<List<RawDepot>> =
+    override fun getRootDepots(): Flow<List<RawDepot>> =
         flow {
             val depots = db.depotDao().findRootDepotsFlow()
             depots.collect { dbDepots ->

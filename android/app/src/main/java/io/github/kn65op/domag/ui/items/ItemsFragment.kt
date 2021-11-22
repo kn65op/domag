@@ -5,18 +5,21 @@ import android.util.Log
 import android.view.*
 import androidx.activity.addCallback
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import dagger.hilt.android.AndroidEntryPoint
 import io.github.kn65op.domag.R
 import io.github.kn65op.domag.data.database.database.AppDatabase
-import io.github.kn65op.domag.data.database.entities.Depot
 import io.github.kn65op.domag.data.database.relations.DepotWithContents
+import io.github.kn65op.domag.data.model.Depot
+import io.github.kn65op.domag.data.operations.getRootDepots
 import io.github.kn65op.domag.data.repository.Repository
 import io.github.kn65op.domag.ui.common.FragmentWithActionBar
 import io.github.kn65op.domag.ui.common.prepareFabs
 import io.github.kn65op.domag.ui.utils.notifyIfNotComputing
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -25,43 +28,53 @@ class ItemsFragment : FragmentWithActionBar() {
 
     @Inject
     lateinit var db: AppDatabase
+
     @Inject
     lateinit var dataRepository: Repository
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var viewManager: RecyclerView.LayoutManager
     private lateinit var viewAdapter: RecyclerView.Adapter<*>
-    private var currentDepot = MutableLiveData<DepotWithContents>()
-    private var root = true
+    private var currentDepotOld = MutableLiveData<DepotWithContents>()
+    private lateinit var currentDepot: Flow<Depot?>
+    private var isRootDepot = true
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater,
+            container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View? {
         val depotId = arguments?.getInt(storedDepotTag)
 
         Log.i(LOG_TAG, "Received depot: $depotId")
 
-        if (depotId == null || depotId == 0) {
-            getRootDepots(db)
+        currentDepot = if (depotId == null || depotId == 0) {
+            Log.i("KOT", "10")
+            getRootDepots(dataRepository)
         } else {
-            getDepot(db, depotId)
-            root = false
+            isRootDepot = false
+            getDepot(depotId)
         }
+        Log.i("KOT", "11")
 
         return prepareView(inflater, container)
     }
 
     private fun prepareView(
-        inflater: LayoutInflater,
-        container: ViewGroup?
+            inflater: LayoutInflater,
+            container: ViewGroup?
     ): View {
         val root = inflater.inflate(R.layout.fragment_items, container, false)
         val currentContext = context
         if (currentContext != null) {
             recyclerView = root.findViewById(R.id.items_recycler_view)
-            viewAdapter = DepotAdapter(dataRepository.getAllDepots(), currentDepot, requireActivity(), viewLifecycleOwner, db)
+            viewAdapter = DepotAdapter(
+                    currentDepot,
+                    requireActivity(),
+                    lifecycleScope,
+                    viewLifecycleOwner,
+                    db
+            )
 
             viewManager = LinearLayoutManager(currentContext)
             recyclerView.apply {
@@ -69,13 +82,13 @@ class ItemsFragment : FragmentWithActionBar() {
                 layoutManager = viewManager
                 adapter = viewAdapter
             }
-            currentDepot.observe(viewLifecycleOwner, {
+            currentDepotOld.observe(viewLifecycleOwner, {
                 val callback = requireActivity().onBackPressedDispatcher.addCallback(this) {
                     val action =
-                        ItemsFragmentDirections.actionNavItemsSelf(
-                            depotId = it.depot.parentId ?: 0
-                        )
-                    Log.i(LOG_TAG, "${currentDepot.value?.depot?.uid}")
+                            ItemsFragmentDirections.actionNavItemsSelf(
+                                    depotId = it.depot.parentId ?: 0
+                            )
+                    Log.i(LOG_TAG, "${currentDepotOld.value?.depot?.uid}")
                     root.findNavController().navigate(action)
                 }
                 callback.isEnabled = it.depot.uid != null
@@ -97,16 +110,16 @@ class ItemsFragment : FragmentWithActionBar() {
         val addDepotAction = View.OnClickListener {
             Log.i(LOG_TAG, "Clicked add depot")
             val action =
-                ItemsFragmentDirections.actionNavItemsToEditContainer(
-                    parentId = currentDepot.value?.depot?.uid ?: 0
-                )
-            Log.i(LOG_TAG, "${currentDepot.value?.depot?.uid}")
+                    ItemsFragmentDirections.actionNavItemsToEditContainer(
+                            parentId = currentDepotOld.value?.depot?.uid ?: 0
+                    )
+            Log.i(LOG_TAG, "${currentDepotOld.value?.depot?.uid}")
             root.findNavController().navigate(action)
         }
         val addItemAction = View.OnClickListener {
             Log.i(LOG_TAG, "Clicked add item")
             val action = ItemsFragmentDirections.actionNavItemsToFragmentEditItem(
-                depotId = currentDepot.value?.depot?.uid ?: 0
+                    depotId = currentDepotOld.value?.depot?.uid ?: 0
             )
             root.findNavController().navigate(action)
         }
@@ -117,59 +130,38 @@ class ItemsFragment : FragmentWithActionBar() {
         }
 
         prepareFabs(
-            root,
-            addDepotAction,
-            addItemAction,
-            addCategoryAction,
-            R.id.items_fab_background,
+                root,
+                addDepotAction,
+                addItemAction,
+                addCategoryAction,
+                R.id.items_fab_background,
         )
     }
 
-    private fun getDepot(db: AppDatabase?, depotId: Int) {
-        val objects = db?.depotDao()?.findWithContentsById(depotId)
-        objects?.observe(viewLifecycleOwner, {
-            Log.i(LOG_TAG, "Observed objects: $it")
-            if (it != null) {
-                currentDepot.value = it
-                actionBar()?.title = it.depot.name
-            }
-        })
-    }
-
-    private fun getRootDepots(db: AppDatabase?) {
-        val rootObjects = db?.depotDao()?.findRootDepots()
-        rootObjects?.observe(viewLifecycleOwner, {
-            Log.i(LOG_TAG, "Observed root objects: $it")
-            if (it != null) {
-                currentDepot.value = DepotWithContents(
-                    depot = Depot(name = "Items - title"),
-                    depots = it
-                )
-            }
-        })
-    }
+    private fun getDepot(depotId: Int) =
+            dataRepository.getDepot(depotId)
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.items_menu, menu)
-        menu.findItem(R.id.items_edit_depot_menu_item).isVisible = !root
+        menu.findItem(R.id.items_edit_depot_menu_item).isVisible = !isRootDepot
         super.onCreateOptionsMenu(menu, inflater)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean =
-        when (item.itemId) {
-            R.id.items_edit_depot_menu_item -> {
-                Log.i(LOG_TAG, "Clicked add depot")
-                currentDepot.value?.depot?.uid?.let {
-                    val action = ItemsFragmentDirections.actionNavItemsToEditContainer(
-                        depotId = it
-                    )
-                    Log.i(LOG_TAG, "Edit $it")
-                    view?.findNavController()?.navigate(action)
+            when (item.itemId) {
+                R.id.items_edit_depot_menu_item -> {
+                    Log.i(LOG_TAG, "Clicked add depot")
+                    currentDepotOld.value?.depot?.uid?.let {
+                        val action = ItemsFragmentDirections.actionNavItemsToEditContainer(
+                                depotId = it
+                        )
+                        Log.i(LOG_TAG, "Edit $it")
+                        view?.findNavController()?.navigate(action)
+                    }
+                    true
                 }
-                true
+                else -> super.onOptionsItemSelected(item)
             }
-            else -> super.onOptionsItemSelected(item)
-        }
 
     companion object {
         private const val LOG_TAG = "ItemsFragment"

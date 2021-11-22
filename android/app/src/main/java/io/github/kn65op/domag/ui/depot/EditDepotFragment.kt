@@ -3,8 +3,6 @@ package io.github.kn65op.domag.ui.depot
 import android.os.Bundle
 import android.util.Log
 import android.view.*
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
@@ -18,6 +16,7 @@ import io.github.kn65op.domag.data.database.database.AppDatabase
 import io.github.kn65op.domag.data.database.entities.Depot
 import io.github.kn65op.domag.data.database.operations.deleteDepot
 import io.github.kn65op.domag.data.database.relations.DepotWithContents
+import io.github.kn65op.domag.data.operations.getRootDepots
 import io.github.kn65op.domag.data.repository.Repository
 import io.github.kn65op.domag.databinding.FragmentEditDepotBinding
 import io.github.kn65op.domag.ui.common.FragmentWithActionBar
@@ -37,6 +36,7 @@ private const val CURRENT_DEPOT_ID_PARAMETER = "depotId"
 class EditDepotFragment : FragmentWithActionBar() {
     @Inject
     lateinit var db: AppDatabase
+
     @Inject
     lateinit var dataRepository: Repository
     private var currentName: String? = null
@@ -47,7 +47,7 @@ class EditDepotFragment : FragmentWithActionBar() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var spinner: SearchableSpinner
     private lateinit var fragmentBinding: FragmentEditDepotBinding
-    private var currentDepot = MutableLiveData<DepotWithContents>()
+    private var currentDepotOld = MutableLiveData<DepotWithContents>()
     private var depotsThatCanBeParents = emptyList<Depot>()
     private var depots: List<Depot>? = null
 
@@ -75,14 +75,14 @@ class EditDepotFragment : FragmentWithActionBar() {
                 db.depotDao().findWithContentsById(searchDepotId)
                     .observe(viewLifecycleOwner, {
                         if (it != null) {
-                            currentDepot.value = it
+                            currentDepotOld.value = it
                             currentParent = it.depot.parentId
                             Log.i(
                                 LOG_TAG,
                                 "Editing depot: ${it.depot.uid}: ${it.depot.name} with parent: ${it.depot.parentId}"
                             )
                         }
-                        prepareParentDepotSelectorIfReady(currentDepot, depots)
+                        prepareParentDepotSelectorIfReady(currentDepotOld, depots)
                     })
             }
         }
@@ -93,7 +93,7 @@ class EditDepotFragment : FragmentWithActionBar() {
         rootObjects?.observe(viewLifecycleOwner, {
             Log.i(LOG_TAG, "Depots in database: ${depots?.size}")
             depots = it
-            prepareParentDepotSelectorIfReady(currentDepot, depots)
+            prepareParentDepotSelectorIfReady(currentDepotOld, depots)
         })
     }
 
@@ -141,14 +141,20 @@ class EditDepotFragment : FragmentWithActionBar() {
         recyclerView = root.findViewById(R.id.edit_depot_content_view)
 
         viewManager = LinearLayoutManager(context)
-        viewAdapter = DepotAdapter(dataRepository.getAllDepots(), currentDepot, requireActivity(), this, db)
+        viewAdapter = DepotAdapter(
+            getRootDepots(dataRepository),
+            requireActivity(),
+            lifecycleScope,
+            this,
+            db
+        )
 
         recyclerView.apply {
             setHasFixedSize(true)
             layoutManager = viewManager
             adapter = viewAdapter
         }
-        currentDepot.observe(viewLifecycleOwner, {
+        currentDepotOld.observe(viewLifecycleOwner, {
             activity?.runOnUiThread {
                 if (!recyclerView.isComputingLayout) {
                     recyclerView.adapter?.notifyDataSetChanged()
@@ -178,7 +184,7 @@ class EditDepotFragment : FragmentWithActionBar() {
             val name = fragmentBinding.editDepotDepotName.text.toString()
             if (name.isNotEmpty()) {
                 val dao = db.depotDao()
-                if (currentDepot.value == null) {
+                if (currentDepotOld.value == null) {
                     lifecycleScope.launch {
                         Log.i(LOG_TAG, "Insert $name with parent: $currentParent")
                         dao.insert(Depot(name = name, parentId = currentParent))
@@ -187,7 +193,7 @@ class EditDepotFragment : FragmentWithActionBar() {
                 } else {
                     lifecycleScope.launch {
                         Log.i(LOG_TAG, "Edit $name")
-                        currentDepot.value?.depot?.let {
+                        currentDepotOld.value?.depot?.let {
                             val depot = Depot(uid = it.uid, name = name, parentId = currentParent)
                             dao.update(depot)
                         }
@@ -199,7 +205,7 @@ class EditDepotFragment : FragmentWithActionBar() {
             true
         }
         R.id.edit_depot_menu_remove_depot_item -> {
-            currentDepot.value?.let {
+            currentDepotOld.value?.let {
                 val parent = it.depot.parentId
                 lifecycleScope.launch {
                     db.deleteDepot(it)

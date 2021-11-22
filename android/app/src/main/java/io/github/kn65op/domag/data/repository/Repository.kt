@@ -11,6 +11,7 @@ interface Repository {
 
     fun getAllDepots(): Flow<List<Depot>>
     fun getDepot(id: DataId): Flow<Depot?>
+    fun getRootDepots(): Flow<List<RawDepot>>
 
     fun getAllItems(): Flow<List<RawItem>>
     fun getItem(id: DataId): Flow<RawItem?>

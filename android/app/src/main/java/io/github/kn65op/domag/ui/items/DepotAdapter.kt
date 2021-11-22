@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.navigation.findNavController
@@ -18,11 +19,14 @@ import io.github.kn65op.domag.data.model.Depot
 import io.github.kn65op.domag.ui.common.constructItemFullName
 import io.github.kn65op.domag.ui.dialogs.ConsumeDialogController
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.take
+import kotlinx.coroutines.launch
 
 class DepotAdapter(
-    depotsFlow : Flow<List<Depot>>,
-    private var depot: LiveData<DepotWithContents>,
+    depotsFlow: Flow<Depot?>,
     activity: FragmentActivity,
+    lifecycleScope: LifecycleCoroutineScope,
     private val lifecycleOwner: LifecycleOwner,
     private val db: AppDatabase,
 ) :
@@ -43,6 +47,23 @@ class DepotAdapter(
     private val depotOnPosition = 1
     private val itemOnPosition = 2
     private val consumeDialogController = ConsumeDialogController(activity, db)
+    private var depot: Depot? = null
+
+    init {
+        Log.i("KOT", "21")
+        lifecycleScope.launch { observe(depotsFlow) }
+        Log.i("KOT", "22")
+    }
+
+    private suspend fun observe(depotFlow: Flow<Depot?>) {
+        Log.i("KOT", "23")
+        depotFlow.collect {
+            depot = it
+            Log.i("KOT", "23.5")
+            notifyDataSetChanged()
+        }
+        Log.i("KOT", "24")
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder =
         when (viewType) {
@@ -67,14 +88,14 @@ class DepotAdapter(
 
     private fun calculatePosition(position: Int): Int {
         Log.i(LOG_TAG, "Position type for: $position")
-        return if (position >= depot.value?.depots?.size ?: 0)
+        return if (position >= depot?.children?.size ?: 0)
             itemOnPosition
         else depotOnPosition
     }
 
     override fun getItemCount(): Int {
-        Log.i(LOG_TAG, "${depot.value}")
-        return (depot.value?.depots?.size ?: 0) + (depot.value?.items?.size ?: 0)
+        Log.d(LOG_TAG, "$depot")
+        return (depot?.children?.size ?: 0) + (depot?.items?.size ?: 0)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
@@ -95,9 +116,9 @@ class DepotAdapter(
         position: Int,
         holder: ViewHolder
     ) {
-        val depotContent = depot.value
+        val depotContent = depot
         if (depotContent != null) {
-            val itemPosition = position - depotContent.depots.size
+            val itemPosition = position - depotContent.children.size
             val item = depotContent.items[itemPosition]
             val category =
                 db.categoryDao().findById(item.categoryId)
@@ -141,7 +162,7 @@ class DepotAdapter(
         position: Int
     ) {
         val depotViewHolder = holder as DepotViewHolder
-        val printedDepot = depot.value?.depots?.get(position)
+        val printedDepot = depot?.children?.get(position)
         depotViewHolder.nameViewHolder.text = printedDepot?.name
         holder.itemView.setOnClickListener {
             val id = printedDepot?.uid ?: 0

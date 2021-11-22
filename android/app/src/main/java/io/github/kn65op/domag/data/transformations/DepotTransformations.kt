@@ -10,7 +10,7 @@ fun DepotWithContents.toModelDepot() = Depot(
     name = depot.name,
     parentId = depot.parentId,
     children = depots.map { it.toModelRawDepot() },
-    items = emptyList()
+    items = items.map { it.toRawItem() }
 )
 
 fun DbDepot.toModelRawDepot() = RawDepot(

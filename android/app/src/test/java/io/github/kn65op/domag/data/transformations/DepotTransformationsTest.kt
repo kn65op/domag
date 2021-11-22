@@ -2,16 +2,19 @@ package io.github.kn65op.domag.data.transformations
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
+import io.github.kn65op.android.lib.type.FixedPointNumber
 import io.github.kn65op.domag.data.database.relations.DepotWithContents
 import io.github.kn65op.domag.data.model.RawDepot
 import io.github.kn65op.domag.data.model.Depot as ModelDepot
 import io.github.kn65op.domag.data.database.entities.Depot as DbDepot
+import io.github.kn65op.domag.data.model.RawItem as ModelItem
+import io.github.kn65op.domag.data.database.entities.Item as DbItem
 import org.junit.Test
 
 class DepotTransformationsTest {
     private val uid = 1
     private val name = "Name"
-    private val dbDepotBase = DbDepot(uid = uid, parentId = null, name = name,)
+    private val dbDepotBase = DbDepot(uid = uid, parentId = null, name = name)
     private val dbDepotWithContentsBase = DepotWithContents(depot = dbDepotBase)
     private val modelDepotBase = ModelDepot(
         uid = uid,
@@ -24,6 +27,26 @@ class DepotTransformationsTest {
         uid = uid,
         name = name,
         parentId = null,
+    )
+
+    private val itemUid = 222
+    private val categoryUid = 384
+    private val amount = FixedPointNumber(3.44)
+    private val description = "Description"
+    private val dbItem = DbItem(
+        uid = itemUid,
+        depotId = uid,
+        categoryId = categoryUid,
+        amount = amount,
+        description = description,
+    )
+
+    private val modelItem = ModelItem(
+        uid = itemUid,
+        depotId = uid,
+        categoryId = categoryUid,
+        amount = amount,
+        description = description,
     )
     private val parentId = 2323
 
@@ -102,5 +125,14 @@ class DepotTransformationsTest {
         val rawModelDepot = modelRawDepotBase.copy(parentId = parentId)
 
         assertThat(dbDepot.toModelRawDepot(), equalTo(rawModelDepot))
+    }
+
+    @Test
+    fun `should transform items`() {
+        val dbDepot = dbDepotWithContentsBase.copy(items = listOf(dbItem))
+
+        val modelDepot = modelDepotBase.copy(items = listOf(modelItem))
+
+        assertThat(dbDepot.toModelDepot(), equalTo(modelDepot))
     }
 }

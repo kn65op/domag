@@ -260,6 +260,7 @@ class EditItemFragment : FragmentWithActionBar(), AdapterView.OnItemSelectedList
                         amount = amount,
                         bestBefore = bestBefore
                     )
+                    Log.i("KOT", "Add $item")
                     writeItemToDb(item, db)
                 }
             }
